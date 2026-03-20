@@ -2,6 +2,8 @@
 
 **Singapore property research site for new condo launches**, built under Tartiner Labs. AI agents auto-populate data from gov APIs, web sources, and YouTube reviewers.
 
+> Research directory — not a marketplace. No agent listings, no buyer-seller transactions.
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -17,6 +19,7 @@
 | Package Manager | pnpm |
 | Hosting | Vercel (ISR for SEO-critical pages) |
 | Blob Storage | Vercel Blob (floor plans, site plans, renders) |
+| Icons | Hugeicons (free set) |
 | Tooling | Biome 2, Husky, commitlint, gitleaks |
 
 ## Design Direction
@@ -27,7 +30,7 @@ Neobrutalist style (full vs soft TBD — compare at `/preview`). Monochrome/neut
 
 - **Server Components by default** — `"use client"` only when interactivity or browser APIs needed
 - **Drizzle schema**: `pgTable`, `text()` IDs, `timestamp()` defaults, `snake_case` casing, separate relation exports
-- **Biome 2**: 2-space indent, recommended rules, import organizing
+- **Biome 2**: 2-space indent, recommended rules, import organising
 - **Conventional commits**: enforced via commitlint (`feat:`, `fix:`, `chore:`, etc.)
 - **Path alias**: `@/*` → `./src/*`
 - **ISR**: `generateStaticParams` + `revalidate`; after agent runs, `revalidateTag()` for affected projects
@@ -38,8 +41,9 @@ Neobrutalist style (full vs soft TBD — compare at `/preview`). Monochrome/neut
 ```bash
 pnpm dev          # Start dev server
 pnpm build        # Production build
+pnpm start        # Start production server
 pnpm check        # Biome lint + format check
-pnpm format       # Biome auto-format
+pnpm format       # Biome lint + format auto-fix
 ```
 
 ## Phased Rollout

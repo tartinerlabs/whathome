@@ -15,7 +15,7 @@ paths:
 ## Relations
 - Export relations separately from table definitions
 - Use `relations()` from `drizzle-orm` for type-safe joins
-- Foreign keys with `references(() => table.id)` and appropriate `onDelete` behavior
+- Foreign keys with `references(() => table.id)` and appropriate `onDelete` behaviour
 
 ## Schema Files
 Each domain gets its own schema file in `src/db/schema/`:

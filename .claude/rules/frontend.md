@@ -24,7 +24,7 @@ paths:
 
 ## Recharts
 - Wrap charts in `ResponsiveContainer`
-- Use project's color tokens for chart colors
+- Use project's colour tokens for chart colours
 - Charts are client components — isolate in dedicated `*-chart.tsx` files
 
 ## Component Patterns
