@@ -9,7 +9,7 @@
 | Layer | Technology |
 |-------|-----------|
 | Framework | Next.js 16 (App Router) + React 19 + React Compiler |
-| Styling | Tailwind CSS v4 + shadcn/ui (Maia style, Base UI) |
+| Styling | Tailwind CSS v4 + shadcn/ui (Lyra style, Base UI) |
 | Database | Neon Postgres + Drizzle ORM (`snake_case` casing) |
 | Auth | Better Auth (email + social, admin roles) |
 | AI Agents | Vercel AI SDK + `@ai-sdk/anthropic` |

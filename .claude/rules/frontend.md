@@ -17,7 +17,7 @@ paths:
 - Use `next/image` for images, `next/font` for fonts
 
 ## Styling
-- Tailwind CSS v4 + shadcn/ui (Maia style, Base UI)
+- Tailwind CSS v4 + shadcn/ui (Lyra style, Base UI)
 - Neobrutalist design direction — monochrome/neutral palette
 - Support light + dark mode
 - Use `cn()` utility from `@/lib/utils` for conditional classes

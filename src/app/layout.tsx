@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
-import { Figtree, Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const figtree = Figtree({ subsets: ["latin"], variable: "--font-sans" });
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
+  variable: "--font-sans",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -31,10 +30,9 @@ export default function RootLayout({
       className={cn(
         "h-full",
         "antialiased",
-        geistSans.variable,
-        geistMono.variable,
+        spaceGrotesk.variable,
+        ibmPlexMono.variable,
         "font-sans",
-        figtree.variable,
       )}
     >
       <body className="min-h-full flex flex-col">{children}</body>
