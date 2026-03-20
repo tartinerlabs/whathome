@@ -1,4 +1,18 @@
-export type { PsfDataPoint, UnitMixRow } from "@/components/preview/types";
+export interface UnitMixRow {
+  unitType: "1BR" | "2BR" | "3BR" | "4BR" | "5BR" | "Penthouse";
+  sizeSqftMin: number;
+  sizeSqftMax: number;
+  pricePsf: number;
+  priceFrom: number;
+  priceTo: number;
+  totalCount: number;
+  soldCount: number;
+}
+
+export interface PsfDataPoint {
+  month: string;
+  psf: number;
+}
 
 export type Region = "CCR" | "RCR" | "OCR";
 export type Tenure = "freehold" | "99-year" | "999-year" | "103-year";
