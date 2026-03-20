@@ -65,8 +65,8 @@ export function PsfChart({ data, variant }: PsfChartProps) {
                 fontSize: "12px",
                 fontFamily: "var(--font-mono)",
               }}
-              formatter={(value: number) => [
-                `$${value.toLocaleString()}`,
+              formatter={(value) => [
+                `$${Number(value).toLocaleString()}`,
                 "PSF",
               ]}
             />
