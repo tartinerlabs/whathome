@@ -49,7 +49,7 @@
                   "id": "zGW3D",
                   "name": "lt",
                   "fill": "$text-primary",
-                  "content": "WHATHOME",
+                  "content": "SGCARSTRENDS",
                   "fontFamily": "Space Grotesk",
                   "fontSize": 20,
                   "fontWeight": "800",
@@ -69,7 +69,7 @@
                   "id": "GxyqR",
                   "name": "n1",
                   "fill": "$text-secondary",
-                  "content": "PROJECTS",
+                  "content": "CARS",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -80,7 +80,7 @@
                   "id": "djvKY",
                   "name": "n2",
                   "fill": "$text-secondary",
-                  "content": "NEW LAUNCHES",
+                  "content": "COE",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -91,7 +91,7 @@
                   "id": "OEG5I",
                   "name": "n3",
                   "fill": "$text-secondary",
-                  "content": "DEVELOPERS",
+                  "content": "MAKES",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -102,7 +102,7 @@
                   "id": "pKLLM",
                   "name": "n4",
                   "fill": "$text-secondary",
-                  "content": "DISTRICTS",
+                  "content": "BLOG",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -113,7 +113,7 @@
                   "id": "aNPDb",
                   "name": "n5",
                   "fill": "$text-secondary",
-                  "content": "ANALYTICS",
+                  "content": "ABOUT",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -188,7 +188,6 @@
               "type": "frame",
               "id": "T5x3J",
               "name": "hl",
-              "cornerRadius": 20,
               "stroke": {
                 "thickness": 2,
                 "fill": "$border"
@@ -203,7 +202,7 @@
                   "id": "Bx4Ei",
                   "name": "hlt",
                   "fill": "$text-secondary",
-                  "content": "SINGAPORE PROPERTY RESEARCH",
+                  "content": "SINGAPORE CAR MARKET DATA",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 11,
                   "fontWeight": "600",
@@ -218,7 +217,7 @@
               "fill": "$text-primary",
               "textGrowth": "fixed-width",
               "width": 900,
-              "content": "Find your next home\nin Singapore.",
+              "content": "What's trending\nin Singapore cars?",
               "lineHeight": 1,
               "fontFamily": "Space Grotesk",
               "fontSize": 72,
@@ -232,7 +231,7 @@
               "fill": "$text-secondary",
               "textGrowth": "fixed-width",
               "width": 680,
-              "content": "AI-powered research on new condo launches. Transactions, pricing, amenities, and expert analysis — all in one place.",
+              "content": "Registration data, COE results, and market insights — updated monthly. Track trends across makes, fuel types, and vehicle categories.",
               "lineHeight": 1.5,
               "fontFamily": "Space Grotesk",
               "fontSize": 20,
@@ -244,7 +243,6 @@
               "name": "sb",
               "width": 680,
               "height": 56,
-              "cornerRadius": 8,
               "stroke": {
                 "thickness": 2,
                 "fill": "$border-bold"
@@ -273,7 +271,7 @@
                   "id": "sUAFj",
                   "name": "sbp",
                   "fill": "$text-muted",
-                  "content": "Search by project name, district, or developer...",
+                  "content": "Search by car make, model, or fuel type...",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 14,
                   "fontWeight": "normal"
@@ -316,7 +314,7 @@
                   "id": "SsUIV",
                   "name": "t1",
                   "fill": "$text-muted",
-                  "content": "12,400+ transactions tracked",
+                  "content": "8,200+ registrations tracked",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -336,7 +334,7 @@
                   "id": "Doziz",
                   "name": "t2",
                   "fill": "$text-muted",
-                  "content": "28 districts covered",
+                  "content": "40+ car makes covered",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -356,7 +354,7 @@
                   "id": "TBOxI",
                   "name": "t3",
                   "fill": "$text-muted",
-                  "content": "Updated daily via AI agents",
+                  "content": "Updated monthly from LTA",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -397,7 +395,7 @@
                   "id": "rvwZq",
                   "name": "fT",
                   "fill": "$text-primary",
-                  "content": "FEATURED LAUNCHES",
+                  "content": "TRENDING THIS MONTH",
                   "fontFamily": "Space Grotesk",
                   "fontSize": 28,
                   "fontWeight": "700",
@@ -441,16 +439,16 @@
                       "name": "c1i",
                       "metadata": {
                         "type": "unsplash",
-                        "username": "danist07",
-                        "link": "https://unsplash.com/@danist07",
-                        "author": "Danist Soh"
+                        "username": "dudukalov_vl",
+                        "link": "https://unsplash.com/@dudukalov_vl",
+                        "author": "Vladimir Dudukalov"
                       },
                       "width": "fill_container",
                       "height": 220,
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1631093266789-60162fd9755a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5MzU4NTh8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "url": "https://images.unsplash.com/photo-1585689190860-e9f8d046acf7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5OTU5NDZ8&ixlib=rb-4.1.0&q=80&w=1080",
                         "mode": "fill"
                       }
                     },
@@ -484,7 +482,7 @@
                                   "id": "Khwp2",
                                   "name": "c1t1t",
                                   "fill": "$text-secondary",
-                                  "content": "CCR · D10 · FREEHOLD",
+                                  "content": "#1 · ELECTRIC · +15.3%",
                                   "fontFamily": "IBM Plex Mono",
                                   "fontSize": 10,
                                   "fontWeight": "600",
@@ -499,7 +497,7 @@
                           "id": "lEHjv",
                           "name": "c1n",
                           "fill": "$text-primary",
-                          "content": "The Collective Residences",
+                          "content": "BYD",
                           "fontFamily": "Space Grotesk",
                           "fontSize": 18,
                           "fontWeight": "600"
@@ -509,7 +507,7 @@
                           "id": "O6VhV",
                           "name": "c1d",
                           "fill": "$text-muted",
-                          "content": "BY CDL · BUKIT TIMAH",
+                          "content": "2,089 REGISTRATIONS · FEB 2026",
                           "fontFamily": "IBM Plex Mono",
                           "fontSize": 11,
                           "fontWeight": "500",
@@ -528,7 +526,7 @@
                               "id": "hOGTm",
                               "name": "c1p",
                               "fill": "$text-primary",
-                              "content": "From $2,180 PSF",
+                              "content": "Top Make",
                               "fontFamily": "Space Grotesk",
                               "fontSize": 16,
                               "fontWeight": "700"
@@ -538,7 +536,7 @@
                               "id": "XppRB",
                               "name": "c1u",
                               "fill": "$text-muted",
-                              "content": "312 UNITS",
+                              "content": "+15.3%",
                               "fontFamily": "IBM Plex Mono",
                               "fontSize": 11,
                               "fontWeight": "600",
@@ -568,16 +566,16 @@
                       "name": "c1i",
                       "metadata": {
                         "type": "unsplash",
-                        "username": "joshdatsu",
-                        "link": "https://unsplash.com/@joshdatsu",
-                        "author": "Joshua Tsu"
+                        "username": "by_syeoni",
+                        "link": "https://unsplash.com/@by_syeoni",
+                        "author": "Suhyeon Choi"
                       },
                       "width": "fill_container",
                       "height": 220,
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1654783855990-ca588e09a672?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5MzU4NzR8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "url": "https://images.unsplash.com/photo-1483450864178-e9bca6865bd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5OTU5NDZ8&ixlib=rb-4.1.0&q=80&w=1080",
                         "mode": "fill"
                       }
                     },
@@ -611,7 +609,7 @@
                                   "id": "FsDGJ",
                                   "name": "c1t1t",
                                   "fill": "$text-secondary",
-                                  "content": "CCR · D09 · 99-YEAR",
+                                  "content": "#2 · PETROL · -3.2%",
                                   "fontFamily": "IBM Plex Mono",
                                   "fontSize": 10,
                                   "fontWeight": "600",
@@ -626,7 +624,7 @@
                           "id": "pKdOL",
                           "name": "c1n",
                           "fill": "$text-primary",
-                          "content": "Aurea at Orchard",
+                          "content": "Toyota",
                           "fontFamily": "Space Grotesk",
                           "fontSize": 18,
                           "fontWeight": "600"
@@ -636,7 +634,7 @@
                           "id": "LjcUU",
                           "name": "c1d",
                           "fill": "$text-muted",
-                          "content": "BY GUOCOLAND · ORCHARD ROAD",
+                          "content": "1,295 REGISTRATIONS · FEB 2026",
                           "fontFamily": "IBM Plex Mono",
                           "fontSize": 11,
                           "fontWeight": "500",
@@ -655,7 +653,7 @@
                               "id": "Y05vm",
                               "name": "c1p",
                               "fill": "$text-primary",
-                              "content": "From $2,850 PSF",
+                              "content": "Runner Up",
                               "fontFamily": "Space Grotesk",
                               "fontSize": 16,
                               "fontWeight": "700"
@@ -665,7 +663,7 @@
                               "id": "Dj9wd",
                               "name": "c1u",
                               "fill": "$text-muted",
-                              "content": "188 UNITS",
+                              "content": "-3.2%",
                               "fontFamily": "IBM Plex Mono",
                               "fontSize": 11,
                               "fontWeight": "600",
@@ -695,16 +693,16 @@
                       "name": "c1i",
                       "metadata": {
                         "type": "unsplash",
-                        "username": "declansun",
-                        "link": "https://unsplash.com/@declansun",
-                        "author": "Declan Sun"
+                        "username": "evnex",
+                        "link": "https://unsplash.com/@evnex",
+                        "author": "Evnex Ltd"
                       },
                       "width": "fill_container",
                       "height": 220,
                       "fill": {
                         "type": "image",
                         "enabled": true,
-                        "url": "https://images.unsplash.com/photo-1759722127709-8205df442252?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5MzU4NzR8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "url": "https://images.unsplash.com/photo-1692052480358-235419613e4d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5OTU5NDd8&ixlib=rb-4.1.0&q=80&w=1080",
                         "mode": "fill"
                       }
                     },
@@ -738,7 +736,7 @@
                                   "id": "9TYMT",
                                   "name": "c1t1t",
                                   "fill": "$text-secondary",
-                                  "content": "OCR · D26 · 99-YEAR",
+                                  "content": "#3 · ELECTRIC · +8.7%",
                                   "fontFamily": "IBM Plex Mono",
                                   "fontSize": 10,
                                   "fontWeight": "600",
@@ -753,7 +751,7 @@
                           "id": "v7Qfe",
                           "name": "c1n",
                           "fill": "$text-primary",
-                          "content": "Hillock Green",
+                          "content": "Tesla",
                           "fontFamily": "Space Grotesk",
                           "fontSize": 18,
                           "fontWeight": "600"
@@ -763,7 +761,7 @@
                           "id": "wqCRc",
                           "name": "c1d",
                           "fill": "$text-muted",
-                          "content": "BY UOL · LENTOR",
+                          "content": "898 REGISTRATIONS · FEB 2026",
                           "fontFamily": "IBM Plex Mono",
                           "fontSize": 11,
                           "fontWeight": "500",
@@ -782,7 +780,7 @@
                               "id": "9aAMx",
                               "name": "c1p",
                               "fill": "$text-primary",
-                              "content": "From $1,890 PSF",
+                              "content": "Third Place",
                               "fontFamily": "Space Grotesk",
                               "fontSize": 16,
                               "fontWeight": "700"
@@ -792,7 +790,7 @@
                               "id": "xlBhy",
                               "name": "c1u",
                               "fill": "$text-muted",
-                              "content": "474 UNITS",
+                              "content": "+8.7%",
                               "fontFamily": "IBM Plex Mono",
                               "fontSize": 11,
                               "fontWeight": "600",
@@ -850,7 +848,7 @@
                   "id": "8H0yN",
                   "name": "mQ",
                   "fill": "$text-muted",
-                  "content": "Q1 2026",
+                  "content": "FEB 2026",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "600",
@@ -883,7 +881,7 @@
                       "id": "AJxZ4",
                       "name": "s1l",
                       "fill": "$text-muted",
-                      "content": "CCR PRICE INDEX",
+                      "content": "TOTAL REGISTRATIONS",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "600",
@@ -894,7 +892,7 @@
                       "id": "YNRcZ",
                       "name": "s1v",
                       "fill": "$text-primary",
-                      "content": "178.4",
+                      "content": "8,273",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 42,
                       "fontWeight": "700"
@@ -903,8 +901,8 @@
                       "type": "text",
                       "id": "DmuWy",
                       "name": "s1c",
-                      "fill": "$success",
-                      "content": "+2.1% QoQ",
+                      "fill": "$destructive",
+                      "content": "-6.1% MoM",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -929,7 +927,7 @@
                       "id": "RctWv",
                       "name": "s2l",
                       "fill": "$text-muted",
-                      "content": "RCR PRICE INDEX",
+                      "content": "TOP FUEL TYPE",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "600",
@@ -940,7 +938,7 @@
                       "id": "1A6c0",
                       "name": "s2v",
                       "fill": "$text-primary",
-                      "content": "192.7",
+                      "content": "Electric",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 42,
                       "fontWeight": "700"
@@ -950,7 +948,7 @@
                       "id": "3rnqX",
                       "name": "s2c",
                       "fill": "$success",
-                      "content": "+1.8% QoQ",
+                      "content": "2,236 regs",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -975,7 +973,7 @@
                       "id": "a7wgd",
                       "name": "s3l",
                       "fill": "$text-muted",
-                      "content": "OCR PRICE INDEX",
+                      "content": "COE CAT A",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "600",
@@ -986,7 +984,7 @@
                       "id": "J0crl",
                       "name": "s3v",
                       "fill": "$text-primary",
-                      "content": "205.1",
+                      "content": "$111,890",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 42,
                       "fontWeight": "700"
@@ -995,8 +993,8 @@
                       "type": "text",
                       "id": "Y3Mfp",
                       "name": "s3c",
-                      "fill": "$destructive",
-                      "content": "-0.3% QoQ",
+                      "fill": "$success",
+                      "content": "+4.5%",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -1021,7 +1019,7 @@
                       "id": "ZVGae",
                       "name": "s4l",
                       "fill": "$text-muted",
-                      "content": "NEW SALES VOLUME",
+                      "content": "COE CAT B",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "600",
@@ -1032,7 +1030,7 @@
                       "id": "sfpip",
                       "name": "s4v",
                       "fill": "$text-primary",
-                      "content": "1,847",
+                      "content": "$115,568",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 42,
                       "fontWeight": "700"
@@ -1042,7 +1040,7 @@
                       "id": "jgF9q",
                       "name": "s4c",
                       "fill": "$success",
-                      "content": "+12.4% QoQ",
+                      "content": "+2.1%",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 12,
                       "fontWeight": "600"
@@ -1119,7 +1117,7 @@
                       "id": "f22OG",
                       "name": "st1t",
                       "fill": "$text-primary",
-                      "content": "AI Ingests Data",
+                      "content": "Data Collection",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 18,
                       "fontWeight": "600"
@@ -1131,7 +1129,7 @@
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Our agents pull transactions from data.gov.sg and URA daily, keeping prices and volume up to date.",
+                      "content": "LTA publishes monthly car registration, COE bidding, and deregistration data. We ingest it automatically.",
                       "lineHeight": 1.6,
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 13,
@@ -1168,7 +1166,7 @@
                       "id": "oj1eY",
                       "name": "st2t",
                       "fill": "$text-primary",
-                      "content": "Research & Enrich",
+                      "content": "Analysis & Trends",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 18,
                       "fontWeight": "600"
@@ -1180,7 +1178,7 @@
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "AI agents research each project — pricing, amenities, developer track record, and YouTube reviewer insights.",
+                      "content": "We process the data to surface trends across makes, fuel types, vehicle categories, and COE premiums.",
                       "lineHeight": 1.6,
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 13,
@@ -1217,7 +1215,7 @@
                       "id": "TDYo1",
                       "name": "st3t",
                       "fill": "$text-primary",
-                      "content": "You Decide",
+                      "content": "Market Insights",
                       "fontFamily": "Space Grotesk",
                       "fontSize": 18,
                       "fontWeight": "600"
@@ -1229,7 +1227,7 @@
                       "fill": "$text-secondary",
                       "textGrowth": "fixed-width",
                       "width": "fill_container",
-                      "content": "Compare projects side by side, save your favourites, and make informed decisions backed by data and AI.",
+                      "content": "Browse interactive charts, compare makes, track COE movements, and read AI-generated market reports.",
                       "lineHeight": 1.6,
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 13,
@@ -1266,7 +1264,7 @@
               "id": "JceEW",
               "name": "ctaH",
               "fill": "$accent-text",
-              "content": "Start researching today.",
+              "content": "Start tracking trends.",
               "textAlign": "center",
               "fontFamily": "Space Grotesk",
               "fontSize": 42,
@@ -1279,7 +1277,7 @@
               "name": "ctaS",
               "opacity": 0.7,
               "fill": "$accent-text",
-              "content": "Free access to transaction data, AI analysis, and project comparisons.",
+              "content": "Free access to registration data, COE results, and market insights.",
               "textAlign": "center",
               "fontFamily": "IBM Plex Mono",
               "fontSize": 14,
@@ -1290,7 +1288,6 @@
               "id": "0ROnZ",
               "name": "ctaB",
               "fill": "$accent-text",
-              "cornerRadius": 8,
               "gap": 8,
               "padding": [
                 16,
@@ -1303,7 +1300,7 @@
                   "id": "TAz2a",
                   "name": "ctaBt",
                   "fill": "$accent",
-                  "content": "EXPLORE PROJECTS",
+                  "content": "EXPLORE DATA",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 13,
                   "fontWeight": "600",
@@ -1345,7 +1342,7 @@
                   "id": "rbZj2",
                   "name": "ftL",
                   "fill": "$text-primary",
-                  "content": "WHATHOME",
+                  "content": "SGCARSTRENDS",
                   "fontFamily": "Space Grotesk",
                   "fontSize": 18,
                   "fontWeight": "800",
@@ -1356,7 +1353,7 @@
                   "id": "bRZsR",
                   "name": "ftTg",
                   "fill": "$text-muted",
-                  "content": "Singapore property research, powered by AI.",
+                  "content": "Singapore car market data and trends.",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 12,
                   "fontWeight": "normal"
@@ -1387,7 +1384,7 @@
                   "id": "aGBtI",
                   "name": "ftC",
                   "fill": "$text-muted",
-                  "content": "© 2026 Tartiner Labs",
+                  "content": "© 2026 SG Cars Trends",
                   "fontFamily": "IBM Plex Mono",
                   "fontSize": 11,
                   "fontWeight": "normal"
@@ -8448,14 +8445,22 @@
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "rectangle",
+                      "id": "Sulga",
+                      "name": "logoIcon",
+                      "fill": "$accent",
+                      "width": 32,
+                      "height": 32
+                    },
+                    {
                       "type": "text",
                       "id": "FY0uN",
                       "name": "navLogo",
                       "fill": "$text-primary",
                       "content": "WHATHOME",
                       "fontFamily": "Space Grotesk",
-                      "fontSize": 18,
-                      "fontWeight": "700",
+                      "fontSize": 20,
+                      "fontWeight": "800",
                       "letterSpacing": 2
                     },
                     {
@@ -8463,50 +8468,55 @@
                       "id": "p4742",
                       "name": "navL1",
                       "fill": "$text-primary",
-                      "content": "New Launches",
+                      "content": "NEW LAUNCHES",
                       "fontFamily": "IBM Plex Mono",
-                      "fontSize": 13,
-                      "fontWeight": "500"
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
                     },
                     {
                       "type": "text",
                       "id": "6iQl6",
                       "name": "navL2",
                       "fill": "$text-secondary",
-                      "content": "Projects",
+                      "content": "PROJECTS",
                       "fontFamily": "IBM Plex Mono",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
                     },
                     {
                       "type": "text",
                       "id": "vxIJ2",
                       "name": "navL3",
                       "fill": "$text-secondary",
-                      "content": "Developers",
+                      "content": "DEVELOPERS",
                       "fontFamily": "IBM Plex Mono",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
                     },
                     {
                       "type": "text",
                       "id": "lIWkf",
                       "name": "navL4",
                       "fill": "$text-secondary",
-                      "content": "Districts",
+                      "content": "DISTRICTS",
                       "fontFamily": "IBM Plex Mono",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
                     },
                     {
                       "type": "text",
                       "id": "Qntxt",
                       "name": "navL5",
                       "fill": "$text-secondary",
-                      "content": "Analytics",
+                      "content": "ANALYTICS",
                       "fontFamily": "IBM Plex Mono",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
                     }
                   ]
                 },
@@ -8518,11 +8528,20 @@
                   "alignItems": "center",
                   "children": [
                     {
+                      "type": "icon_font",
+                      "id": "tiEkB",
+                      "name": "searchIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-primary"
+                    },
+                    {
                       "type": "frame",
                       "id": "i7MOt",
                       "name": "navBtn",
                       "fill": "$accent",
-                      "cornerRadius": 6,
                       "padding": [
                         10,
                         20
@@ -8534,10 +8553,11 @@
                           "id": "8bbEX",
                           "name": "navBtnT",
                           "fill": "$accent-text",
-                          "content": "Sign In",
+                          "content": "LOG IN",
                           "fontFamily": "IBM Plex Mono",
-                          "fontSize": 13,
-                          "fontWeight": "500"
+                          "fontSize": 11,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
                         }
                       ]
                     }
@@ -8576,52 +8596,14 @@
                       "letterSpacing": 2
                     },
                     {
-                      "type": "frame",
-                      "id": "snNcp",
-                      "name": "ftNav",
-                      "gap": 24,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "H9AZe",
-                          "name": "ftN1",
-                          "fill": "$text-secondary",
-                          "content": "Projects",
-                          "fontFamily": "IBM Plex Mono",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "ICjW3",
-                          "name": "ftN2",
-                          "fill": "$text-secondary",
-                          "content": "Developers",
-                          "fontFamily": "IBM Plex Mono",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "VlpOh",
-                          "name": "ftN3",
-                          "fill": "$text-secondary",
-                          "content": "Districts",
-                          "fontFamily": "IBM Plex Mono",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        },
-                        {
-                          "type": "text",
-                          "id": "8mB8P",
-                          "name": "ftN4",
-                          "fill": "$text-secondary",
-                          "content": "Analytics",
-                          "fontFamily": "IBM Plex Mono",
-                          "fontSize": 13,
-                          "fontWeight": "normal"
-                        }
-                      ]
+                      "type": "text",
+                      "id": "hkato",
+                      "name": "ftTagline",
+                      "fill": "$text-secondary",
+                      "content": "Singapore property research, powered by AI.",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -8646,7 +8628,7 @@
                       "id": "GNzy3",
                       "name": "ftCopy",
                       "fill": "$text-muted",
-                      "content": "© 2026 Tartiner Labs. All rights reserved.",
+                      "content": "© 2026 Tartiner Labs",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "normal"
@@ -8656,7 +8638,7 @@
                       "id": "hP7s9",
                       "name": "ftBrand",
                       "fill": "$text-muted",
-                      "content": "A Tartiner Labs project",
+                      "content": "Made in Singapore",
                       "fontFamily": "IBM Plex Mono",
                       "fontSize": 11,
                       "fontWeight": "normal"
@@ -8722,9 +8704,9 @@
                       "fill": "$text-primary",
                       "content": "NEW LAUNCHES",
                       "fontFamily": "Space Grotesk",
-                      "fontSize": 24,
+                      "fontSize": 28,
                       "fontWeight": "700",
-                      "letterSpacing": 2
+                      "letterSpacing": -1
                     },
                     {
                       "type": "text",
@@ -8743,10 +8725,11 @@
                   "id": "hRvIW",
                   "name": "secHdrLink",
                   "fill": "$accent",
-                  "content": "View all →",
+                  "content": "VIEW ALL →",
                   "fontFamily": "IBM Plex Mono",
-                  "fontSize": 13,
-                  "fontWeight": "500"
+                  "fontSize": 12,
+                  "fontWeight": "600",
+                  "letterSpacing": 1
                 }
               ]
             },
@@ -8923,6 +8906,1288 @@
                       "iconFontName": "chevron-right",
                       "iconFontFamily": "lucide",
                       "fill": "$text-primary"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "J7Cz3",
+          "name": "Section: Buttons & Badges",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "E5eAf",
+              "name": "sec1t",
+              "fill": "$text-muted",
+              "content": "BUTTONS & BADGES",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "h0HKS",
+              "name": "s5r",
+              "width": "fill_container",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "wP5ax",
+                  "name": "Primary Button",
+                  "reusable": true,
+                  "fill": "$accent",
+                  "stroke": {
+                    "thickness": 0
+                  },
+                  "padding": [
+                    8,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VwAXt",
+                      "name": "Label",
+                      "fill": "$accent-text",
+                      "content": "BUTTON",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "HNhj1",
+                  "name": "Secondary Button",
+                  "reusable": true,
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "padding": [
+                    8,
+                    20
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "BKoOA",
+                      "name": "Label",
+                      "fill": "$text-primary",
+                      "content": "BUTTON",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "gFmtL",
+                  "name": "Badge / Success",
+                  "reusable": true,
+                  "fill": "#22C55E",
+                  "stroke": {
+                    "thickness": 0
+                  },
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "x5t9R",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "SUCCESS",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "plXBz",
+                  "name": "Badge / Warning",
+                  "reusable": true,
+                  "fill": "#F59E0B",
+                  "stroke": {
+                    "thickness": 0
+                  },
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Oyb1a",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "WARNING",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Uyxpa",
+                  "name": "Badge / Error",
+                  "reusable": true,
+                  "fill": "#EF4444",
+                  "stroke": {
+                    "thickness": 0
+                  },
+                  "padding": [
+                    4,
+                    10
+                  ],
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "GxcyP",
+                      "name": "Label",
+                      "fill": "#FFFFFF",
+                      "content": "ERROR",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "UY76c",
+          "name": "Section: Cards",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "KcWBd",
+              "name": "sec2t",
+              "fill": "$text-muted",
+              "content": "CARDS",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "3bYlb",
+              "name": "s6r",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WebsN",
+                  "name": "Project Card",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "S7ELI",
+                      "name": "Image",
+                      "metadata": {
+                        "type": "unsplash",
+                        "username": "danist07",
+                        "link": "https://unsplash.com/@danist07",
+                        "author": "Danist Soh"
+                      },
+                      "width": "fill_container",
+                      "height": 220,
+                      "fill": {
+                        "type": "image",
+                        "enabled": true,
+                        "url": "https://images.unsplash.com/photo-1633579435926-504321ddfd1a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w4NDM0ODN8MHwxfHJhbmRvbXx8fHx8fHx8fDE3NzM5OTYzMDd8&ixlib=rb-4.1.0&q=80&w=1080",
+                        "mode": "fill"
+                      }
+                    },
+                    {
+                      "type": "frame",
+                      "id": "d9MMW",
+                      "name": "Body",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "FUoYs",
+                          "name": "Tags",
+                          "width": "fill_container",
+                          "gap": 6,
+                          "children": [
+                            {
+                              "id": "i8YXY",
+                              "type": "ref",
+                              "ref": "ontNl",
+                              "name": "tag1",
+                              "descendants": {
+                                "4ppVc": {
+                                  "content": "CCR"
+                                }
+                              }
+                            },
+                            {
+                              "id": "zCnIl",
+                              "type": "ref",
+                              "ref": "ontNl",
+                              "name": "tag2",
+                              "x": 46,
+                              "descendants": {
+                                "4ppVc": {
+                                  "content": "NEW LAUNCH"
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "Vjltq",
+                          "name": "Project Name",
+                          "fill": "$text-primary",
+                          "content": "The Arcady",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 16,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zsbWZ",
+                          "name": "Developer",
+                          "fill": "$text-muted",
+                          "content": "KSH HOLDINGS",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal",
+                          "letterSpacing": 1
+                        },
+                        {
+                          "type": "frame",
+                          "id": "rJuXx",
+                          "name": "Stats",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "q9Vcw",
+                              "name": "PSF",
+                              "fill": "$text-primary",
+                              "content": "$2,100 psf",
+                              "fontFamily": "IBM Plex Mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "text",
+                              "id": "3sxiR",
+                              "name": "Price",
+                              "fill": "$text-primary",
+                              "content": "From $1.2M",
+                              "fontFamily": "IBM Plex Mono",
+                              "fontSize": 12,
+                              "fontWeight": "600"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EnEAY",
+                  "name": "Metric Card",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": 24,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "v31pW",
+                      "name": "Label",
+                      "fill": "$text-muted",
+                      "content": "AVG PSF",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    },
+                    {
+                      "type": "text",
+                      "id": "57Gzp",
+                      "name": "Value",
+                      "fill": "$text-primary",
+                      "content": "$2,341",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 42,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "pcAJV",
+                      "name": "Change",
+                      "fill": "$success",
+                      "content": "+12.4%",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "wgnIl",
+          "name": "Section: List Items",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "F0ge7",
+              "name": "sec3t",
+              "fill": "$text-muted",
+              "content": "LIST ITEMS",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "Pwo27",
+              "name": "s7r",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "nQ8GL",
+                  "name": "Developer Row",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "gap": 24,
+                  "padding": 24,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "pm07O",
+                      "name": "logo",
+                      "width": 64,
+                      "height": 64,
+                      "fill": "$bg-secondary",
+                      "layout": "vertical",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "3bUOu",
+                          "name": "logoText",
+                          "fill": "$text-primary",
+                          "content": "CD",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 16,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "FLrVk",
+                      "name": "infoCol",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HGp3B",
+                          "name": "nameText",
+                          "fill": "$text-primary",
+                          "content": "Developer Name",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 20,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "KUKRk",
+                          "name": "descText",
+                          "fill": "$text-secondary",
+                          "textGrowth": "fixed-width",
+                          "width": "fill_container",
+                          "content": "Brief description of the developer and their projects",
+                          "lineHeight": 1.5,
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "oT3uk",
+                      "name": "arrowIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "arrow-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-primary"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Ack15",
+                  "name": "District Card",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vSfEj",
+                      "name": "distNum",
+                      "fill": "$text-primary",
+                      "content": "D01",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 32,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "7j3RX",
+                      "name": "areaName",
+                      "fill": "$text-primary",
+                      "content": "Raffles Place",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 15,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Akd7e",
+                      "name": "statsRow",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "justifyContent": "space_between",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Uzshp",
+                          "name": "projCount",
+                          "fill": "$text-muted",
+                          "content": "12 projects",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "text",
+                          "id": "vDXUW",
+                          "name": "avgPsf",
+                          "fill": "$text-muted",
+                          "content": "$2,450 avg PSF",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "yNGPm",
+                  "name": "Saved Search Row",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "gap": 12,
+                  "padding": 20,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "9D9TC",
+                      "name": "savedInfo",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 6,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "cxtLN",
+                          "name": "savedTitle",
+                          "fill": "$text-primary",
+                          "content": "Search Title",
+                          "fontFamily": "Space Grotesk",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "2GmEv",
+                          "name": "savedFilters",
+                          "fill": "$text-muted",
+                          "content": "District 9 · 2BR · $1.5M–$2M",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "30AMN",
+                      "name": "matchesCount",
+                      "fill": "$text-muted",
+                      "content": "24 matches",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon_font",
+                      "id": "z9oZN",
+                      "name": "savedArrow",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "arrow-right",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-primary"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "cGaUe",
+          "name": "Section: Tables",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "FmOzX",
+              "name": "sec4t",
+              "fill": "$text-muted",
+              "content": "TABLES",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "FAs3B",
+              "name": "s8r",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "pzWiG",
+                  "name": "Table Header",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$accent",
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "E7sE1",
+                      "name": "thCell1",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "kbnGu",
+                          "name": "thText1",
+                          "fill": "$accent-text",
+                          "content": "PROJECT",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "8SE3e",
+                      "name": "thCell2",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RtuKj",
+                          "name": "thText2",
+                          "fill": "$accent-text",
+                          "content": "DEVELOPER",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dBcQg",
+                      "name": "thCell3",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tSWR2",
+                          "name": "thText3",
+                          "fill": "$accent-text",
+                          "content": "DISTRICT",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sDVBh",
+                      "name": "thCell4",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "tiL8d",
+                          "name": "thText4",
+                          "fill": "$accent-text",
+                          "content": "PSF",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 11,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "vGkrf",
+                  "name": "Table Row",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "#E5E5E5"
+                  },
+                  "padding": [
+                    12,
+                    16
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "WfwJU",
+                      "name": "trCell1",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RTVkd",
+                          "name": "trText1",
+                          "fill": "$text-primary",
+                          "content": "Project Name",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "ewOFC",
+                      "name": "trCell2",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "47pe8",
+                          "name": "trText2",
+                          "fill": "$text-primary",
+                          "content": "Developer Name",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tMA7U",
+                      "name": "trCell3",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ueQab",
+                          "name": "trText3",
+                          "fill": "$text-secondary",
+                          "content": "District 01",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "23e2M",
+                      "name": "trCell4",
+                      "width": "fill_container",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "Ae3tq",
+                          "name": "trText4",
+                          "fill": "$text-secondary",
+                          "content": "$1,850",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 13,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "9fdRL",
+                  "name": "YouTube Review Card",
+                  "reusable": true,
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 12,
+                  "padding": 20,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "krvH9",
+                      "name": "reviewerRow",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "YfTqG",
+                          "name": "channelIcon",
+                          "width": 28,
+                          "height": 28,
+                          "fill": "$bg-secondary",
+                          "cornerRadius": 14
+                        },
+                        {
+                          "type": "text",
+                          "id": "PZQQP",
+                          "name": "channelName",
+                          "fill": "$text-primary",
+                          "content": "Channel Name",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "amdXD",
+                      "name": "quoteText",
+                      "fill": "$text-secondary",
+                      "textGrowth": "fixed-width",
+                      "width": "fill_container",
+                      "content": "'Great value for the location, but the units are on the smaller side. Good for investors looking at rental yield.'",
+                      "lineHeight": 1.6,
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "YpJY4",
+                      "name": "ratingText",
+                      "fill": "$text-primary",
+                      "content": "Rating: 7.5 / 10",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lnbC7",
+          "name": "Section: Navigation Extended",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "ho6qv",
+              "name": "sec5t",
+              "fill": "$text-muted",
+              "content": "NAVIGATION EXTENDED",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "JLysM",
+              "name": "s9r",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "XT8wj",
+                  "name": "Tab Active",
+                  "reusable": true,
+                  "fill": "$accent",
+                  "padding": [
+                    14,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WUkEA",
+                      "name": "tabActiveLabel",
+                      "fill": "$accent-text",
+                      "content": "TAB LABEL",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "LEGZL",
+                  "name": "Tab Inactive",
+                  "reusable": true,
+                  "padding": [
+                    14,
+                    32
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "n0AmV",
+                      "name": "tabInactiveLabel",
+                      "fill": "$text-secondary",
+                      "content": "TAB LABEL",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "600",
+                      "letterSpacing": 1
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "oitT3",
+                  "name": "Breadcrumb",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$bg-secondary",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": {
+                      "bottom": 1
+                    },
+                    "fill": "$border"
+                  },
+                  "gap": 8,
+                  "padding": [
+                    12,
+                    48
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "xuSBm",
+                      "name": "breadcrumbText",
+                      "fill": "$text-secondary",
+                      "content": "HOME › PROJECTS › DETAIL",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 11
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V88XM",
+                  "name": "Sidebar Nav Item Active",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "gap": 10,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "MnaV8",
+                      "name": "sidebarActiveLabel",
+                      "fill": "$text-primary",
+                      "content": "Nav Label",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 13,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "eQV9X",
+                  "name": "Sidebar Nav Item Inactive",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "gap": 10,
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Ss78Y",
+                      "name": "sidebarInactiveLabel",
+                      "fill": "$text-muted",
+                      "content": "Nav Label",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 13
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "NAi97",
+                  "name": "Page Header",
+                  "reusable": true,
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "EJjXt",
+                      "name": "pageHeaderTitle",
+                      "fill": "$text-primary",
+                      "content": "Page Title",
+                      "fontFamily": "Space Grotesk",
+                      "fontSize": 42,
+                      "fontWeight": "700",
+                      "letterSpacing": -1
+                    },
+                    {
+                      "type": "text",
+                      "id": "dqqMs",
+                      "name": "pageHeaderSubtitle",
+                      "fill": "$text-muted",
+                      "content": "Page subtitle description",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 14
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "aE1Wp",
+          "name": "Section: Misc",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "kdMP7",
+              "name": "sec6t",
+              "fill": "$text-muted",
+              "content": "MISCELLANEOUS",
+              "fontFamily": "Space Grotesk",
+              "fontSize": 18,
+              "fontWeight": "700",
+              "letterSpacing": 2
+            },
+            {
+              "type": "frame",
+              "id": "8btsl",
+              "name": "s10r",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "t6t2L",
+                  "name": "Amenity Row",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "fill": "$bg-card",
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "padding": [
+                    10,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "hS3z2",
+                      "name": "amName",
+                      "fill": "$text-primary",
+                      "content": "Stevens MRT Station",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "text",
+                      "id": "IFM4A",
+                      "name": "amDist",
+                      "fill": "$text-muted",
+                      "content": "350m · 4 min walk",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 12,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "o3XyC",
+                  "name": "Chart Placeholder",
+                  "reusable": true,
+                  "width": "fill_container",
+                  "height": 300,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border"
+                  },
+                  "layout": "vertical",
+                  "gap": 8,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "GzTFt",
+                      "name": "chartIcon",
+                      "width": 32,
+                      "height": 32,
+                      "iconFontName": "trending-up",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "a67Y5",
+                      "name": "chartLabel",
+                      "fill": "$text-muted",
+                      "content": "Chart Area (Recharts)",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "5gD3P",
+                  "name": "Hero Search Bar",
+                  "reusable": true,
+                  "width": 680,
+                  "height": 56,
+                  "cornerRadius": 8,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 2,
+                    "fill": "$border-bold"
+                  },
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    4,
+                    0,
+                    20
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon_font",
+                      "id": "JqeD8",
+                      "name": "searchIcon",
+                      "width": 20,
+                      "height": 20,
+                      "iconFontName": "search",
+                      "iconFontFamily": "lucide",
+                      "fill": "$text-muted"
+                    },
+                    {
+                      "type": "text",
+                      "id": "kRdXp",
+                      "name": "searchPlaceholder",
+                      "fill": "$text-muted",
+                      "content": "Search by project name, district, or developer...",
+                      "fontFamily": "IBM Plex Mono",
+                      "fontSize": 14,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "h7GGL",
+                      "name": "searchBtn",
+                      "fill": "$accent",
+                      "padding": [
+                        14,
+                        24
+                      ],
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "ugaR8",
+                          "name": "searchBtnText",
+                          "fill": "$accent-text",
+                          "content": "SEARCH",
+                          "fontFamily": "IBM Plex Mono",
+                          "fontSize": 12,
+                          "fontWeight": "600",
+                          "letterSpacing": 1
+                        }
+                      ]
                     }
                   ]
                 }
