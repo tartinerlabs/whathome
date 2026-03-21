@@ -8,12 +8,12 @@ import {
   psfTrendByProject,
   unitMixByProject,
 } from "@/lib/mock-data";
-import { AiSummary } from "./_components/ai-summary";
-import { NearbyAmenities } from "./_components/nearby-amenities";
-import { PricingSection } from "./_components/pricing-section";
-import { ProjectGallery } from "./_components/project-gallery";
-import { ProjectHero } from "./_components/project-hero";
-import { PsfChartSection } from "./_components/psf-chart-section";
+import { AiSummary } from "./components/ai-summary";
+import { NearbyAmenities } from "./components/nearby-amenities";
+import { PricingSection } from "./components/pricing-section";
+import { ProjectGallery } from "./components/project-gallery";
+import { ProjectHero } from "./components/project-hero";
+import { PsfChartSection } from "./components/psf-chart-section";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));

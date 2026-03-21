@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/section-header";
-import { PriceIndexChart } from "./_components/price-index-chart";
-import { RegionPsfChart } from "./_components/region-psf-chart";
-import { VolumeChart } from "./_components/volume-chart";
+import { PriceIndexChart } from "./components/price-index-chart";
+import { RegionPsfChart } from "./components/region-psf-chart";
+import { VolumeChart } from "./components/volume-chart";
 
 export const metadata: Metadata = {
   title: "Market Analytics",

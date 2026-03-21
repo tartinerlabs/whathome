@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { CompareShell } from "./_components/compare-shell";
+import { CompareShell } from "./components/compare-shell";
 
 export const metadata: Metadata = {
   title: "Compare Projects",

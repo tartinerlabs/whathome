@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/section-header";
 import { developers } from "@/lib/mock-data";
-import { DeveloperCard } from "./_components/developer-card";
+import { DeveloperCard } from "./components/developer-card";
 
 export const metadata: Metadata = {
   title: "Developers",

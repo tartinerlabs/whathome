@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/section-header";
 import { districts } from "@/lib/mock-data";
-import { DistrictCard } from "./_components/district-card";
+import { DistrictCard } from "./components/district-card";
 
 export const metadata: Metadata = {
   title: "Districts",

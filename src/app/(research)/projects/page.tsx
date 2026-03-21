@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { FilterBar } from "@/components/filter-bar";
 import { SectionHeader } from "@/components/section-header";
 import { projects } from "@/lib/mock-data";
-import { ProjectGrid } from "./_components/project-grid";
+import { ProjectGrid } from "./components/project-grid";
 
 export const metadata: Metadata = {
   title: "Projects",
