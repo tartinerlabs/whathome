@@ -11,7 +11,6 @@ import {
 import { AiSummary } from "./_components/ai-summary";
 import { NearbyAmenities } from "./_components/nearby-amenities";
 import { PricingSection } from "./_components/pricing-section";
-import { ViewTransactionsLink } from "./_components/project-analytics";
 import { ProjectGallery } from "./_components/project-gallery";
 import { ProjectHero } from "./_components/project-hero";
 import { PsfChartSection } from "./_components/psf-chart-section";
@@ -108,7 +107,12 @@ export default async function ProjectDetailPage({
 
       <section className="border-b-2 border-foreground px-6 py-8 md:px-12">
         <div className="mx-auto max-w-7xl">
-          <ViewTransactionsLink slug={slug} />
+          <a
+            href={`/projects/${slug}/transactions`}
+            className="inline-flex items-center border-2 border-foreground rounded-none px-6 py-3 shadow-[2px_2px_0px_0px_var(--foreground)] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all font-bold uppercase tracking-wide text-sm"
+          >
+            View All Transactions &rarr;
+          </a>
         </div>
       </section>
     </>
