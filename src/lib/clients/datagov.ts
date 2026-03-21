@@ -2,7 +2,7 @@
  * data.gov.sg client — amenity datasets (MRT, schools, parks, hospitals).
  *
  * Two API patterns:
- * 1. Tabular (CSV): GET /api/action/datastore_search?resource_id={id}&limit=N&offset=N
+ * 1. Tabular (CSV): GET /v1/public/api/datasets/{id}/query?offset=N&limit=N
  * 2. GeoJSON: Initiate download → poll → fetch GeoJSON FeatureCollection
  *
  * Rate limit: 5 req/min (no API key needed for public datasets).
@@ -10,26 +10,28 @@
  * @see https://guide.data.gov.sg/developer-guide/api-overview
  */
 
-const BASE_URL = "https://data.gov.sg/api/action";
+import { svy21ToWgs84 } from "@/lib/geo";
+
+const BASE_URL = "https://api-open.data.gov.sg/v1/public/api/datasets";
 
 // --- Dataset IDs ---
 
 /** MOE General information of schools (tabular CSV, 31 columns) */
 const SCHOOLS_DATASET = "d_688b934f82c1059ed0a6993d2a829089";
 
-/** LTA Train Station Exit Points (GeoJSON with coordinates) */
-const MRT_STATIONS_DATASET = "d_b39d3a0871985372d7e1337a3039e4db";
+/** LTA MRT Station Exit Points — deduplicate by STATION_NA for centroids */
+const MRT_STATIONS_DATASET = "d_b39d3a0871985372d7e1637193335da5";
 
 /** LTA Commuter Facilities — bus stops, interchanges, terminals (GeoJSON) */
 const BUS_FACILITIES_DATASET = "d_778e6d2eaf4a3812aab0d1a1bdf7fd38";
 
-/** MOH CHAS Clinics — healthcare facilities (GeoJSON) */
+/** MOH CHAS Clinics — healthcare facilities (GeoJSON, SVY21 coordinates) */
 const HEALTHCARE_DATASET = "d_548c33ea2d99e29ec63a7cc9edcccedc";
 
-/** NParks Parks (GeoJSON) */
-const PARKS_DATASET = "d_0542d48be5614a1586715913e28c4cd8";
+/** NParks Parks point centroids (GeoJSON) */
+const PARKS_DATASET = "d_0542d48f0991541706b58059381a6eca";
 
-/** Shopping malls / supermarkets (GeoJSON) */
+/** Supermarkets (GeoJSON) — proxy for malls; no dedicated mall dataset exists */
 const SUPERMARKETS_DATASET = "d_cac2c32f01960a3ad7202a99c27268a0";
 
 // --- Shared types ---
@@ -43,21 +45,22 @@ export interface Amenity {
 
 // --- Tabular API ---
 
-interface DatastoreResponse<T> {
-  success: boolean;
-  result: {
+interface TabularResponse<T> {
+  code: number;
+  data: {
     records: T[];
     total: number;
-    _links: { next?: string };
+    limit: number;
+    offset: number;
   };
 }
 
-async function fetchTabular<T>(datasetId: string, limit = 5000): Promise<T[]> {
+async function fetchTabular<T>(datasetId: string, limit = 500): Promise<T[]> {
   const allRecords: T[] = [];
   let offset = 0;
 
   while (true) {
-    const url = `${BASE_URL}/datastore_search?resource_id=${datasetId}&limit=${limit}&offset=${offset}`;
+    const url = `${BASE_URL}/${datasetId}/query?offset=${offset}&limit=${limit}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -66,11 +69,15 @@ async function fetchTabular<T>(datasetId: string, limit = 5000): Promise<T[]> {
       );
     }
 
-    const data = (await response.json()) as DatastoreResponse<T>;
-    const records = data.result.records;
+    const json = (await response.json()) as TabularResponse<T>;
+    if (json.code !== 0) {
+      throw new Error(`data.gov.sg query error: code ${json.code}`);
+    }
+
+    const records = json.data.records;
     allRecords.push(...records);
 
-    if (records.length < limit) break;
+    if (records.length < limit || allRecords.length >= json.data.total) break;
     offset += limit;
   }
 
@@ -100,7 +107,7 @@ interface GeoJsonFeature {
 
 async function fetchGeoJson(datasetId: string): Promise<GeoJsonFeature[]> {
   // Step 1: Initiate download
-  const initUrl = `https://api-open.data.gov.sg/v1/public/api/datasets/${datasetId}/initiate-download`;
+  const initUrl = `${BASE_URL}/${datasetId}/initiate-download`;
   const initResponse = await fetch(initUrl, { method: "GET" });
 
   if (!initResponse.ok) {
@@ -113,7 +120,7 @@ async function fetchGeoJson(datasetId: string): Promise<GeoJsonFeature[]> {
 
   if (initData.code !== 0 || !initData.data?.url) {
     // Try poll-download as fallback
-    const pollUrl = `https://api-open.data.gov.sg/v1/public/api/datasets/${datasetId}/poll-download`;
+    const pollUrl = `${BASE_URL}/${datasetId}/poll-download`;
     const pollResponse = await fetch(pollUrl);
 
     if (!pollResponse.ok) {
@@ -147,11 +154,11 @@ async function fetchGeoJsonFromUrl(url: string): Promise<GeoJsonFeature[]> {
 function extractName(properties: Record<string, string>): string {
   // data.gov.sg GeoJSON uses various property names
   return (
+    properties.STATION_NA ??
+    properties.HCI_NAME ??
     properties.Name ??
     properties.NAME ??
     properties.name ??
-    properties.STATION_NAME ??
-    properties.STN_NAME ??
     properties.Description ??
     "Unknown"
   );
@@ -200,7 +207,39 @@ function featuresToAmenities(
 
 export async function getMrtStations(): Promise<Amenity[]> {
   const features = await fetchGeoJson(MRT_STATIONS_DATASET);
-  return featuresToAmenities(features, "mrt");
+
+  // Dataset has multiple exits per station — deduplicate by STATION_NA,
+  // averaging coordinates to get a station centroid
+  const stationMap = new Map<string, { lats: number[]; lngs: number[] }>();
+
+  for (const f of features) {
+    const coords = extractCoords(f);
+    if (!coords) continue;
+
+    const name = f.properties.STATION_NA ?? extractName(f.properties);
+    const existing = stationMap.get(name);
+    if (existing) {
+      existing.lats.push(coords.latitude);
+      existing.lngs.push(coords.longitude);
+    } else {
+      stationMap.set(name, {
+        lats: [coords.latitude],
+        lngs: [coords.longitude],
+      });
+    }
+  }
+
+  const amenities: Amenity[] = [];
+  for (const [name, { lats, lngs }] of stationMap) {
+    amenities.push({
+      name,
+      type: "mrt",
+      latitude: lats.reduce((a, b) => a + b, 0) / lats.length,
+      longitude: lngs.reduce((a, b) => a + b, 0) / lngs.length,
+    });
+  }
+
+  return amenities;
 }
 
 export async function getBusInterchanges(): Promise<Amenity[]> {
@@ -254,7 +293,31 @@ export async function getParks(): Promise<Amenity[]> {
 
 export async function getHealthcareFacilities(): Promise<Amenity[]> {
   const features = await fetchGeoJson(HEALTHCARE_DATASET);
-  return featuresToAmenities(features, "hospital");
+
+  // CHAS Clinics use SVY21 coordinates in properties, not WGS84 in geometry.
+  // Some features have X_COORDINATE/Y_COORDINATE in SVY21 format.
+  const amenities: Amenity[] = [];
+
+  for (const f of features) {
+    const name = f.properties.HCI_NAME ?? extractName(f.properties);
+
+    // Try WGS84 geometry first
+    let coords = extractCoords(f);
+
+    // Fall back to SVY21 properties if geometry is missing/invalid
+    if (!coords) {
+      const x = Number.parseFloat(f.properties.X_COORDINATE);
+      const y = Number.parseFloat(f.properties.Y_COORDINATE);
+      if (Number.isFinite(x) && Number.isFinite(y) && x > 0 && y > 0) {
+        coords = svy21ToWgs84(x, y);
+      }
+    }
+
+    if (!coords) continue;
+    amenities.push({ name, type: "hospital", ...coords });
+  }
+
+  return amenities;
 }
 
 export async function getMalls(): Promise<Amenity[]> {
