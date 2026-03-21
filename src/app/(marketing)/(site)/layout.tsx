@@ -1,5 +1,5 @@
-import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
+import { Footer } from "@/components/footer";
+import { Header } from "@/components/header";
 
 export default function SiteLayout({
   children,
@@ -8,9 +8,9 @@ export default function SiteLayout({
 }) {
   return (
     <>
-      <SiteHeader />
+      <Header />
       <main className="flex-1">{children}</main>
-      <SiteFooter />
+      <Footer />
     </>
   );
 }

@@ -1,4 +1,4 @@
-export function SiteFooter() {
+export function Footer() {
   return (
     <footer className="border-t-2 border-foreground px-6 py-12 md:px-12">
       <div className="mx-auto max-w-7xl">

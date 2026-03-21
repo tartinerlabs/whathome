@@ -11,9 +11,36 @@ export const metadata: Metadata = {
     "Research every new condo launch in Singapore. AI-powered analysis on pricing, amenities, and investment potential.",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      name: "WhatHome",
+      url: "https://whathome.sg",
+      description:
+        "Research every new condo launch in Singapore. AI-powered analysis on pricing, amenities, and investment potential.",
+    },
+    {
+      "@type": "Organization",
+      name: "Tartiner Labs",
+      url: "https://whathome.sg",
+      brand: {
+        "@type": "Brand",
+        name: "WhatHome",
+      },
+    },
+  ],
+};
+
 export default function HomePage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from trusted static data
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HeroSection />
       <FeaturedLaunches />
       <MarketSnapshot />

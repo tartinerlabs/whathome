@@ -48,12 +48,24 @@ export async function generateMetadata({
   };
 }
 
-function getJsonLd(project: NonNullable<ReturnType<typeof getProjectBySlug>>) {
+function getJsonLd(
+  project: NonNullable<ReturnType<typeof getProjectBySlug>>,
+  units: import("@/lib/types").UnitMixRow[],
+) {
+  const priceValues = units.map((u) => u.priceFrom).filter(Boolean);
+  const lowPrice = priceValues.length ? Math.min(...priceValues) : undefined;
+  const highPrice = units
+    .map((u) => u.priceTo)
+    .filter(Boolean)
+    .reduce((max, v) => Math.max(max, v), 0);
+
   return {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: project.name,
     description: project.description,
+    url: `https://whathome.sg/projects/${project.slug}`,
+    datePosted: project.launchDate,
     address: {
       "@type": "PostalAddress",
       streetAddress: project.address,
@@ -66,6 +78,52 @@ function getJsonLd(project: NonNullable<ReturnType<typeof getProjectBySlug>>) {
       latitude: project.latitude,
       longitude: project.longitude,
     },
+    ...(lowPrice && {
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "SGD",
+        lowPrice,
+        highPrice: highPrice || undefined,
+        offerCount: project.totalUnits,
+      },
+    }),
+    numberOfRooms:
+      units.length > 0 ? units[units.length - 1].unitType : undefined,
+    seller: {
+      "@type": "Organization",
+      name: project.developerName,
+    },
+    additionalProperty: [
+      {
+        "@type": "PropertyValue",
+        name: "tenure",
+        value: project.tenure,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "totalUnits",
+        value: project.totalUnits,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "region",
+        value: project.region,
+      },
+      {
+        "@type": "PropertyValue",
+        name: "district",
+        value: project.districtNumber,
+      },
+      ...(project.topDate
+        ? [
+            {
+              "@type": "PropertyValue" as const,
+              name: "expectedCompletion",
+              value: project.topDate,
+            },
+          ]
+        : []),
+    ],
   };
 }
 
@@ -89,7 +147,7 @@ export default async function ProjectDetailPage({
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from trusted server data
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(getJsonLd(project)),
+          __html: JSON.stringify(getJsonLd(project, units)),
         }}
       />
 

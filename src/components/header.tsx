@@ -29,7 +29,7 @@ function SearchIcon() {
   );
 }
 
-export function SiteHeader() {
+export function Header() {
   return (
     <header className="flex h-16 items-center justify-between border-b-2 border-foreground px-6 md:px-12">
       <Link href="/" className="flex items-center gap-3">

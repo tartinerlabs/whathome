@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { ViewCounter } from "@/components/view-counter";
@@ -15,14 +15,28 @@ const ibmPlexMono = IBM_Plex_Mono({
   variable: "--font-mono",
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
+  ],
+};
+
 export const metadata: Metadata = {
-  metadataBase: new URL(`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`),
+  metadataBase: new URL(
+    `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL ?? "whathome.sg"}`,
+  ),
   title: {
     default: "WhatHome — Singapore New Condo Launch Research",
     template: "%s | WhatHome",
   },
   description:
     "Research every new condo launch in Singapore. AI-powered analysis on pricing, amenities, and investment potential.",
+  alternates: {
+    canonical: "./",
+  },
 };
 
 export default function RootLayout({

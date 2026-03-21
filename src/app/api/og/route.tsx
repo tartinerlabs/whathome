@@ -1,4 +1,4 @@
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "next/og";
 import { getProjectBySlug, unitMixByProject } from "@/lib/mock-data";
 
 export async function GET(request: Request) {
