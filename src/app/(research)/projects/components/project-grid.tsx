@@ -11,6 +11,7 @@ import { projects } from "@/lib/mock-data";
 
 export function ProjectGrid() {
   const [filters] = useQueryStates({
+    q: parseAsString,
     regions: parseAsArrayOf(parseAsString).withDefault([]),
     district: parseAsInteger,
     tenures: parseAsArrayOf(parseAsString).withDefault([]),
@@ -18,6 +19,22 @@ export function ProjectGrid() {
   });
 
   const filtered = projects.filter((project) => {
+    if (filters.q) {
+      const query = filters.q.toLowerCase();
+      const searchable = [
+        project.name,
+        project.address,
+        project.developerName,
+        `D${project.districtNumber}`,
+        project.region,
+      ]
+        .join(" ")
+        .toLowerCase();
+      if (!searchable.includes(query)) {
+        return false;
+      }
+    }
+
     if (
       filters.regions.length > 0 &&
       !filters.regions.includes(project.region)

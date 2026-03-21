@@ -46,6 +46,7 @@ const label = "uppercase font-bold tracking-wide text-[10px]";
 
 export function FilterBar() {
   const [filters, setFilters] = useQueryStates({
+    q: parseAsString,
     regions: parseAsArrayOf(parseAsString).withDefault([]),
     district: parseAsInteger,
     tenures: parseAsArrayOf(parseAsString).withDefault([]),
@@ -62,6 +63,25 @@ export function FilterBar() {
 
   return (
     <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <input
+          type="text"
+          value={filters.q ?? ""}
+          onChange={(e) => setFilters({ q: e.target.value || null })}
+          placeholder="Search by project name, address, or developer..."
+          className="h-9 flex-1 border-2 border-foreground bg-transparent px-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:shadow-[2px_2px_0px_0px_var(--foreground)]"
+        />
+        {filters.q && (
+          <button
+            type="button"
+            onClick={() => setFilters({ q: null })}
+            className={cn(chip, "cursor-pointer bg-foreground text-background")}
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
       <div className="flex flex-wrap gap-2 items-center">
         <span className={cn(label, "text-muted-foreground mr-1")}>Region</span>
         {regions.map((region) => (

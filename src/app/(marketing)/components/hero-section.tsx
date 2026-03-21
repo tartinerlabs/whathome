@@ -1,3 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 function SearchIcon() {
   return (
     <svg
@@ -19,6 +24,19 @@ function SearchIcon() {
 }
 
 export function HeroSection() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const trimmed = query.trim();
+    if (trimmed) {
+      router.push(`/projects?q=${encodeURIComponent(trimmed)}`);
+    } else {
+      router.push("/projects");
+    }
+  }
+
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12 md:py-20">
       <div className="mx-auto max-w-7xl">
@@ -35,18 +53,25 @@ export function HeroSection() {
           &mdash; all in one place.
         </p>
 
-        <a
-          href="/projects"
-          className="mt-8 flex h-14 w-full max-w-[680px] items-center gap-3 border-2 border-foreground bg-background px-4 transition-shadow hover:shadow-[4px_4px_0px_0px_var(--foreground)]"
+        <form
+          onSubmit={handleSubmit}
+          className="mt-8 flex h-14 w-full max-w-[680px] items-center gap-3 border-2 border-foreground bg-background px-4 transition-shadow focus-within:shadow-[4px_4px_0px_0px_var(--foreground)]"
         >
           <SearchIcon />
-          <span className="flex-1 font-mono text-sm text-muted-foreground">
-            Search by project name, district, or developer...
-          </span>
-          <span className="bg-foreground px-4 py-2 font-mono text-[11px] font-semibold tracking-wider text-background">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by project name, district, or developer..."
+            className="flex-1 bg-transparent font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="bg-foreground px-4 py-2 font-mono text-[11px] font-semibold tracking-wider text-background transition-colors hover:bg-foreground/80"
+          >
             SEARCH
-          </span>
-        </a>
+          </button>
+        </form>
 
         <p className="mt-4 font-mono text-xs text-muted-foreground">
           Trending: D15 &middot; Tampines &middot; Bukit Timah &middot; Jurong
