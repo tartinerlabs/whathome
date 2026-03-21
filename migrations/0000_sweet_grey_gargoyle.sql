@@ -8,10 +8,7 @@ CREATE TYPE "public"."agent_type" AS ENUM('data_ingestion', 'project_research', 
 CREATE TYPE "public"."run_status" AS ENUM('pending', 'running', 'completed', 'failed');--> statement-breakpoint
 CREATE TYPE "public"."property_type" AS ENUM('condo', 'apt', 'ec', 'strata_landed');--> statement-breakpoint
 CREATE TYPE "public"."sale_type" AS ENUM('new_sale', 'sub_sale', 'resale');--> statement-breakpoint
-<<<<<<<< HEAD:migrations/0000_gifted_jean_grey.sql
-========
 CREATE TYPE "public"."type_of_area" AS ENUM('strata', 'land', 'unknown');--> statement-breakpoint
->>>>>>>> e3cd05b (feat: add Phase 1 foundation — data ingestion pipeline):migrations/0000_safe_scarlet_witch.sql
 CREATE TABLE "page_views" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"page_path" text NOT NULL,
@@ -19,8 +16,6 @@ CREATE TABLE "page_views" (
 	"recorded_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-<<<<<<<< HEAD:migrations/0000_gifted_jean_grey.sql
-========
 CREATE TABLE "developer_sales" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"project_name" text NOT NULL,
@@ -44,7 +39,6 @@ CREATE TABLE "developer_sales" (
 	CONSTRAINT "developer_sales_projectName_refPeriod_unique" UNIQUE("project_name","ref_period")
 );
 --> statement-breakpoint
->>>>>>>> e3cd05b (feat: add Phase 1 foundation — data ingestion pipeline):migrations/0000_safe_scarlet_witch.sql
 CREATE TABLE "developers" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
@@ -67,8 +61,6 @@ CREATE TABLE "price_indices" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "price_indices_quarter_region_unique" UNIQUE("quarter","region")
-<<<<<<<< HEAD:migrations/0000_gifted_jean_grey.sql
-========
 );
 --> statement-breakpoint
 CREATE TABLE "pipeline_projects" (
@@ -88,7 +80,6 @@ CREATE TABLE "pipeline_projects" (
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "pipeline_projects_projectName_snapshotQuarter_unique" UNIQUE("project_name","snapshot_quarter")
->>>>>>>> e3cd05b (feat: add Phase 1 foundation — data ingestion pipeline):migrations/0000_safe_scarlet_witch.sql
 );
 --> statement-breakpoint
 CREATE TABLE "nearby_amenities" (
@@ -131,56 +122,6 @@ CREATE TABLE "project_units" (
 );
 --> statement-breakpoint
 CREATE TABLE "projects" (
-<<<<<<<< HEAD:migrations/0000_gifted_jean_grey.sql
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" text NOT NULL,
-	"slug" text NOT NULL,
-	"developer_id" uuid,
-	"district_number" integer,
-	"region" "region",
-	"address" text,
-	"postal_code" text,
-	"tenure" "tenure",
-	"tenure_years" integer,
-	"tenure_start_date" date,
-	"total_units" integer,
-	"units_sold" integer,
-	"launch_date" date,
-	"top_date" date,
-	"completion_date" date,
-	"status" "project_status" DEFAULT 'upcoming',
-	"latitude" numeric,
-	"longitude" numeric,
-	"site_area" numeric,
-	"plot_ratio" numeric,
-	"description" text,
-	"ai_summary" text,
-	"last_researched_at" timestamp,
-	"data_source_hash" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "projects_slug_unique" UNIQUE("slug")
-);
---> statement-breakpoint
-CREATE TABLE "research_runs" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"agent_type" "agent_type" NOT NULL,
-	"status" "run_status" DEFAULT 'pending' NOT NULL,
-	"project_id" uuid,
-	"input_payload" jsonb,
-	"output_summary" text,
-	"tokens_used" integer,
-	"cost_usd" numeric,
-	"started_at" timestamp,
-	"completed_at" timestamp,
-	"error_message" text,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "transactions" (
-========
->>>>>>>> e3cd05b (feat: add Phase 1 foundation — data ingestion pipeline):migrations/0000_safe_scarlet_witch.sql
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"slug" text NOT NULL,
@@ -212,8 +153,6 @@ CREATE TABLE "transactions" (
 	"data_source_hash" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-<<<<<<<< HEAD:migrations/0000_gifted_jean_grey.sql
-========
 	CONSTRAINT "projects_slug_unique" UNIQUE("slug")
 );
 --> statement-breakpoint
@@ -258,7 +197,6 @@ CREATE TABLE "transactions" (
 	"source_record_id" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
->>>>>>>> e3cd05b (feat: add Phase 1 foundation — data ingestion pipeline):migrations/0000_safe_scarlet_witch.sql
 	CONSTRAINT "transactions_sourceRecordId_unique" UNIQUE("source_record_id")
 );
 --> statement-breakpoint
