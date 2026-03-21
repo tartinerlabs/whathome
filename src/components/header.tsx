@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SearchAutocomplete } from "@/components/search-autocomplete";
 
 const navLinks = [
   { label: "PROJECTS", href: "/projects" },
@@ -7,27 +8,6 @@ const navLinks = [
   { label: "DISTRICTS", href: "/districts" },
   { label: "ANALYTICS", href: "/analytics" },
 ];
-
-function SearchIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      role="img"
-      aria-label="Search"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  );
-}
 
 export function Header() {
   return (
@@ -52,13 +32,9 @@ export function Header() {
       </nav>
 
       <div className="flex items-center gap-4">
-        <a
-          href="/projects"
-          className="hidden text-text-secondary transition-colors hover:text-foreground sm:block"
-          aria-label="Search"
-        >
-          <SearchIcon />
-        </a>
+        <div className="hidden sm:block">
+          <SearchAutocomplete variant="header" />
+        </div>
         <a
           href="/login"
           className="bg-foreground px-5 py-2 font-mono text-[11px] font-semibold tracking-wider text-background transition-colors hover:bg-foreground/80"
