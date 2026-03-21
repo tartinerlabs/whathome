@@ -1,0 +1,14 @@
+import { start } from "workflow/api";
+import { dataIngestionWorkflow } from "@/lib/agents/data-ingestion/workflow";
+
+export async function GET(request: Request) {
+  const authHeader = request.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new Response("Unauthorised", { status: 401 });
+  }
+
+  console.log("[cron] Starting daily data ingestion workflow");
+  const run = await start(dataIngestionWorkflow);
+
+  return Response.json({ runId: run.runId });
+}

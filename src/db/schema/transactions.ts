@@ -24,6 +24,12 @@ export const propertyTypeEnum = pgEnum("property_type", [
   "strata_landed",
 ]);
 
+export const typeOfAreaEnum = pgEnum("type_of_area", [
+  "strata",
+  "land",
+  "unknown",
+]);
+
 export const transactions = pgTable("transactions", {
   id: uuid().primaryKey().defaultRandom(),
   projectId: uuid().references(() => projects.id),
@@ -34,12 +40,17 @@ export const transactions = pgTable("transactions", {
   areaSqm: numeric(),
   areaSqft: numeric(),
   transactedPrice: integer(),
+  nettPrice: integer(),
   pricePsf: numeric(),
   contractDate: date(),
   saleType: saleTypeEnum(),
   propertyType: propertyTypeEnum(),
-  district: text(),
+  typeOfArea: typeOfAreaEnum(),
+  noOfUnits: integer(),
+  district: integer(),
   tenure: text(),
+  svyX: numeric(),
+  svyY: numeric(),
   sourceDataset: text(),
   sourceRecordId: text().unique(),
   createdAt: timestamp().notNull().defaultNow(),
