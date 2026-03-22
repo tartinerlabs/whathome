@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { CompareShell } from "./components/compare-shell";
+import { getProjects } from "@/lib/queries/projects";
+import { ProjectComparison } from "./components/project-comparison";
 
 export const metadata: Metadata = {
   title: "Compare Projects",
@@ -8,7 +9,9 @@ export const metadata: Metadata = {
     "Compare Singapore new condo launches side by side. Analyse pricing, unit mix, PSF trends, and key metrics across 2–3 projects.",
 };
 
-export default function ComparePage() {
+export default async function ComparePage() {
+  const { items } = await getProjects({ pageSize: 100 });
+
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
       <div className="mx-auto max-w-7xl space-y-8">
@@ -22,7 +25,7 @@ export default function ComparePage() {
         </div>
 
         <Suspense>
-          <CompareShell />
+          <ProjectComparison projects={items} />
         </Suspense>
       </div>
     </section>

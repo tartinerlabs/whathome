@@ -1,4 +1,12 @@
-import type { FeaturedProject } from "./mock-data";
+interface FeaturedProject {
+  name: string;
+  slug: string;
+  developer: string;
+  area: string;
+  region: "CCR" | "RCR" | "OCR";
+  psfFrom: number;
+  totalUnits: number;
+}
 
 interface FeaturedCardProps {
   project: FeaturedProject;

@@ -9,14 +9,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  getProjectBySlug,
-  projects,
-  transactionsByProject,
-} from "@/lib/mock-data";
+import { getAllProjectSlugs, getProjectBySlug } from "@/lib/queries/projects";
+import { getTransactionsByProject } from "@/lib/queries/transactions";
 
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return getAllProjectSlugs();
 }
 
 export async function generateMetadata({
@@ -25,12 +22,12 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) return { title: "Transactions Not Found" };
+  const data = await getProjectBySlug(slug);
+  if (!data) return { title: "Transactions Not Found" };
 
   return {
-    title: `${project.name} Transactions`,
-    description: `View all transaction records for ${project.name}. Historical sale prices, PSF trends, and unit-level data.`,
+    title: `${data.project.name} Transactions`,
+    description: `View all transaction records for ${data.project.name}. Historical sale prices, PSF trends, and unit-level data.`,
   };
 }
 
@@ -40,10 +37,11 @@ export default async function TransactionsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) notFound();
+  const data = await getProjectBySlug(slug);
+  if (!data) notFound();
 
-  const transactions = transactionsByProject[slug] ?? [];
+  const { project } = data;
+  const transactions = await getTransactionsByProject(project.id);
 
   const avgPsf =
     transactions.length > 0

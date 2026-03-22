@@ -8,11 +8,12 @@ import {
   type SQL,
   sql,
 } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/constants/districts";
 import { toNumber } from "@/lib/format";
-import type { Project } from "@/lib/types";
+import type { Project, UnitMixRow } from "@/lib/types";
 
 function mapProjectRow(
   row: typeof projects.$inferSelect,
@@ -48,9 +49,9 @@ function mapProjectRow(
 }
 
 export interface ProjectFilters {
-  q?: string;
+  q?: string | null;
   regions?: string[];
-  district?: number;
+  district?: number | null;
   tenures?: string[];
   statuses?: string[];
   page?: number;
@@ -58,6 +59,10 @@ export interface ProjectFilters {
 }
 
 export async function getProjects(filters: ProjectFilters = {}) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const { page = 1, pageSize = 20 } = filters;
   const conditions: (SQL | undefined)[] = [];
 
@@ -113,6 +118,10 @@ export async function getProjects(filters: ProjectFilters = {}) {
 }
 
 export async function getProjectBySlug(slug: string) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects", `project:${slug}`);
+
   const result = await db.query.projects.findFirst({
     where: (p, { eq }) => eq(p.slug, slug),
     with: {
@@ -128,7 +137,7 @@ export async function getProjectBySlug(slug: string) {
   return {
     project: mapProjectRow(result, result.developer),
     units: (result.units ?? []).map((u) => ({
-      unitType: u.unitType as Project["tenure"],
+      unitType: u.unitType as UnitMixRow["unitType"],
       sizeSqftMin: u.sizeSqftMin ?? 0,
       sizeSqftMax: u.sizeSqftMax ?? 0,
       pricePsf: toNumber(u.pricePsf),
@@ -150,6 +159,10 @@ export async function getProjectBySlug(slug: string) {
 }
 
 export async function getNewLaunches() {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const rows = await db
     .select()
     .from(projects)
@@ -161,6 +174,10 @@ export async function getNewLaunches() {
 }
 
 export async function getFeaturedLaunches(limit = 3) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const rows = await db
     .select()
     .from(projects)
@@ -174,6 +191,9 @@ export async function getFeaturedLaunches(limit = 3) {
 
 export async function getAllProjectSlugs() {
   const rows = await db.select({ slug: projects.slug }).from(projects);
+
+  // Cache Components requires at least one result from generateStaticParams
+  if (!rows.length) return [{ slug: "__placeholder__" }];
 
   return rows.map((r) => ({ slug: r.slug }));
 }

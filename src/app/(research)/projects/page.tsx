@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FilterBar } from "@/components/filter-bar";
 import { SectionHeader } from "@/components/section-header";
-import { projects } from "@/lib/mock-data";
+import { getProjects } from "@/lib/queries/projects";
 import { ProjectGrid } from "./components/project-grid";
+import { loadSearchParams } from "./search-params";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -11,18 +12,35 @@ export const metadata: Metadata = {
     "Browse all Singapore new condo launches. Filter by region, district, tenure, and status to find your next property research target.",
 };
 
-export default function ProjectsPage() {
+async function ProjectResults({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const filters = await loadSearchParams(searchParams);
+  const { items, total } = await getProjects(filters);
+
+  return (
+    <>
+      <SectionHeader title="All Projects" meta={`${total} PROJECTS`} />
+      <FilterBar />
+      <ProjectGrid projects={items} />
+    </>
+  );
+}
+
+export default function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
       <div className="mx-auto max-w-7xl space-y-8">
-        <SectionHeader
-          title="All Projects"
-          meta={`${projects.length} PROJECTS`}
-        />
-
-        <Suspense>
-          <FilterBar />
-          <ProjectGrid />
+        <Suspense
+          fallback={<SectionHeader title="All Projects" meta="LOADING..." />}
+        >
+          <ProjectResults searchParams={searchParams} />
         </Suspense>
       </div>
     </section>

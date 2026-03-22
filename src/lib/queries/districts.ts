@@ -1,4 +1,5 @@
 import { count, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { projects, transactions } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/constants/districts";
@@ -6,6 +7,9 @@ import { toNumber } from "@/lib/format";
 import type { DistrictInfo, Project } from "@/lib/types";
 
 export async function getDistrictStats(): Promise<DistrictInfo[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("districts");
   const projectCounts = await db
     .select({
       districtNumber: projects.districtNumber,
@@ -49,6 +53,10 @@ export async function getDistrictStats(): Promise<DistrictInfo[]> {
 }
 
 export async function getDistrictByNumber(districtNumber: number) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("districts", `district:${districtNumber}`);
+
   const meta = DISTRICT_NAMES[districtNumber];
   if (!meta) return null;
 

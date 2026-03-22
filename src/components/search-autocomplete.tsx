@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { developers, projects } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 
 interface SearchResult {
@@ -11,46 +10,6 @@ interface SearchResult {
   label: string;
   href: string;
   meta: string;
-}
-
-function search(query: string): SearchResult[] {
-  const q = query.toLowerCase();
-  const results: SearchResult[] = [];
-
-  for (const project of projects) {
-    if (results.length >= 6) break;
-    const haystack = [
-      project.name,
-      project.address,
-      project.developerName,
-      `D${project.districtNumber}`,
-      project.region,
-    ]
-      .join(" ")
-      .toLowerCase();
-    if (haystack.includes(q)) {
-      results.push({
-        type: "project",
-        label: project.name,
-        href: `/projects/${project.slug}`,
-        meta: `D${project.districtNumber} · ${project.region} · ${project.developerName}`,
-      });
-    }
-  }
-
-  for (const dev of developers) {
-    if (results.length >= 8) break;
-    if (dev.name.toLowerCase().includes(q)) {
-      results.push({
-        type: "developer",
-        label: dev.name,
-        href: `/developers/${dev.slug}`,
-        meta: `${dev.projectCount} projects`,
-      });
-    }
-  }
-
-  return results;
 }
 
 interface SearchAutocompleteProps {
@@ -64,8 +23,26 @@ export function SearchAutocomplete({
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [results, setResults] = useState<SearchResult[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const results = query.trim().length >= 2 ? search(query.trim()) : [];
+
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
+      signal: controller.signal,
+    })
+      .then((res) => res.json())
+      .then((data: SearchResult[]) => setResults(data))
+      .catch(() => {});
+
+    return () => controller.abort();
+  }, [query]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

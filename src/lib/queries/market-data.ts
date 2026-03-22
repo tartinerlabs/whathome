@@ -1,10 +1,15 @@
 import { desc, eq } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { priceIndices } from "@/db/schema";
 import { toNumber } from "@/lib/format";
 import type { PriceIndex } from "@/lib/types";
 
 export async function getMarketSnapshot() {
+  "use cache";
+  cacheLife("max");
+  cacheTag("market-data");
+
   const rows = await db
     .select()
     .from(priceIndices)
@@ -68,6 +73,10 @@ export async function getMarketSnapshot() {
 }
 
 export async function getPriceIndices(): Promise<PriceIndex[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("market-data");
+
   const rows = await db
     .select()
     .from(priceIndices)

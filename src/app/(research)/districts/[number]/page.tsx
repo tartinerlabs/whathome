@@ -3,11 +3,7 @@ import { notFound } from "next/navigation";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
-import {
-  districts,
-  getDistrictByNumber,
-  getProjectsByDistrict,
-} from "@/lib/mock-data";
+import { getDistrictByNumber } from "@/lib/queries/districts";
 import { cn } from "@/lib/utils";
 
 const regionColours: Record<string, string> = {
@@ -17,7 +13,7 @@ const regionColours: Record<string, string> = {
 };
 
 export function generateStaticParams() {
-  return districts.map((d) => ({ number: String(d.number) }));
+  return Array.from({ length: 28 }, (_, i) => ({ number: String(i + 1) }));
 }
 
 export async function generateMetadata({
@@ -26,8 +22,10 @@ export async function generateMetadata({
   params: Promise<{ number: string }>;
 }): Promise<Metadata> {
   const { number } = await params;
-  const district = getDistrictByNumber(Number.parseInt(number, 10));
-  if (!district) return { title: "District Not Found" };
+  const data = await getDistrictByNumber(Number.parseInt(number, 10));
+  if (!data) return { title: "District Not Found" };
+
+  const { district } = data;
 
   return {
     title: `District ${district.number} — ${district.name}`,
@@ -42,10 +40,10 @@ export default async function DistrictDetailPage({
 }) {
   const { number } = await params;
   const districtNum = Number.parseInt(number, 10);
-  const district = getDistrictByNumber(districtNum);
-  if (!district) notFound();
+  const data = await getDistrictByNumber(districtNum);
+  if (!data) notFound();
 
-  const districtProjects = getProjectsByDistrict(districtNum);
+  const { district, projects: districtProjects } = data;
 
   return (
     <>

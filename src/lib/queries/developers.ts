@@ -1,4 +1,5 @@
 import { count, eq, sql, sum } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/constants/districts";
@@ -6,6 +7,10 @@ import { toNumber } from "@/lib/format";
 import type { Developer, Project } from "@/lib/types";
 
 export async function getDevelopers(): Promise<Developer[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("developers");
+
   const rows = await db
     .select({
       id: developers.id,
@@ -35,6 +40,10 @@ export async function getDevelopers(): Promise<Developer[]> {
 }
 
 export async function getDeveloperBySlug(slug: string) {
+  "use cache";
+  cacheLife("max");
+  cacheTag("developers", `developer:${slug}`);
+
   const result = await db.query.developers.findFirst({
     where: (d, { eq }) => eq(d.slug, slug),
     with: {
@@ -91,6 +100,8 @@ export async function getDeveloperBySlug(slug: string) {
 
 export async function getAllDeveloperSlugs() {
   const rows = await db.select({ slug: developers.slug }).from(developers);
+
+  if (!rows.length) return [{ slug: "__placeholder__" }];
 
   return rows.map((r) => ({ slug: r.slug }));
 }

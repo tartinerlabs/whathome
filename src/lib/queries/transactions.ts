@@ -1,4 +1,5 @@
 import { desc, eq, sql } from "drizzle-orm";
+import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { transactions } from "@/db/schema";
 import { toNumber } from "@/lib/format";
@@ -7,6 +8,10 @@ import type { PsfDataPoint, Transaction } from "@/lib/types";
 export async function getTransactionsByProject(
   projectId: string,
 ): Promise<Transaction[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const rows = await db
     .select()
     .from(transactions)
@@ -31,6 +36,10 @@ export async function getTransactionsByProject(
 }
 
 export async function getPsfTrend(projectId: string): Promise<PsfDataPoint[]> {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const rows = await db
     .select({
       month: sql<string>`to_char(${transactions.contractDate}, 'YYYY-MM')`,
