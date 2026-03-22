@@ -7,7 +7,7 @@ export async function GET(request: Request) {
     return new Response("Unauthorised", { status: 401 });
   }
 
-  console.log("[cron] Starting daily data ingestion workflow");
+  console.log("[workflows] Starting daily data ingestion workflow (cron)");
   const run = await start(dataIngestionWorkflow);
 
   return Response.json({ runId: run.runId });
