@@ -45,13 +45,16 @@ const chip =
 const label = "uppercase font-bold tracking-wide text-[10px]";
 
 export function FilterBar() {
-  const [filters, setFilters] = useQueryStates({
-    q: parseAsString,
-    regions: parseAsArrayOf(parseAsString).withDefault([]),
-    district: parseAsInteger,
-    tenures: parseAsArrayOf(parseAsString).withDefault([]),
-    statuses: parseAsArrayOf(parseAsString).withDefault([]),
-  });
+  const [filters, setFilters] = useQueryStates(
+    {
+      q: parseAsString,
+      regions: parseAsArrayOf(parseAsString).withDefault([]),
+      district: parseAsInteger,
+      tenures: parseAsArrayOf(parseAsString).withDefault([]),
+      statuses: parseAsArrayOf(parseAsString).withDefault([]),
+    },
+    { shallow: false },
+  );
 
   function toggleItem(key: "regions" | "tenures" | "statuses", item: string) {
     const current = filters[key] ?? [];

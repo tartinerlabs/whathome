@@ -23,7 +23,6 @@ async function ProjectResults({
   return (
     <>
       <SectionHeader title="All Projects" meta={`${total} PROJECTS`} />
-      <FilterBar />
       <ProjectGrid projects={items} />
     </>
   );
@@ -37,6 +36,7 @@ export default function ProjectsPage({
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
       <div className="mx-auto max-w-7xl space-y-8">
+        <FilterBar />
         <Suspense
           fallback={<SectionHeader title="All Projects" meta="LOADING..." />}
         >
