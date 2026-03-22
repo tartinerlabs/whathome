@@ -11,7 +11,7 @@ import { getPlanningArea } from "@/lib/clients/onemap";
 import type { TransactionBatch, UraTransaction } from "@/lib/clients/ura";
 import * as ura from "@/lib/clients/ura";
 import { svy21ToWgs84 } from "@/lib/geo";
-import { findOrCreateProject } from "./match-project";
+import { findOrCreateProject } from "@/lib/queries/projects";
 
 // --- Step functions (full Node.js access, retryable) ---
 

@@ -1,5 +1,5 @@
 import { start } from "workflow/api";
-import { dataIngestionWorkflow } from "@/lib/agents/data-ingestion/workflow";
+import { dataIngestionWorkflow } from "@/workflows/ingest";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
