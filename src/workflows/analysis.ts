@@ -126,7 +126,7 @@ async function stepGenerateAnalysis(
       tenure: projects.tenure,
     })
     .from(projects)
-    .where(and(eq(projects.districtNumber, context.districtNumber ?? 0)))
+    .where(eq(projects.districtNumber, context.districtNumber ?? 0))
     .limit(10);
 
   const { text, usage } = await generateText({

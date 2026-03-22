@@ -241,7 +241,7 @@ async function stepClassifyUnits(
   const areaData = txns
     .filter((t) => t.areaSqft)
     .map((t) => ({
-      areaSqft: Number.parseFloat(t.areaSqft!),
+      areaSqft: Number.parseFloat(t.areaSqft ?? "0"),
       pricePsf: t.pricePsf ? Number.parseFloat(t.pricePsf) : null,
       price: t.transactedPrice,
     }))
@@ -262,7 +262,7 @@ async function stepClassifyUnits(
   }
 
   const bucketSummary = Object.entries(buckets)
-    .sort(([a], [b]) => Number.parseInt(a) - Number.parseInt(b))
+    .sort(([a], [b]) => Number.parseInt(a, 10) - Number.parseInt(b, 10))
     .map(([range, vals]) => `${range} sqft: ${vals.length} units`)
     .join("\n");
 
@@ -486,6 +486,7 @@ async function stepGenerateAnalysis(
       developer: true,
       units: true,
       nearbyAmenities: true,
+      transactions: { limit: 1 },
     },
   });
 
@@ -531,7 +532,7 @@ async function stepGenerateAnalysis(
       distance: `${a.distanceMeters}m`,
       walk: `${a.walkMinutes} min`,
     })),
-    transactionCount: txnCount,
+    transactionCount: fullProject.transactions?.length ?? 0,
   };
 
   const { text, usage } = await generateText({
@@ -635,7 +636,7 @@ export async function projectResearchWorkflow(projectId: string) {
   // Launch date = earliest new_sale contract date
   const newSaleDates = txns
     .filter((t) => t.saleType === "new_sale" && t.contractDate)
-    .map((t) => t.contractDate!)
+    .map((t) => t.contractDate as string)
     .sort();
   const launchDate = newSaleDates[0] ?? null;
 
