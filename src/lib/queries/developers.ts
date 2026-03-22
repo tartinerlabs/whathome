@@ -2,7 +2,7 @@ import { count, eq, sql, sum } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
-import { DISTRICT_NAMES } from "@/lib/constants/districts";
+import { DISTRICT_NAMES } from "@/lib/districts";
 import { toNumber } from "@/lib/format";
 import type { Developer, Project } from "@/lib/types";
 

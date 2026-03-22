@@ -1,5 +1,5 @@
 import { SectionHeader } from "@/components/section-header";
-import { DISTRICT_NAMES } from "@/lib/constants/districts";
+import { DISTRICT_NAMES } from "@/lib/districts";
 import { getFeaturedLaunches } from "@/lib/queries/projects";
 import { FeaturedCard } from "./featured-card";
 
