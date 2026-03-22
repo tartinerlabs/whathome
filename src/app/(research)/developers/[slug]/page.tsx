@@ -3,13 +3,12 @@ import { notFound } from "next/navigation";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeader } from "@/components/section-header";
 import {
-  developers,
+  getAllDeveloperSlugs,
   getDeveloperBySlug,
-  getProjectsByDeveloper,
-} from "@/lib/mock-data";
+} from "@/lib/queries/developers";
 
-export function generateStaticParams() {
-  return developers.map((d) => ({ slug: d.slug }));
+export async function generateStaticParams() {
+  return getAllDeveloperSlugs();
 }
 
 export async function generateMetadata({
@@ -18,8 +17,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const developer = getDeveloperBySlug(slug);
-  if (!developer) return { title: "Developer Not Found" };
+  const data = await getDeveloperBySlug(slug);
+  if (!data) return { title: "Developer Not Found" };
+
+  const { developer } = data;
 
   return {
     title: developer.name,
@@ -33,10 +34,10 @@ export default async function DeveloperDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const developer = getDeveloperBySlug(slug);
-  if (!developer) notFound();
+  const data = await getDeveloperBySlug(slug);
+  if (!data) notFound();
 
-  const devProjects = getProjectsByDeveloper(slug);
+  const { developer, projects: devProjects } = data;
 
   return (
     <>

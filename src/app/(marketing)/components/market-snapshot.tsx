@@ -1,15 +1,30 @@
 import { SectionHeader } from "@/components/section-header";
+import { getMarketSnapshot } from "@/lib/queries/market-data";
 import { cn } from "@/lib/utils";
-import { marketStats } from "./mock-data";
 
-export function MarketSnapshot() {
+export async function MarketSnapshot() {
+  const { latestQuarter, stats } = await getMarketSnapshot();
+
+  if (!stats.length) {
+    return (
+      <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
+        <div className="mx-auto max-w-7xl">
+          <SectionHeader title="Market Snapshot" />
+          <p className="mt-4 text-muted-foreground">
+            Market data not yet available.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
       <div className="mx-auto max-w-7xl">
-        <SectionHeader title="Market Snapshot" meta="Q1 2026" />
+        <SectionHeader title="Market Snapshot" meta={latestQuarter} />
 
         <div className="mt-8 grid grid-cols-2 gap-6 lg:grid-cols-4">
-          {marketStats.map((stat) => (
+          {stats.map((stat) => (
             <div key={stat.label} className="border-2 border-foreground p-6">
               <p className="font-mono text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 {stat.label}
@@ -23,7 +38,8 @@ export function MarketSnapshot() {
                   stat.isPositive ? "text-success" : "text-destructive",
                 )}
               >
-                {stat.change}
+                {stat.change >= 0 ? "+" : ""}
+                {stat.change}%
               </p>
             </div>
           ))}

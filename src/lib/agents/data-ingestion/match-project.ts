@@ -75,7 +75,6 @@ export async function findOrCreateProject(
       svyY: input.svyY ? String(input.svyY) : null,
       latitude,
       longitude,
-      status: "upcoming",
     })
     .returning({ id: projects.id, slug: projects.slug });
 

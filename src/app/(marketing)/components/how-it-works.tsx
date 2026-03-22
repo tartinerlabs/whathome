@@ -1,5 +1,25 @@
 import { SectionHeader } from "@/components/section-header";
-import { howItWorksSteps } from "./mock-data";
+
+const howItWorksSteps = [
+  {
+    number: "01",
+    title: "Browse",
+    description:
+      "Explore new condo launches filtered by district, region, developer, or price range.",
+  },
+  {
+    number: "02",
+    title: "Analyse",
+    description:
+      "Read AI-generated investment analysis, nearby amenity maps, and pricing trend charts.",
+  },
+  {
+    number: "03",
+    title: "Compare",
+    description:
+      "Put projects side by side to compare unit mixes, PSF trends, and neighbourhood features.",
+  },
+];
 
 export function HowItWorks() {
   return (

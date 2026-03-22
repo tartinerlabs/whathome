@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/section-header";
-import { districts } from "@/lib/mock-data";
+import { getDistrictStats } from "@/lib/queries/districts";
 import { DistrictCard } from "./components/district-card";
 
 export const metadata: Metadata = {
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
     "Browse Singapore's 28 property districts. View average PSF, project counts, and median prices by district.",
 };
 
-export default function DistrictsPage() {
+export default async function DistrictsPage() {
+  const districts = await getDistrictStats();
+
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
       <div className="mx-auto max-w-7xl space-y-8">

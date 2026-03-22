@@ -52,7 +52,7 @@ export const projects = pgTable("projects", {
   launchDate: date(),
   topDate: date(),
   completionDate: date(),
-  status: projectStatusEnum().default("upcoming"),
+  status: projectStatusEnum().default("completed"),
   latitude: numeric(),
   longitude: numeric(),
   svyX: numeric(),

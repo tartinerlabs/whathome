@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeader } from "@/components/section-header";
-import { projects } from "@/lib/mock-data";
+import { getNewLaunches } from "@/lib/queries/projects";
 
 export const metadata: Metadata = {
   title: "New Launches",
@@ -9,13 +9,8 @@ export const metadata: Metadata = {
     "Discover upcoming and recently launched new condos in Singapore. Be the first to research the latest property launches.",
 };
 
-export default function NewLaunchesPage() {
-  const newLaunches = projects.filter(
-    (p) =>
-      p.status === "upcoming" ||
-      p.status === "launched" ||
-      p.status === "selling",
-  );
+export default async function NewLaunchesPage() {
+  const newLaunches = await getNewLaunches();
 
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">

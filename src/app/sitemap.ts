@@ -1,8 +1,14 @@
 import type { MetadataRoute } from "next";
-import { developers, districts, projects } from "@/lib/mock-data";
+import { getAllDeveloperSlugs } from "@/lib/queries/developers";
+import { getAllProjectSlugs } from "@/lib/queries/projects";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://whathome.sg";
+
+  const [projectSlugs, developerSlugs] = await Promise.all([
+    getAllProjectSlugs(),
+    getAllDeveloperSlugs(),
+  ]);
 
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -55,26 +61,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const projectPages: MetadataRoute.Sitemap = projects.map((p) => ({
+  const projectPages: MetadataRoute.Sitemap = projectSlugs.map((p) => ({
     url: `${baseUrl}/projects/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: "daily",
     priority: 0.8,
   }));
 
-  const developerPages: MetadataRoute.Sitemap = developers.map((d) => ({
+  const developerPages: MetadataRoute.Sitemap = developerSlugs.map((d) => ({
     url: `${baseUrl}/developers/${d.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly",
     priority: 0.6,
   }));
 
-  const districtPages: MetadataRoute.Sitemap = districts.map((d) => ({
-    url: `${baseUrl}/districts/${d.number}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly",
-    priority: 0.6,
-  }));
+  const districtPages: MetadataRoute.Sitemap = Array.from(
+    { length: 28 },
+    (_, i) => ({
+      url: `${baseUrl}/districts/${i + 1}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }),
+  );
 
   return [...staticPages, ...projectPages, ...developerPages, ...districtPages];
 }

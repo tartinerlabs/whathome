@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { projects, psfTrendByProject, unitMixByProject } from "@/lib/mock-data";
+import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const chartColours = ["var(--chart-1)", "var(--chart-3)", "var(--chart-5)"];
@@ -19,7 +19,11 @@ const chartColours = ["var(--chart-1)", "var(--chart-3)", "var(--chart-5)"];
 const chip =
   "border-2 border-foreground rounded-none font-bold uppercase text-[10px] tracking-wider px-2 py-0.5 cursor-pointer transition-colors";
 
-export function CompareShell() {
+interface ProjectComparisonProps {
+  projects: Project[];
+}
+
+export function ProjectComparison({ projects }: ProjectComparisonProps) {
   const [{ slugs }, setFilters] = useQueryStates({
     slugs: parseAsArrayOf(parseAsString).withDefault([]),
   });
@@ -38,21 +42,8 @@ export function CompareShell() {
     (slugs ?? []).includes(p.slug),
   );
 
-  // Build merged PSF data for overlay chart
+  // TODO: Fetch PSF trend data for selected projects via API
   const mergedPsfData: Record<string, unknown>[] = [];
-  if (selectedProjects.length > 0) {
-    const firstData = psfTrendByProject[selectedProjects[0].slug] ?? [];
-    for (let i = 0; i < firstData.length; i++) {
-      const point: Record<string, unknown> = { month: firstData[i].month };
-      for (const proj of selectedProjects) {
-        const data = psfTrendByProject[proj.slug] ?? [];
-        if (data[i]) {
-          point[proj.slug] = data[i].psf;
-        }
-      }
-      mergedPsfData.push(point);
-    }
-  }
 
   return (
     <div className="space-y-8">
@@ -150,10 +141,7 @@ export function CompareShell() {
                   },
                   {
                     label: "Unit Types",
-                    values: selectedProjects.map((p) => {
-                      const units = unitMixByProject[p.slug] ?? [];
-                      return units.map((u) => u.unitType).join(", ") || "—";
-                    }),
+                    values: selectedProjects.map(() => "—"),
                   },
                 ].map((row) => (
                   <tr key={row.label} className="border-b-2 border-foreground">

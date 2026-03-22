@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getProjectBySlug, unitMixByProject } from "@/lib/mock-data";
+import { getProjectBySlug } from "@/lib/queries/projects";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -15,7 +15,8 @@ export async function GET(request: Request) {
     ? await fetch(fontUrl).then((res) => res.arrayBuffer())
     : null;
 
-  const project = slug ? getProjectBySlug(slug) : null;
+  const data = slug ? await getProjectBySlug(slug) : null;
+  const project = data?.project ?? null;
 
   if (!project) {
     // Fallback: generic WhatHome branded image
@@ -90,7 +91,7 @@ export async function GET(request: Request) {
   }
 
   // Get PSF range from unit mix
-  const units = unitMixByProject[project.slug] ?? [];
+  const units = data?.units ?? [];
   const psfValues = units.map((u) => u.pricePsf).filter(Boolean);
   const psfMin = psfValues.length ? Math.min(...psfValues) : null;
   const psfMax = psfValues.length ? Math.max(...psfValues) : null;

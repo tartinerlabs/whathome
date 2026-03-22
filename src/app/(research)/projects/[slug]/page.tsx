@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getAllProjectSlugs, getProjectBySlug } from "@/lib/queries/projects";
 import {
-  amenitiesByProject,
-  developers,
-  getProjectBySlug,
-  projects,
-  psfTrendByProject,
-  unitMixByProject,
-} from "@/lib/mock-data";
+  getPsfTrend,
+  getTransactionsByProject,
+} from "@/lib/queries/transactions";
 import { AiSummary } from "./components/ai-summary";
 import { NearbyAmenities } from "./components/nearby-amenities";
 import { PricingSection } from "./components/pricing-section";
@@ -15,8 +12,8 @@ import { ProjectGallery } from "./components/project-gallery";
 import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
 
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return getAllProjectSlugs();
 }
 
 export async function generateMetadata({
@@ -25,8 +22,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) return { title: "Project Not Found" };
+  const data = await getProjectBySlug(slug);
+  if (!data) return { title: "Project Not Found" };
+
+  const { project } = data;
 
   return {
     title: project.name,
@@ -49,7 +48,7 @@ export async function generateMetadata({
 }
 
 function getJsonLd(
-  project: NonNullable<ReturnType<typeof getProjectBySlug>>,
+  project: import("@/lib/types").Project,
   units: import("@/lib/types").UnitMixRow[],
 ) {
   const priceValues = units.map((u) => u.priceFrom).filter(Boolean);
@@ -133,13 +132,11 @@ export default async function ProjectDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProjectBySlug(slug);
-  if (!project) notFound();
+  const data = await getProjectBySlug(slug);
+  if (!data) notFound();
 
-  const developer = developers.find((d) => d.id === project.developerId);
-  const units = unitMixByProject[slug] ?? [];
-  const psfData = psfTrendByProject[slug] ?? [];
-  const amenities = amenitiesByProject[slug] ?? [];
+  const { project, units, amenities, developerSlug } = data;
+  const psfData = await getPsfTrend(project.id);
 
   return (
     <>
@@ -151,7 +148,7 @@ export default async function ProjectDetailPage({
         }}
       />
 
-      <ProjectHero project={project} developerSlug={developer?.slug ?? ""} />
+      <ProjectHero project={project} developerSlug={developerSlug} />
 
       {units.length > 0 && <PricingSection units={units} />}
 

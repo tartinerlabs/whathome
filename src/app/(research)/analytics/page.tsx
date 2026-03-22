@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/section-header";
+import { getPriceIndices } from "@/lib/queries/market-data";
 import { PriceIndexChart } from "./components/price-index-chart";
 import { RegionPsfChart } from "./components/region-psf-chart";
 import { VolumeChart } from "./components/volume-chart";
@@ -10,13 +11,15 @@ export const metadata: Metadata = {
     "Singapore property market trends and data. Price index movements, transaction volumes, and PSF analysis by region.",
 };
 
-export default function AnalyticsPage() {
+export default async function AnalyticsPage() {
+  const priceIndices = await getPriceIndices();
+
   return (
     <>
       <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
         <div className="mx-auto max-w-7xl space-y-6">
           <SectionHeader title="Price Index" meta="Q2 2024 – Q1 2026" />
-          <PriceIndexChart />
+          <PriceIndexChart data={priceIndices} />
         </div>
       </section>
 

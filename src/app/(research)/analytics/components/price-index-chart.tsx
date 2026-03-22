@@ -10,7 +10,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { priceIndices } from "@/lib/mock-data";
+import type { PriceIndex } from "@/lib/types";
 
 const lines = [
   { key: "ccr", name: "CCR", colour: "var(--chart-1)" },
@@ -19,7 +19,11 @@ const lines = [
   { key: "overall", name: "Overall", colour: "var(--foreground)" },
 ];
 
-export function PriceIndexChart() {
+interface PriceIndexChartProps {
+  data: PriceIndex[];
+}
+
+export function PriceIndexChart({ data: priceIndices }: PriceIndexChartProps) {
   return (
     <div className="border-2 border-foreground rounded-none p-4 h-[350px]">
       <ResponsiveContainer width="100%" height="100%">
