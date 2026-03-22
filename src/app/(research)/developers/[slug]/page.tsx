@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProjectCard } from "@/components/project-card";
 import { SectionHeader } from "@/components/section-header";
-import {
-  getAllDeveloperSlugs,
-  getDeveloperBySlug,
-} from "@/lib/queries/developers";
+import { getDeveloperBySlug } from "@/lib/queries/developers";
 
+// TODO: Pre-render high-traffic developers
 export async function generateStaticParams() {
-  return getAllDeveloperSlugs();
+  return [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata({

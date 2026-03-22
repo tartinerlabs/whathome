@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllProjectSlugs, getProjectBySlug } from "@/lib/queries/projects";
+import { getProjectBySlug } from "@/lib/queries/projects";
 import {
   getPsfTrend,
   getTransactionsByProject,
@@ -12,8 +12,9 @@ import { ProjectGallery } from "./components/project-gallery";
 import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
 
+// TODO: Pre-render high-traffic projects (e.g. top 100 by transaction count)
 export async function generateStaticParams() {
-  return getAllProjectSlugs();
+  return [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata({
