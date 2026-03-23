@@ -59,7 +59,7 @@ interface ProjectContext {
 async function stepLoadContext(projectId: string): Promise<ProjectContext> {
   "use step";
 
-  console.log(`[analysis] Loading context for project ${projectId}`);
+  console.log("[analysis] Loading context for project %s", projectId);
 
   const project = await db.query.projects.findFirst({
     where: eq(projects.id, projectId),

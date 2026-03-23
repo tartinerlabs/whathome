@@ -96,7 +96,7 @@ async function stepLoadProject(projectId: string): Promise<{
 }> {
   "use step";
 
-  console.log(`[research] Loading project ${projectId}`);
+  console.log("[research] Loading project %s", projectId);
 
   const [project] = await db
     .select({
@@ -179,7 +179,7 @@ async function stepReverseGeocode(
 ): Promise<{ postalCode: string | null; address: string | null }> {
   "use step";
 
-  console.log(`[research] Reverse geocoding for project ${projectId}`);
+  console.log("[research] Reverse geocoding for project %s", projectId);
   const result = await reverseGeocode(lat, lng);
 
   const updates: Record<string, string | null> = {};
@@ -348,7 +348,7 @@ async function stepEnrichProject(
 ): Promise<void> {
   "use step";
 
-  console.log(`[research] Enriching project ${projectId}`);
+  console.log("[research] Enriching project %s", projectId);
 
   const updates: Record<string, unknown> = {};
 
