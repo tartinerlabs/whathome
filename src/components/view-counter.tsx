@@ -17,6 +17,8 @@ export function ViewCounter() {
   const pathname = usePathname();
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_VERCEL_ENV !== "production") return;
+
     const visitorId = getVisitorId();
     navigator.sendBeacon(
       "/api/analytics/pageview",

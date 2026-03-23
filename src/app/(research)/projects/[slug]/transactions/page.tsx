@@ -9,11 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getAllProjectSlugs, getProjectBySlug } from "@/lib/queries/projects";
+import { getProjectBySlug } from "@/lib/queries/projects";
 import { getTransactionsByProject } from "@/lib/queries/transactions";
 
+// TODO: Add generateStaticParams for high-traffic projects (e.g. top 100 by transaction count)
+// to pre-render the most visited transaction pages at build time.
 export async function generateStaticParams() {
-  return getAllProjectSlugs();
+  return [{ slug: "__placeholder__" }];
 }
 
 export async function generateMetadata({

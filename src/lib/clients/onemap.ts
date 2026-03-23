@@ -1,5 +1,5 @@
 /**
- * OneMap API client — auth + planning area query only.
+ * OneMap API client — auth, planning area, and reverse geocoding.
  *
  * Base URL: https://www.onemap.gov.sg
  * Auth: POST /api/auth/post/getToken with email/password, returns 3-day JWT.
@@ -93,4 +93,71 @@ export async function getPlanningArea(
   if (!data.length) return null;
 
   return data[0].pln_area_n ?? null;
+}
+
+export interface ReverseGeocodeResult {
+  postalCode: string | null;
+  address: string | null;
+  buildingName: string | null;
+}
+
+interface RevGeocodeResponse {
+  GeocodeInfo: Array<{
+    ROAD: string;
+    BUILDINGNAME: string;
+    BLOCK: string;
+    POSTALCODE: string;
+    XCOORD: string;
+    YCOORD: string;
+    LATITUDE: string;
+    LONGITUDE: string;
+  }>;
+}
+
+/**
+ * Reverse geocode a WGS84 coordinate to get postal code and address.
+ *
+ * @param latitude WGS84 latitude
+ * @param longitude WGS84 longitude
+ * @returns Postal code, address, and building name, or nulls if not found
+ */
+export async function reverseGeocode(
+  latitude: number,
+  longitude: number,
+): Promise<ReverseGeocodeResult> {
+  const token = await getToken();
+
+  const url = new URL(`${BASE_URL}/api/public/revgeocode`);
+  url.searchParams.set("location", `${latitude},${longitude}`);
+  url.searchParams.set("buffer", "200");
+  url.searchParams.set("addressType", "All");
+  url.searchParams.set("otherFeatures", "N");
+
+  const response = await fetch(url.toString(), {
+    headers: { Authorization: token },
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      return { postalCode: null, address: null, buildingName: null };
+    }
+    throw new Error(`OneMap reverse geocode failed: ${response.status}`);
+  }
+
+  const data = (await response.json()) as RevGeocodeResponse;
+  const info = data.GeocodeInfo?.[0];
+  if (!info) {
+    return { postalCode: null, address: null, buildingName: null };
+  }
+
+  const postalCode =
+    info.POSTALCODE && info.POSTALCODE !== "NIL" ? info.POSTALCODE : null;
+
+  const parts = [info.BLOCK, info.ROAD].filter((p) => p && p !== "NIL");
+  const address = parts.length ? parts.join(" ") : null;
+
+  const buildingName =
+    info.BUILDINGNAME && info.BUILDINGNAME !== "NIL" ? info.BUILDINGNAME : null;
+
+  return { postalCode, address, buildingName };
 }

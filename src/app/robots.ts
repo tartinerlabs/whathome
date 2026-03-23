@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/dashboard", "/settings", "/login", "/signup"],
+        disallow: ["/dashboard", "/login", "/signup"],
       },
     ],
     sitemap: "https://whathome.sg/sitemap.xml",
