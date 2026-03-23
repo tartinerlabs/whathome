@@ -46,7 +46,7 @@ export async function getDataHealthSummary(): Promise<DataHealthSummary> {
   };
 }
 
-export interface RunRow {
+export interface WorkflowExecution {
   id: string;
   agentType: string;
   status: string;
@@ -59,7 +59,9 @@ export interface RunRow {
   createdAt: Date;
 }
 
-export async function getRecentRuns(limit = 20): Promise<RunRow[]> {
+export async function getWorkflowHistory(
+  limit = 20,
+): Promise<WorkflowExecution[]> {
   const rows = await db
     .select({
       id: researchRuns.id,
@@ -81,7 +83,7 @@ export async function getRecentRuns(limit = 20): Promise<RunRow[]> {
   return rows;
 }
 
-export interface RunDetail {
+export interface WorkflowExecutionDetail {
   id: string;
   agentType: string;
   status: string;
@@ -98,7 +100,9 @@ export interface RunDetail {
   createdAt: Date;
 }
 
-export async function getRunById(runId: string): Promise<RunDetail | null> {
+export async function getWorkflowExecutionById(
+  runId: string,
+): Promise<WorkflowExecutionDetail | null> {
   const [row] = await db
     .select({
       id: researchRuns.id,

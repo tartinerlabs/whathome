@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -9,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { revalidateProject } from "@/lib/cache";
 
 async function updateProject(formData: FormData) {
@@ -47,7 +49,7 @@ async function updateProject(formData: FormData) {
     revalidateProject(slug);
   }
 
-  redirect("/admin/projects");
+  redirect("/dashboard/projects");
 }
 
 export function generateStaticParams() {
@@ -65,7 +67,7 @@ export default async function EditProjectPage({
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/projects"
+          href="/dashboard/projects"
           className="font-mono text-xs text-muted-foreground hover:text-foreground"
         >
           &larr; All Projects
@@ -83,6 +85,11 @@ export default async function EditProjectPage({
 }
 
 async function EditForm({ projectId }: { projectId: string }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session || session.user.role !== "admin") {
+    redirect("/login");
+  }
+
   const [project] = await db
     .select()
     .from(projects)
@@ -227,7 +234,7 @@ async function EditForm({ projectId }: { projectId: string }) {
           <div className="flex gap-2">
             <Button type="submit">Save Changes</Button>
             <Link
-              href="/admin/projects"
+              href="/dashboard/projects"
               className="inline-flex h-8 items-center rounded-none border border-border px-2.5 font-mono text-xs hover:bg-muted"
             >
               Cancel

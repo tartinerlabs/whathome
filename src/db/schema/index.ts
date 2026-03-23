@@ -1,4 +1,5 @@
 export * from "./analytics";
+export * from "./auth";
 export * from "./developer-sales";
 export * from "./developers";
 export * from "./market-data";

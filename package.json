@@ -15,6 +15,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
+    "auth:generate": "pnpm dlx auth@latest generate --output src/db/schema/auth.ts --yes",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -31,6 +32,7 @@
     "@vercel/config": "^0.0.40",
     "@vercel/og": "^0.11.1",
     "ai": "^6.0.134",
+    "better-auth": "^1.5.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",

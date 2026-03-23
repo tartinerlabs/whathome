@@ -1,5 +1,8 @@
 import { desc } from "drizzle-orm";
+import type { Route } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
+import { auth } from "@/lib/auth";
 import { TriggerButton } from "../components/trigger-buttons";
 
 export default function AdminProjectsPage() {
@@ -37,6 +41,11 @@ export default function AdminProjectsPage() {
 }
 
 async function ProjectsTable() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session || session.user.role !== "admin") {
+    redirect("/login");
+  }
+
   const rows = await db
     .select({
       id: projects.id,
@@ -70,7 +79,7 @@ async function ProjectsTable() {
           <TableRow key={project.id}>
             <TableCell className="max-w-[250px] truncate text-xs font-medium">
               <Link
-                href={`/projects/${project.slug}` as never}
+                href={`/projects/${project.slug}` as Route}
                 className="underline"
               >
                 {project.name}
@@ -106,7 +115,7 @@ async function ProjectsTable() {
                 body={{ projectId: project.id }}
               />
               <Link
-                href={`/admin/projects/${project.id}/edit` as never}
+                href={`/dashboard/projects/${project.id}/edit` as Route}
                 className="inline-flex h-7 items-center rounded-none border border-border px-2.5 font-mono text-xs hover:bg-muted"
               >
                 Edit

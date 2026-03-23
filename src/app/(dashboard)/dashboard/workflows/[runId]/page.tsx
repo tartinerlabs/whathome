@@ -1,10 +1,13 @@
+import type { Route } from "next";
+import { headers } from "next/headers";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getRunById } from "@/lib/queries/admin";
+import { auth } from "@/lib/auth";
+import { getWorkflowExecutionById } from "@/lib/queries/admin";
 
 const statusVariant: Record<
   string,
@@ -20,7 +23,7 @@ export function generateStaticParams() {
   return [{ runId: "__placeholder__" }];
 }
 
-export default async function RunDetailPage({
+export default async function WorkflowExecutionPage({
   params,
 }: {
   params: Promise<{ runId: string }>;
@@ -31,25 +34,30 @@ export default async function RunDetailPage({
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Link
-          href="/admin/workflows"
+          href="/dashboard/workflows"
           className="font-mono text-xs text-muted-foreground hover:text-foreground"
         >
-          &larr; All Runs
+          &larr; All Workflows
         </Link>
         <h1 className="font-sans text-2xl font-extrabold tracking-tight">
-          Run Detail
+          Workflow Execution
         </h1>
       </div>
 
       <Suspense fallback={<Skeleton className="h-96 w-full" />}>
-        <RunContent runId={runId} />
+        <ExecutionContent runId={runId} />
       </Suspense>
     </div>
   );
 }
 
-async function RunContent({ runId }: { runId: string }) {
-  const run = await getRunById(runId);
+async function ExecutionContent({ runId }: { runId: string }) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session || session.user.role !== "admin") {
+    redirect("/login");
+  }
+
+  const run = await getWorkflowExecutionById(runId);
 
   if (!run) notFound();
 
@@ -84,7 +92,7 @@ async function RunContent({ runId }: { runId: string }) {
           <CardContent className="text-sm">
             {run.projectSlug ? (
               <Link
-                href={`/projects/${run.projectSlug}` as never}
+                href={`/projects/${run.projectSlug}` as Route}
                 className="underline"
               >
                 {run.projectName}

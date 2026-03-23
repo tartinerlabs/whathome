@@ -50,12 +50,12 @@ pnpm format       # Biome lint + format auto-fix
 
 | Phase | Focus | Status |
 |-------|-------|--------|
-| 0 | Design Preview — neobrutalist theme demos at `/preview` | Current |
-| 1 | Foundation — DB schema, data.gov.sg client, ingestion agent | Next |
-| 2 | Core Site — listings, filters, project detail, ISR, SEO | |
-| 3 | AI Agents — research + analysis agents, admin panel | |
-| 4 | Analytics & Users — charts, comparison, accounts | |
-| 5 | Backfill & Polish — YouTube agent, URA API, search, Blob | |
+| 0 | Design Preview — neobrutalist theme demos at `/preview` | Done |
+| 1 | Foundation — DB schema, data.gov.sg client, ingestion agent | Done |
+| 2 | Core Site — listings, filters, project detail, ISR, SEO | Done |
+| 3 | AI Agents — research + analysis agents, admin panel | Current |
+| 4 | Analytics & Users — charts, comparison, accounts | Done |
+| 5 | Backfill & Polish — YouTube agent, URA API, search, Blob | Next |
 
 @AGENTS.md
 @SCHEMA.md
