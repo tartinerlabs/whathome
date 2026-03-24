@@ -1,18 +1,6 @@
-/**
- * data.gov.sg client — amenity datasets (MRT, schools, parks, hospitals).
- *
- * Two API patterns:
- * 1. Tabular (CSV): GET /v1/public/api/datasets/{id}/query?offset=N&limit=N
- * 2. GeoJSON: Initiate download → poll → fetch GeoJSON FeatureCollection
- *
- * Rate limit: 5 req/min (no API key needed for public datasets).
- *
- * @see https://guide.data.gov.sg/developer-guide/api-overview
- */
-
 import { svy21ToWgs84 } from "@/lib/geo";
 
-const BASE_URL = "https://api-open.data.gov.sg/v1/public/api/datasets";
+const DATAGOV_BASE_URL = "https://data.gov.sg/api/action/datastore_search";
 
 // --- Dataset IDs ---
 
@@ -43,24 +31,21 @@ export interface Amenity {
   longitude: number;
 }
 
-// --- Tabular API ---
-
-interface TabularResponse<T> {
-  code: number;
-  data: {
+interface CkanResponse<T> {
+  success: boolean;
+  result: {
     records: T[];
     total: number;
     limit: number;
-    offset: number;
   };
 }
 
-async function fetchTabular<T>(datasetId: string, limit = 500): Promise<T[]> {
+async function fetchRecords<T>(datasetId: string, limit = 500): Promise<T[]> {
   const allRecords: T[] = [];
   let offset = 0;
 
   while (true) {
-    const url = `${BASE_URL}/${datasetId}/query?offset=${offset}&limit=${limit}`;
+    const url = `${DATAGOV_BASE_URL}?resource_id=${datasetId}&offset=${offset}&limit=${limit}`;
 
     const response = await fetch(url);
     if (!response.ok) {
@@ -69,135 +54,62 @@ async function fetchTabular<T>(datasetId: string, limit = 500): Promise<T[]> {
       );
     }
 
-    const json = (await response.json()) as TabularResponse<T>;
-    if (json.code !== 0) {
-      throw new Error(`data.gov.sg query error: code ${json.code}`);
+    const json = (await response.json()) as CkanResponse<T>;
+    if (!json.success) {
+      throw new Error("data.gov.sg query failed");
     }
 
-    const records = json.data.records;
+    const records = json.result.records;
     allRecords.push(...records);
 
-    if (records.length < limit || allRecords.length >= json.data.total) break;
+    if (records.length < limit || allRecords.length >= json.result.total) break;
     offset += limit;
   }
 
   return allRecords;
 }
 
-// --- GeoJSON download API ---
+type GeoRecord = Record<
+  string,
+  string | number | Record<string, unknown> | null
+>;
 
-interface PollDownloadResponse {
-  data: { url: string };
-  code: number;
-}
-
-interface GeoJsonFeatureCollection {
-  type: "FeatureCollection";
-  features: GeoJsonFeature[];
-}
-
-interface GeoJsonFeature {
-  type: "Feature";
-  properties: Record<string, string>;
-  geometry: {
-    type: string;
-    coordinates: number[]; // [lng, lat] or [lng, lat, elevation]
-  };
-}
-
-async function fetchGeoJson(datasetId: string): Promise<GeoJsonFeature[]> {
-  // Step 1: Initiate download
-  const initUrl = `${BASE_URL}/${datasetId}/initiate-download`;
-  const initResponse = await fetch(initUrl, { method: "GET" });
-
-  if (!initResponse.ok) {
-    throw new Error(
-      `data.gov.sg initiate download failed: ${initResponse.status}`,
-    );
-  }
-
-  const initData = (await initResponse.json()) as PollDownloadResponse;
-
-  if (initData.code !== 0 || !initData.data?.url) {
-    // Try poll-download as fallback
-    const pollUrl = `${BASE_URL}/${datasetId}/poll-download`;
-    const pollResponse = await fetch(pollUrl);
-
-    if (!pollResponse.ok) {
-      throw new Error(
-        `data.gov.sg poll download failed: ${pollResponse.status}`,
-      );
-    }
-
-    const pollData = (await pollResponse.json()) as PollDownloadResponse;
-
-    if (pollData.code !== 0 || !pollData.data?.url) {
-      throw new Error("data.gov.sg: unable to get download URL");
-    }
-
-    return fetchGeoJsonFromUrl(pollData.data.url);
-  }
-
-  return fetchGeoJsonFromUrl(initData.data.url);
-}
-
-async function fetchGeoJsonFromUrl(url: string): Promise<GeoJsonFeature[]> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`GeoJSON fetch failed: ${response.status}`);
-  }
-
-  const data = (await response.json()) as GeoJsonFeatureCollection;
-  return data.features ?? [];
-}
-
-function extractName(properties: Record<string, string>): string {
-  // data.gov.sg GeoJSON uses various property names
-  return (
-    properties.STATION_NA ??
-    properties.HCI_NAME ??
-    properties.Name ??
-    properties.NAME ??
-    properties.name ??
-    properties.Description ??
-    "Unknown"
+function extractName(record: GeoRecord): string {
+  return String(
+    record.STATION_NA ??
+      record.HCI_NAME ??
+      record.Name ??
+      record.NAME ??
+      record.name ??
+      record.Description ??
+      "Unknown",
   );
 }
 
 function extractCoords(
-  feature: GeoJsonFeature,
+  record: GeoRecord,
 ): { latitude: number; longitude: number } | null {
-  const coords = feature.geometry?.coordinates;
-  if (!coords || coords.length < 2) return null;
-
-  // GeoJSON is [lng, lat]
-  const [longitude, latitude] = coords;
-  if (
-    !Number.isFinite(latitude) ||
-    !Number.isFinite(longitude) ||
-    latitude === 0 ||
-    longitude === 0
-  ) {
-    return null;
+  const lat = Number(record.LATITUDE ?? record.latitude ?? record.lat);
+  const lng = Number(record.LONGITUDE ?? record.longitude ?? record.lng);
+  if (Number.isFinite(lat) && Number.isFinite(lng) && lat !== 0 && lng !== 0) {
+    return { latitude: lat, longitude: lng };
   }
 
-  return { latitude, longitude };
+  return null;
 }
 
-// --- Helpers ---
-
-function featuresToAmenities(
-  features: GeoJsonFeature[],
+function recordsToAmenities(
+  records: GeoRecord[],
   type: Amenity["type"],
-  filter?: (f: GeoJsonFeature) => boolean,
+  filter?: (record: GeoRecord) => boolean,
 ): Amenity[] {
   const amenities: Amenity[] = [];
 
-  for (const f of features) {
-    if (filter && !filter(f)) continue;
-    const coords = extractCoords(f);
+  for (const record of records) {
+    if (filter && !filter(record)) continue;
+    const coords = extractCoords(record);
     if (!coords) continue;
-    amenities.push({ name: extractName(f.properties), type, ...coords });
+    amenities.push({ name: extractName(record), type, ...coords });
   }
 
   return amenities;
@@ -206,17 +118,17 @@ function featuresToAmenities(
 // --- Public API ---
 
 export async function getMrtStations(): Promise<Amenity[]> {
-  const features = await fetchGeoJson(MRT_STATIONS_DATASET);
+  const records = await fetchRecords<GeoRecord>(MRT_STATIONS_DATASET);
 
   // Dataset has multiple exits per station — deduplicate by STATION_NA,
   // averaging coordinates to get a station centroid
   const stationMap = new Map<string, { lats: number[]; lngs: number[] }>();
 
-  for (const f of features) {
-    const coords = extractCoords(f);
+  for (const record of records) {
+    const coords = extractCoords(record);
     if (!coords) continue;
 
-    const name = f.properties.STATION_NA ?? extractName(f.properties);
+    const name = String(record.STATION_NA ?? extractName(record));
     const existing = stationMap.get(name);
     if (existing) {
       existing.lats.push(coords.latitude);
@@ -243,14 +155,12 @@ export async function getMrtStations(): Promise<Amenity[]> {
 }
 
 export async function getBusInterchanges(): Promise<Amenity[]> {
-  const features = await fetchGeoJson(BUS_FACILITIES_DATASET);
+  const records = await fetchRecords<GeoRecord>(BUS_FACILITIES_DATASET);
 
-  return featuresToAmenities(features, "bus_interchange", (f) => {
-    const name = extractName(f.properties).toLowerCase();
-    const desc = (
-      f.properties.Description ??
-      f.properties.DESCRIPTION ??
-      ""
+  return recordsToAmenities(records, "bus_interchange", (record) => {
+    const name = extractName(record).toLowerCase();
+    const desc = String(
+      record.Description ?? record.DESCRIPTION ?? "",
     ).toLowerCase();
 
     return (
@@ -271,7 +181,7 @@ interface SchoolRecord {
 }
 
 export async function getSchools(): Promise<Amenity[]> {
-  const records = await fetchTabular<SchoolRecord>(SCHOOLS_DATASET);
+  const records = await fetchRecords<SchoolRecord>(SCHOOLS_DATASET);
 
   // Schools dataset has no coordinates — return with 0,0 for geocoding later
   return records
@@ -287,29 +197,31 @@ export async function getSchools(): Promise<Amenity[]> {
 }
 
 export async function getParks(): Promise<Amenity[]> {
-  const features = await fetchGeoJson(PARKS_DATASET);
-  return featuresToAmenities(features, "park");
+  const records = await fetchRecords<GeoRecord>(PARKS_DATASET);
+  return recordsToAmenities(records, "park");
 }
 
 export async function getHealthcareFacilities(): Promise<Amenity[]> {
-  const features = await fetchGeoJson(HEALTHCARE_DATASET);
+  const records = await fetchRecords<GeoRecord>(HEALTHCARE_DATASET);
 
-  // CHAS Clinics use SVY21 coordinates in properties, not WGS84 in geometry.
-  // Some features have X_COORDINATE/Y_COORDINATE in SVY21 format.
   const amenities: Amenity[] = [];
 
-  for (const f of features) {
-    const name = f.properties.HCI_NAME ?? extractName(f.properties);
+  for (const record of records) {
+    const name = String(record.HCI_NAME ?? extractName(record));
 
-    // Try WGS84 geometry first
-    let coords = extractCoords(f);
+    let coords = extractCoords(record);
 
-    // Fall back to SVY21 properties if geometry is missing/invalid
+    // Fall back to SVY21 properties if lat/lng columns are missing
     if (!coords) {
-      const x = Number.parseFloat(f.properties.X_COORDINATE);
-      const y = Number.parseFloat(f.properties.Y_COORDINATE);
-      if (Number.isFinite(x) && Number.isFinite(y) && x > 0 && y > 0) {
-        coords = svy21ToWgs84(x, y);
+      const easting = Number.parseFloat(String(record.X_COORDINATE ?? ""));
+      const northing = Number.parseFloat(String(record.Y_COORDINATE ?? ""));
+      if (
+        Number.isFinite(easting) &&
+        Number.isFinite(northing) &&
+        easting > 0 &&
+        northing > 0
+      ) {
+        coords = svy21ToWgs84(easting, northing);
       }
     }
 
@@ -321,8 +233,8 @@ export async function getHealthcareFacilities(): Promise<Amenity[]> {
 }
 
 export async function getMalls(): Promise<Amenity[]> {
-  const features = await fetchGeoJson(SUPERMARKETS_DATASET);
-  return featuresToAmenities(features, "mall");
+  const records = await fetchRecords<GeoRecord>(SUPERMARKETS_DATASET);
+  return recordsToAmenities(records, "mall");
 }
 
 /** Fetch all amenity types in parallel. */
