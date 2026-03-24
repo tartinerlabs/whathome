@@ -8,7 +8,7 @@ function computePercentageChange(current: number, previous: number) {
 }
 
 export async function GET(request: Request) {
-  if (process.env.VERCEL_ENV === "production") {
+  if (process.env.VERCEL_ENV !== "development") {
     const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return new Response("Unauthorised", { status: 401 });
