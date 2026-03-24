@@ -22,6 +22,9 @@ const PARKS_DATASET = "d_0542d48f0991541706b58059381a6eca";
 /** Supermarkets (GeoJSON) — proxy for malls; no dedicated mall dataset exists */
 const SUPERMARKETS_DATASET = "d_cac2c32f01960a3ad7202a99c27268a0";
 
+/** URA Non-landed Property Price Index by Locality, Quarterly (CCR/RCR/OCR) */
+const PRICE_INDEX_DATASET = "d_f65e490a8ad430f60a9a3d9df2bff2a0";
+
 // --- Shared types ---
 
 export interface Amenity {
@@ -249,4 +252,43 @@ export async function getAllAmenities(): Promise<Amenity[]> {
 
   // Schools excluded from bulk fetch — no coordinates, need geocoding
   return [...mrt, ...buses, ...parks, ...healthcare, ...malls];
+}
+
+// --- Price Indices ---
+
+interface PriceIndexRecord {
+  quarter: string;
+  market_segment: string;
+  price_index: string;
+  _id: number;
+}
+
+const SEGMENT_TO_REGION: Record<string, "CCR" | "RCR" | "OCR"> = {
+  "Core Central Region": "CCR",
+  "Rest of Central Region": "RCR",
+  "Outside Central Region": "OCR",
+};
+
+export interface PriceIndexRow {
+  quarter: string;
+  region: "CCR" | "RCR" | "OCR";
+  indexValue: number;
+}
+
+export async function getPriceIndexData(): Promise<PriceIndexRow[]> {
+  const records = await fetchRecords<PriceIndexRecord>(PRICE_INDEX_DATASET);
+
+  const rows: PriceIndexRow[] = [];
+
+  for (const record of records) {
+    const region = SEGMENT_TO_REGION[record.market_segment];
+    if (!region) continue;
+
+    const indexValue = Number.parseFloat(record.price_index);
+    if (!Number.isFinite(indexValue)) continue;
+
+    rows.push({ quarter: record.quarter, region, indexValue });
+  }
+
+  return rows;
 }
