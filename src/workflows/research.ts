@@ -13,7 +13,7 @@ import {
 import { analysisModel, enrichModel } from "@/lib/ai/model";
 // Run logging handled by the API route / backfill workflow
 import { revalidateProject } from "@/lib/cache";
-import { getAllAmenities } from "@/lib/clients/datagov";
+import { getAllAmenities } from "@/lib/clients/data-gov";
 import { reverseGeocode } from "@/lib/clients/onemap";
 import { haversineDistance, walkMinutes } from "@/lib/geo";
 import { slugify } from "@/lib/slug";

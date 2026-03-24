@@ -8,7 +8,7 @@ export const config: VercelConfig = {
       schedule: "0 2 * * *",
     },
     {
-      path: "/api/cron/weekly-index",
+      path: "/api/cron/prices",
       schedule: "0 3 * * 1",
     },
   ],
