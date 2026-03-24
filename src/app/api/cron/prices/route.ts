@@ -1,14 +1,15 @@
+import { sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { db } from "@/db";
 import { priceIndices } from "@/db/schema";
-import { getPriceIndexData } from "@/lib/clients/data-gov";
+import { getPriceIndexData } from "@/lib/providers/data-gov";
 
 function computePercentageChange(current: number, previous: number) {
   return (((current - previous) / previous) * 100).toFixed(2);
 }
 
 export async function GET(request: Request) {
-  if (process.env.VERCEL_ENV !== "development") {
+  if (process.env.VERCEL_ENV) {
     const authHeader = request.headers.get("authorization");
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return new Response("Unauthorised", { status: 401 });
@@ -55,9 +56,9 @@ export async function GET(request: Request) {
       .onConflictDoUpdate({
         target: [priceIndices.quarter, priceIndices.region],
         set: {
-          indexValue: priceIndices.indexValue,
-          percentageChange: priceIndices.percentageChange,
-          sourceDataset: priceIndices.sourceDataset,
+          indexValue: sql`excluded.index_value`,
+          percentageChange: sql`excluded.percentage_change`,
+          sourceDataset: sql`excluded.source_dataset`,
         },
       });
 
