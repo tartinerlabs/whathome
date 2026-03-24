@@ -7,10 +7,10 @@ import {
   researchRuns,
   transactions,
 } from "@/db/schema";
-import { getPlanningArea } from "@/lib/clients/onemap";
-import type { TransactionBatch, UraTransaction } from "@/lib/clients/ura";
-import * as ura from "@/lib/clients/ura";
 import { svy21ToWgs84 } from "@/lib/geo";
+import { getPlanningArea } from "@/lib/providers/onemap";
+import type { TransactionBatch, UraTransaction } from "@/lib/providers/ura";
+import * as ura from "@/lib/providers/ura";
 import { findOrCreateProject } from "@/lib/queries/projects";
 
 // --- Step functions (full Node.js access, retryable) ---

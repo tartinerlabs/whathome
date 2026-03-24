@@ -50,7 +50,9 @@ async function fetchRecords<T>(datasetId: string, limit = 500): Promise<T[]> {
   while (true) {
     const url = `${DATAGOV_BASE_URL}?resource_id=${datasetId}&offset=${offset}&limit=${limit}`;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: { "x-api-key": process.env.DATAGOV_API_KEY! },
+    });
     if (!response.ok) {
       throw new Error(
         `data.gov.sg API error: ${response.status} ${response.statusText}`,
