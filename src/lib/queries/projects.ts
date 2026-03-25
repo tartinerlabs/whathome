@@ -1,19 +1,11 @@
-import {
-  and,
-  count,
-  desc,
-  eq,
-  ilike,
-  inArray,
-  type SQL,
-  sql,
-} from "drizzle-orm";
+import { and, count, desc, eq, inArray, type SQL, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/districts";
 import { toNumber } from "@/lib/format";
 import { svy21ToWgs84 } from "@/lib/geo";
+import { toTsQuery } from "@/lib/search";
 import { slugify } from "@/lib/slug";
 import type { Project, UnitMixRow } from "@/lib/types";
 
@@ -69,7 +61,12 @@ export async function getProjects(filters: ProjectFilters = {}) {
   const conditions: (SQL | undefined)[] = [];
 
   if (filters.q) {
-    conditions.push(ilike(projects.name, `%${filters.q}%`));
+    const tsQuery = toTsQuery(filters.q);
+    if (tsQuery) {
+      conditions.push(
+        sql`${projects.searchVector} @@ to_tsquery('english', ${tsQuery})`,
+      );
+    }
   }
 
   if (filters.regions?.length) {
