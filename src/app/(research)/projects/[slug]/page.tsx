@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/queries/projects";
-import {
-  getPsfTrend,
-  getTransactionsByProject,
-} from "@/lib/queries/transactions";
+import { getPsfTrend } from "@/lib/queries/transactions";
 import { AiSummary } from "./components/ai-summary";
 import { NearbyAmenities } from "./components/nearby-amenities";
 import { PricingSection } from "./components/pricing-section";
 import { ProjectGallery } from "./components/project-gallery";
 import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
+import { RentalComparison } from "./components/rental-comparison";
 
 // TODO: Pre-render high-traffic projects (e.g. top 100 by transaction count)
 export async function generateStaticParams() {
@@ -156,6 +154,8 @@ export default async function ProjectDetailPage({
       {psfData.length > 0 && <PsfChartSection data={psfData} />}
 
       {amenities.length > 0 && <NearbyAmenities amenities={amenities} />}
+
+      <RentalComparison projectId={project.id} projectName={project.name} />
 
       <ProjectGallery projectName={project.name} />
 
