@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/queries/projects";
-import {
-  getPsfTrend,
-  getTransactionsByProject,
-} from "@/lib/queries/transactions";
+import { getPsfTrend } from "@/lib/queries/transactions";
 import { AiSummary } from "./components/ai-summary";
 import { NearbyAmenities } from "./components/nearby-amenities";
 import { PricingSection } from "./components/pricing-section";
 import { ProjectGallery } from "./components/project-gallery";
 import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
+import { RentalComparison } from "./components/rental-comparison";
 
 // TODO: Pre-render high-traffic projects (e.g. top 100 by transaction count)
 export async function generateStaticParams() {
@@ -136,7 +134,7 @@ export default async function ProjectDetailPage({
   const data = await getProjectBySlug(slug);
   if (!data) notFound();
 
-  const { project, units, amenities, developerSlug } = data;
+  const { project, units, amenities, images, developerSlug } = data;
   const psfData = await getPsfTrend(project.id);
 
   return (
@@ -157,7 +155,9 @@ export default async function ProjectDetailPage({
 
       {amenities.length > 0 && <NearbyAmenities amenities={amenities} />}
 
-      <ProjectGallery projectName={project.name} />
+      <RentalComparison projectId={project.id} projectName={project.name} />
+
+      <ProjectGallery projectName={project.name} images={images} />
 
       <AiSummary summary={project.aiSummary} />
 

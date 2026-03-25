@@ -1,9 +1,11 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   developerSales,
+  medianRentals,
   pipelineProjects,
   projects,
+  rentalContracts,
   transactions,
 } from "@/db/schema";
 import { svy21ToWgs84 } from "@/lib/geo";
@@ -403,6 +405,102 @@ async function stepFetchPipeline(): Promise<{
   return { upserted, newProjects: newProjectCount };
 }
 
+async function stepFetchRentalContracts(): Promise<number> {
+  "use step";
+
+  console.log("[ingestion] Fetching rental contracts");
+  const now = new Date();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const yy = String(now.getFullYear()).slice(2);
+  const refPeriod = `${mm}${yy}`;
+
+  const contracts = await ura.getRentalContracts(refPeriod);
+  if (!contracts.length) return 0;
+
+  let inserted = 0;
+
+  const CHUNK_SIZE = 500;
+  for (let i = 0; i < contracts.length; i += CHUNK_SIZE) {
+    const chunk = contracts.slice(i, i + CHUNK_SIZE);
+    const rows = chunk.map((contract) => {
+      const sourceRecordId = [
+        contract.project,
+        contract.district,
+        contract.leaseDate,
+        contract.rent,
+        contract.areaSqft,
+        contract.noOfBedRoom,
+      ].join(":");
+
+      return {
+        projectName: contract.project,
+        street: contract.street,
+        propertyType: contract.propertyType,
+        district: contract.district
+          ? Number.parseInt(contract.district, 10)
+          : null,
+        noOfBedRoom: contract.noOfBedRoom,
+        rent: contract.rent ? Number.parseInt(contract.rent, 10) : null,
+        areaSqft: contract.areaSqft || null,
+        areaSqm: contract.areaSqm || null,
+        leaseDate: contract.leaseDate || null,
+        sourceRecordId,
+      };
+    });
+
+    const result = await db
+      .insert(rentalContracts)
+      .values(rows)
+      .onConflictDoNothing({ target: rentalContracts.sourceRecordId });
+
+    inserted += result.rowCount ?? 0;
+  }
+
+  console.log(`[ingestion] Rental contracts: ${inserted} inserted`);
+  return inserted;
+}
+
+async function stepFetchMedianRentals(): Promise<number> {
+  "use step";
+
+  console.log("[ingestion] Fetching median rentals");
+  const rentals = await ura.getMedianRentals();
+  if (!rentals.length) return 0;
+
+  let upserted = 0;
+
+  const CHUNK_SIZE = 500;
+  for (let i = 0; i < rentals.length; i += CHUNK_SIZE) {
+    const chunk = rentals.slice(i, i + CHUNK_SIZE);
+    const rows = chunk.map((rental) => ({
+      projectName: rental.project,
+      street: rental.street,
+      district: rental.district ? Number.parseInt(rental.district, 10) : null,
+      refPeriod: rental.refPeriod,
+      median: rental.median || null,
+      psf25: rental.psf25 || null,
+      psf75: rental.psf75 || null,
+    }));
+
+    const result = await db
+      .insert(medianRentals)
+      .values(rows)
+      .onConflictDoUpdate({
+        target: [medianRentals.projectName, medianRentals.refPeriod],
+        set: {
+          median: sql`excluded.median`,
+          psf25: sql`excluded.psf25`,
+          psf75: sql`excluded.psf75`,
+        },
+      });
+
+    upserted += result.rowCount ?? 0;
+  }
+
+  console.log(`[ingestion] Median rentals: ${upserted} upserted`);
+  return upserted;
+}
+
 interface IngestionSummary {
   transactionsInserted: number;
   transactionsSkipped: number;
@@ -410,6 +508,8 @@ interface IngestionSummary {
   developerSalesUpserted: number;
   pipelineUpserted: number;
   pipelineNewProjects: number;
+  rentalContractsInserted: number;
+  medianRentalsUpserted: number;
   durationMs: number;
 }
 
@@ -460,7 +560,13 @@ export async function dataIngestionWorkflow() {
   // Step 6: Fetch pipeline data
   const pipelineResult = await stepFetchPipeline();
 
-  // Step 7: Log the run
+  // Step 7: Fetch rental contracts
+  const rentalContractsCount = await stepFetchRentalContracts();
+
+  // Step 8: Fetch median rentals
+  const medianRentalsCount = await stepFetchMedianRentals();
+
+  // Step 9: Log the run
   const durationMs = Date.now() - startTime;
   await stepLogRun({
     transactionsInserted: totalInserted,
@@ -469,6 +575,8 @@ export async function dataIngestionWorkflow() {
     developerSalesUpserted: developerSalesCount,
     pipelineUpserted: pipelineResult.upserted,
     pipelineNewProjects: pipelineResult.newProjects,
+    rentalContractsInserted: rentalContractsCount,
+    medianRentalsUpserted: medianRentalsCount,
     durationMs,
   });
 
@@ -479,5 +587,7 @@ export async function dataIngestionWorkflow() {
     developerSalesUpserted: developerSalesCount,
     pipelineUpserted: pipelineResult.upserted,
     pipelineNewProjects: pipelineResult.newProjects,
+    rentalContractsInserted: rentalContractsCount,
+    medianRentalsUpserted: medianRentalsCount,
   };
 }

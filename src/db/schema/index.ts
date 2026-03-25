@@ -6,5 +6,5 @@ export * from "./pipeline";
 export * from "./price-indices";
 export * from "./project-details";
 export * from "./projects";
-
+export * from "./rentals";
 export * from "./transactions";

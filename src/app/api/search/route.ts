@@ -1,6 +1,4 @@
-import { ilike, or } from "drizzle-orm";
-import { db } from "@/db";
-import { developers, projects } from "@/db/schema";
+import { searchAll } from "@/lib/queries/search";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,45 +8,7 @@ export async function GET(request: Request) {
     return Response.json([]);
   }
 
-  const pattern = `%${q}%`;
-
-  const [projectResults, developerResults] = await Promise.all([
-    db
-      .select({
-        name: projects.name,
-        slug: projects.slug,
-        districtNumber: projects.districtNumber,
-        region: projects.region,
-      })
-      .from(projects)
-      .where(
-        or(ilike(projects.name, pattern), ilike(projects.address, pattern)),
-      )
-      .limit(6),
-    db
-      .select({
-        name: developers.name,
-        slug: developers.slug,
-      })
-      .from(developers)
-      .where(ilike(developers.name, pattern))
-      .limit(4),
-  ]);
-
-  const results = [
-    ...projectResults.map((p) => ({
-      type: "project" as const,
-      label: p.name,
-      href: `/projects/${p.slug}`,
-      meta: `D${p.districtNumber} · ${p.region ?? ""}`,
-    })),
-    ...developerResults.map((d) => ({
-      type: "developer" as const,
-      label: d.name,
-      href: `/developers/${d.slug}`,
-      meta: "",
-    })),
-  ];
+  const results = await searchAll(q);
 
   return Response.json(results);
 }

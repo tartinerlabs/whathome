@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 import { withWorkflow } from "workflow/next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        // TODO: update hostname to custom domain after Vercel Blob domain migration
+        protocol: "https",
+        hostname: "*.public.blob.vercel-storage.com",
+      },
+    ],
+  },
   reactStrictMode: true,
   reactCompiler: true,
   cacheComponents: true,
