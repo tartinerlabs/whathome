@@ -134,7 +134,7 @@ export default async function ProjectDetailPage({
   const data = await getProjectBySlug(slug);
   if (!data) notFound();
 
-  const { project, units, amenities, developerSlug } = data;
+  const { project, units, amenities, images, developerSlug } = data;
   const psfData = await getPsfTrend(project.id);
 
   return (
@@ -157,7 +157,7 @@ export default async function ProjectDetailPage({
 
       <RentalComparison projectId={project.id} projectName={project.name} />
 
-      <ProjectGallery projectName={project.name} />
+      <ProjectGallery projectName={project.name} images={images} />
 
       <AiSummary summary={project.aiSummary} />
 
