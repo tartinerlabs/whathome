@@ -41,5 +41,4 @@ id, userId (FK), name, filters (jsonb), createdAt
 ### `video_sources`
 id, projectId (nullable FK), channelName, videoId, title, publishedAt, transcriptText, extractedData (jsonb), processedAt, timestamps
 
-### `research_runs`
-id, agentType (data_ingestion/project_research/analysis/backfill/youtube_research), status (pending/running/completed/failed), projectId (nullable FK), inputPayload (jsonb), outputSummary, tokensUsed, costUsd, startedAt, completedAt, errorMessage, timestamps
+Agent run tracking is handled by external observability tools (LangFuse/Sentry).

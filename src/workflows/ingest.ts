@@ -4,7 +4,6 @@ import {
   developerSales,
   pipelineProjects,
   projects,
-  researchRuns,
   transactions,
 } from "@/db/schema";
 import { svy21ToWgs84 } from "@/lib/geo";
@@ -417,14 +416,7 @@ interface IngestionSummary {
 async function stepLogRun(summary: IngestionSummary): Promise<void> {
   "use step";
 
-  console.log("[ingestion] Logging successful run", summary);
-  await db.insert(researchRuns).values({
-    agentType: "data_ingestion",
-    status: "completed",
-    outputSummary: JSON.stringify(summary),
-    startedAt: new Date(Date.now() - summary.durationMs),
-    completedAt: new Date(),
-  });
+  console.log("[ingestion] Run complete", summary);
 }
 
 // --- Workflow orchestrator (runs in sandbox, coordinates steps) ---

@@ -26,9 +26,8 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 ```
 
 ## Agent Routes (`src/app/api/agents/`)
-- Log every run to `research_runs` table (start, complete, or fail)
-- Include `tokensUsed` and `costUsd` in completion logs
-- Return run ID in response for tracking
+- Use external observability (LangFuse/Sentry) for run tracking
+- Return structured JSON responses with status and summary
 
 ## Streaming Patterns
 - Use `streamText` from AI SDK for AI responses

@@ -1,6 +1,7 @@
 import { desc, isNull } from "drizzle-orm";
 import { db } from "@/db";
-import { projects, researchRuns } from "@/db/schema";
+import { projects } from "@/db/schema";
+
 import { projectResearchWorkflow } from "./research";
 
 /**
@@ -90,12 +91,4 @@ async function stepLogBatchRun(
   console.log(
     `[backfill] Batch complete: ${processed}/${total} projects, ${durationMs}ms`,
   );
-
-  await db.insert(researchRuns).values({
-    agentType: "backfill",
-    status: "completed",
-    outputSummary: JSON.stringify({ processed, total, durationMs }),
-    startedAt: new Date(Date.now() - durationMs),
-    completedAt: new Date(),
-  });
 }
