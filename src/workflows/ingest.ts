@@ -4,13 +4,12 @@ import {
   developerSales,
   pipelineProjects,
   projects,
-  researchRuns,
   transactions,
 } from "@/db/schema";
-import { getPlanningArea } from "@/lib/clients/onemap";
-import type { TransactionBatch, UraTransaction } from "@/lib/clients/ura";
-import * as ura from "@/lib/clients/ura";
 import { svy21ToWgs84 } from "@/lib/geo";
+import { getPlanningArea } from "@/lib/providers/onemap";
+import type { TransactionBatch, UraTransaction } from "@/lib/providers/ura";
+import * as ura from "@/lib/providers/ura";
 import { findOrCreateProject } from "@/lib/queries/projects";
 
 // --- Step functions (full Node.js access, retryable) ---
@@ -417,14 +416,7 @@ interface IngestionSummary {
 async function stepLogRun(summary: IngestionSummary): Promise<void> {
   "use step";
 
-  console.log("[ingestion] Logging successful run", summary);
-  await db.insert(researchRuns).values({
-    agentType: "data_ingestion",
-    status: "completed",
-    outputSummary: JSON.stringify(summary),
-    startedAt: new Date(Date.now() - summary.durationMs),
-    completedAt: new Date(),
-  });
+  console.log("[ingestion] Run complete", summary);
 }
 
 // --- Workflow orchestrator (runs in sandbox, coordinates steps) ---

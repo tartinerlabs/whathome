@@ -23,8 +23,8 @@ Each domain gets its own schema file in `src/db/schema/`:
 - `projects.ts` — projects (enums: region, tenure, project_status)
 - `project-details.ts` — project_units, nearby_amenities, project_images
 - `transactions.ts` — transactions
-- `market-data.ts` — price_indices
-- `research.ts` — research_runs
+- `price-indices.ts` — price_indices
+- `page-views.ts` — page_views
 
 ## Migration Workflow
 1. Edit schema files

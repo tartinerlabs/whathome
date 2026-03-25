@@ -15,7 +15,7 @@ import {
   projectImages,
   projectUnits,
 } from "./project-details";
-import { researchRuns } from "./research";
+
 import { transactions } from "./transactions";
 
 export const regionEnum = pgEnum("region", ["CCR", "RCR", "OCR"]);
@@ -81,5 +81,4 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   transactions: many(transactions),
   nearbyAmenities: many(nearbyAmenities),
   images: many(projectImages),
-  researchRuns: many(researchRuns),
 }));

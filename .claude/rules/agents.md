@@ -18,13 +18,8 @@ All agent tools live in `src/lib/agents/tools/`:
 - **Claude Haiku** (`claude-haiku-4-5-20251001`): Data ingestion agent (high volume, low complexity)
 - **Claude Sonnet** (`claude-sonnet-4-6`): Research, analysis, backfill, YouTube agents (reasoning needed)
 
-## Research Runs Logging
-Every agent execution must:
-1. Create a `research_runs` record with status `pending` at start
-2. Update to `running` when processing begins
-3. Update to `completed` with `outputSummary`, `tokensUsed`, `costUsd` on success
-4. Update to `failed` with `errorMessage` on failure
-5. Always set `completedAt` timestamp on finish (success or failure)
+## Observability
+Agent run tracking is handled by external tools (LangFuse/Sentry), not a custom DB table.
 
 ## Agent Patterns
 - Use Vercel AI SDK `generateText` / `streamText` with tool calling

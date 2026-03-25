@@ -1,10 +1,10 @@
-export * from "./analytics";
 export * from "./auth";
 export * from "./developer-sales";
 export * from "./developers";
-export * from "./market-data";
+export * from "./page-views";
 export * from "./pipeline";
+export * from "./price-indices";
 export * from "./project-details";
 export * from "./projects";
-export * from "./research";
+
 export * from "./transactions";
