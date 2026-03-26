@@ -1,4 +1,14 @@
-import { and, count, desc, eq, inArray, type SQL, sql } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  or,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
@@ -214,10 +224,12 @@ interface ProjectStubInput {
 export async function findOrCreateProject(
   input: ProjectStubInput,
 ): Promise<{ id: string; slug: string; isNew: boolean }> {
+  const slug = slugify(input.name);
+
   const existing = await db
     .select({ id: projects.id, slug: projects.slug })
     .from(projects)
-    .where(eq(projects.name, input.name))
+    .where(or(ilike(projects.name, input.name), eq(projects.slug, slug)))
     .limit(1);
 
   if (existing.length > 0) {
@@ -247,7 +259,7 @@ export async function findOrCreateProject(
     .insert(projects)
     .values({
       name: input.name,
-      slug: slugify(input.name),
+      slug,
       districtNumber: input.district,
       region,
       marketSegment: input.marketSegment,

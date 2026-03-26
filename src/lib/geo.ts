@@ -71,7 +71,7 @@ export function svy21ToWgs84(
 ): { latitude: number; longitude: number } {
   const mOrigin = meridianDistance(ORIGIN_LAT);
   const mPrime = mOrigin + (northing - FALSE_NORTHING) / SCALE_FACTOR;
-  const fPhi = footpointLatitude(mPrime / A);
+  const fPhi = footpointLatitude(mPrime);
 
   const sinFPhi = Math.sin(fPhi);
   const sin2FPhi = sinFPhi * sinFPhi;

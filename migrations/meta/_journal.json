@@ -43,6 +43,20 @@
       "when": 1774426154407,
       "tag": "0005_mixed_avengers",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1774430697051,
+      "tag": "0006_daily_night_nurse",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1774453028685,
+      "tag": "0007_jazzy_sentinels",
+      "breakpoints": true
     }
   ]
 }

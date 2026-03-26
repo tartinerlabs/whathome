@@ -18,10 +18,7 @@ import { findOrCreateProject } from "@/lib/queries/projects";
 
 async function stepFetchUraToken(): Promise<string> {
   "use step";
-  console.log("[ingestion] Fetching URA token");
-  const token = await ura.fetchToken();
-  console.log("[ingestion] URA token acquired");
-  return token;
+  return ura.fetchToken();
 }
 
 interface BatchResult {
@@ -34,17 +31,12 @@ async function stepFetchTransactionBatch(
 ): Promise<BatchResult> {
   "use step";
 
-  console.log(`[ingestion] Fetching transaction batch ${batch}`);
   const rawTxns = await ura.getTransactions(batch);
-  if (!rawTxns.length) {
-    console.log(`[ingestion] Batch ${batch}: 0 transactions`);
-    return { inserted: 0, skipped: 0 };
-  }
+  if (!rawTxns.length) return { inserted: 0, skipped: 0 };
 
   let inserted = 0;
   let skipped = 0;
 
-  // Process in chunks of 500
   const CHUNK_SIZE = 500;
   for (let i = 0; i < rawTxns.length; i += CHUNK_SIZE) {
     const chunk = rawTxns.slice(i, i + CHUNK_SIZE);
@@ -59,9 +51,6 @@ async function stepFetchTransactionBatch(
     skipped += rows.length - (result.rowCount ?? 0);
   }
 
-  console.log(
-    `[ingestion] Batch ${batch}: ${inserted} inserted, ${skipped} skipped`,
-  );
   return { inserted, skipped };
 }
 
@@ -142,7 +131,6 @@ interface NewProject {
 async function stepDetectNewProjects(): Promise<NewProject[]> {
   "use step";
 
-  console.log("[ingestion] Detecting new projects from unmatched transactions");
   // Find distinct project names in transactions that have no matching projects record
   const unmatched = await db
     .selectDistinct({ projectName: transactions.projectName })
@@ -202,8 +190,48 @@ async function stepDetectNewProjects(): Promise<NewProject[]> {
       );
   }
 
-  console.log(`[ingestion] Detected ${newProjects.length} new projects`);
   return newProjects;
+}
+
+async function stepFixCoordinates(): Promise<number> {
+  "use step";
+
+  // Find projects with SVY21 data but bad latitude (near 0 instead of ~1.3)
+  const badCoords = await db
+    .select({
+      id: projects.id,
+      svyX: projects.svyX,
+      svyY: projects.svyY,
+    })
+    .from(projects)
+    .where(
+      and(
+        sql`${projects.svyX} IS NOT NULL`,
+        sql`${projects.svyY} IS NOT NULL`,
+        sql`CAST(${projects.latitude} AS float) < 0.5`,
+      ),
+    );
+
+  if (!badCoords.length) return 0;
+
+  let fixed = 0;
+  for (const row of badCoords) {
+    const svyX = Number.parseFloat(row.svyX!);
+    const svyY = Number.parseFloat(row.svyY!);
+    if (!svyX || !svyY) continue;
+
+    const coords = svy21ToWgs84(svyX, svyY);
+    await db
+      .update(projects)
+      .set({
+        latitude: String(coords.latitude),
+        longitude: String(coords.longitude),
+      })
+      .where(eq(projects.id, row.id));
+    fixed++;
+  }
+
+  return fixed;
 }
 
 async function stepEnrichPlanningArea(
@@ -213,7 +241,6 @@ async function stepEnrichPlanningArea(
 ): Promise<void> {
   "use step";
 
-  console.log(`[ingestion] Enriching planning area for ${slug}`);
   const planningArea = await getPlanningArea(lat, lng);
   if (planningArea) {
     await db
@@ -226,11 +253,11 @@ async function stepEnrichPlanningArea(
 async function stepFetchDeveloperSales(): Promise<number> {
   "use step";
 
-  console.log("[ingestion] Fetching developer sales");
-  // Current month in mmyy format
+  // Previous month in mmyy format (current month data often not published yet)
   const now = new Date();
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
-  const yy = String(now.getFullYear()).slice(2);
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const mm = String(prev.getMonth() + 1).padStart(2, "0");
+  const yy = String(prev.getFullYear()).slice(2);
   const refPeriod = `${mm}${yy}`;
 
   const sales = await ura.getDeveloperSales(refPeriod);
@@ -311,7 +338,6 @@ async function stepFetchDeveloperSales(): Promise<number> {
     }
   }
 
-  console.log(`[ingestion] Developer sales: ${upserted} upserted`);
   return upserted;
 }
 
@@ -321,7 +347,6 @@ async function stepFetchPipeline(): Promise<{
 }> {
   "use step";
 
-  console.log("[ingestion] Fetching pipeline data");
   const pipeline = await ura.getPipeline();
   if (!pipeline.length) return { upserted: 0, newProjects: 0 };
 
@@ -366,12 +391,14 @@ async function stepFetchPipeline(): Promise<{
 
   // Create project stubs for pipeline entries not yet in projects table
   const existingNames = await db.select({ name: projects.name }).from(projects);
-  const existingNameSet = new Set(existingNames.map((p) => p.name));
+  const existingNameSet = new Set(
+    existingNames.map((project) => project.name.toUpperCase()),
+  );
 
   const uniquePipelineNames = [...new Set(pipeline.map((p) => p.project))];
 
   for (const name of uniquePipelineNames) {
-    if (existingNameSet.has(name)) continue;
+    if (existingNameSet.has(name.toUpperCase())) continue;
 
     const pipelineEntry = pipeline.find((p) => p.project === name);
     if (!pipelineEntry) continue;
@@ -389,37 +416,36 @@ async function stepFetchPipeline(): Promise<{
     });
 
     // Update TOP year on the newly created project
-    if (pipelineEntry.expectedTOPYear) {
+    const topYear = pipelineEntry.expectedTOPYear;
+    if (topYear && /^\d{4}$/.test(topYear)) {
       await db
         .update(projects)
-        .set({ topDate: `${pipelineEntry.expectedTOPYear}-01-01` })
+        .set({ topDate: `${topYear}-01-01` })
         .where(eq(projects.name, name));
     }
 
     newProjectCount++;
   }
 
-  console.log(
-    `[ingestion] Pipeline: ${upserted} upserted, ${newProjectCount} new projects`,
-  );
   return { upserted, newProjects: newProjectCount };
 }
 
 async function stepFetchRentalContracts(): Promise<number> {
   "use step";
 
-  console.log("[ingestion] Fetching rental contracts");
+  // URA rental contracts use yyqq format (e.g. 26q1)
   const now = new Date();
-  const mm = String(now.getMonth() + 1).padStart(2, "0");
-  const yy = String(now.getFullYear()).slice(2);
-  const refPeriod = `${mm}${yy}`;
+  const prev = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const yy = String(prev.getFullYear()).slice(2);
+  const quarter = Math.ceil((prev.getMonth() + 1) / 3);
+  const refPeriod = `${yy}q${quarter}`;
 
   const contracts = await ura.getRentalContracts(refPeriod);
   if (!contracts.length) return 0;
 
   let inserted = 0;
 
-  const CHUNK_SIZE = 500;
+  const CHUNK_SIZE = 100;
   for (let i = 0; i < contracts.length; i += CHUNK_SIZE) {
     const chunk = contracts.slice(i, i + CHUNK_SIZE);
     const rows = chunk.map((contract) => {
@@ -443,7 +469,10 @@ async function stepFetchRentalContracts(): Promise<number> {
         rent: contract.rent ? Number.parseInt(contract.rent, 10) : null,
         areaSqft: contract.areaSqft || null,
         areaSqm: contract.areaSqm || null,
-        leaseDate: contract.leaseDate || null,
+        // leaseDate from URA is mmyy format → convert to yyyy-mm-01
+        leaseDate: contract.leaseDate
+          ? `20${contract.leaseDate.slice(2)}-${contract.leaseDate.slice(0, 2)}-01`
+          : null,
         sourceRecordId,
       };
     });
@@ -456,23 +485,32 @@ async function stepFetchRentalContracts(): Promise<number> {
     inserted += result.rowCount ?? 0;
   }
 
-  console.log(`[ingestion] Rental contracts: ${inserted} inserted`);
   return inserted;
 }
 
 async function stepFetchMedianRentals(): Promise<number> {
   "use step";
 
-  console.log("[ingestion] Fetching median rentals");
   const rentals = await ura.getMedianRentals();
   if (!rentals.length) return 0;
 
-  let upserted = 0;
-
-  const CHUNK_SIZE = 500;
-  for (let i = 0; i < rentals.length; i += CHUNK_SIZE) {
-    const chunk = rentals.slice(i, i + CHUNK_SIZE);
-    const rows = chunk.map((rental) => ({
+  // Deduplicate by (projectName, refPeriod) — PostgreSQL rejects
+  // ON CONFLICT DO UPDATE when the same row is affected twice in one INSERT
+  const deduped = new Map<
+    string,
+    {
+      projectName: string;
+      street: string | null;
+      district: number | null;
+      refPeriod: string;
+      median: string | null;
+      psf25: string | null;
+      psf75: string | null;
+    }
+  >();
+  for (const rental of rentals) {
+    const key = `${rental.project}::${rental.refPeriod}`;
+    deduped.set(key, {
       projectName: rental.project,
       street: rental.street,
       district: rental.district ? Number.parseInt(rental.district, 10) : null,
@@ -480,7 +518,15 @@ async function stepFetchMedianRentals(): Promise<number> {
       median: rental.median || null,
       psf25: rental.psf25 || null,
       psf75: rental.psf75 || null,
-    }));
+    });
+  }
+
+  const allRows = [...deduped.values()];
+  let upserted = 0;
+
+  const CHUNK_SIZE = 500;
+  for (let i = 0; i < allRows.length; i += CHUNK_SIZE) {
+    const rows = allRows.slice(i, i + CHUNK_SIZE);
 
     const result = await db
       .insert(medianRentals)
@@ -497,7 +543,6 @@ async function stepFetchMedianRentals(): Promise<number> {
     upserted += result.rowCount ?? 0;
   }
 
-  console.log(`[ingestion] Median rentals: ${upserted} upserted`);
   return upserted;
 }
 
@@ -543,6 +588,9 @@ export async function dataIngestionWorkflow() {
   // Step 3: Detect and create new projects from unmatched transactions
   const newProjects = await stepDetectNewProjects();
 
+  // Step 3b: Fix any bad SVY21→WGS84 coordinates from earlier runs
+  await stepFixCoordinates();
+
   // Step 4: Enrich new projects with planning area from OneMap
   for (const project of newProjects) {
     if (project.latitude && project.longitude) {
@@ -554,13 +602,13 @@ export async function dataIngestionWorkflow() {
     }
   }
 
-  // Step 5: Fetch developer sales for current month
+  // Step 5: Fetch developer sales for previous month
   const developerSalesCount = await stepFetchDeveloperSales();
 
   // Step 6: Fetch pipeline data
   const pipelineResult = await stepFetchPipeline();
 
-  // Step 7: Fetch rental contracts
+  // Step 7: Fetch rental contracts for previous quarter
   const rentalContractsCount = await stepFetchRentalContracts();
 
   // Step 8: Fetch median rentals

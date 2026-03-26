@@ -155,6 +155,45 @@ export interface UraMedianRental {
   psf75: string;
 }
 
+// --- Raw API response types (nested per-project wrappers) ---
+
+interface RawTransactionResult {
+  project: string;
+  street: string;
+  x: string;
+  y: string;
+  marketSegment: string;
+  transaction: Array<
+    Omit<UraTransaction, "project" | "street" | "x" | "y" | "marketSegment">
+  >;
+}
+
+interface RawDevSalesResult {
+  project: string;
+  street: string;
+  district: string;
+  developer: string;
+  marketSegment: string;
+  developerSales: Array<
+    Omit<
+      UraDeveloperSale,
+      "project" | "street" | "district" | "developer" | "marketSegment"
+    >
+  >;
+}
+
+interface RawRentalContractResult {
+  project: string;
+  street: string;
+  rental: Array<Omit<UraRentalContract, "project" | "street">>;
+}
+
+interface RawMedianRentalResult {
+  project: string;
+  street: string;
+  rentalMedian: Array<Omit<UraMedianRental, "project" | "street">>;
+}
+
 // --- Public API ---
 
 export type TransactionBatch = 1 | 2 | 3 | 4;
@@ -170,7 +209,17 @@ export async function getTransactions(
     service: "PMI_Resi_Transaction",
     batch: String(batch),
   });
-  return uraFetch<UraTransaction>(params);
+  const results = await uraFetch<RawTransactionResult>(params);
+  return results.flatMap((r) =>
+    (r.transaction ?? []).map((txn) => ({
+      ...txn,
+      project: r.project,
+      street: r.street,
+      x: r.x,
+      y: r.y,
+      marketSegment: r.marketSegment,
+    })),
+  );
 }
 
 export async function getDeveloperSales(
@@ -180,7 +229,19 @@ export async function getDeveloperSales(
     service: "PMI_Resi_Developer_Sales",
     refPeriod,
   });
-  return uraFetch<UraDeveloperSale>(params);
+  const results = await uraFetch<RawDevSalesResult>(params);
+  return results.flatMap((r) =>
+    (r.developerSales ?? []).map((sale) => ({
+      ...sale,
+      project: r.project,
+      street: r.street,
+      district: r.district,
+      developer: r.developer,
+      marketSegment: r.marketSegment,
+      x: "",
+      y: "",
+    })),
+  );
 }
 
 export async function getPipeline(): Promise<UraPipelineProject[]> {
@@ -197,12 +258,26 @@ export async function getRentalContracts(
     service: "PMI_Resi_Rental",
     refPeriod,
   });
-  return uraFetch<UraRentalContract>(params);
+  const results = await uraFetch<RawRentalContractResult>(params);
+  return results.flatMap((r) =>
+    (r.rental ?? []).map((contract) => ({
+      ...contract,
+      project: r.project,
+      street: r.street,
+    })),
+  );
 }
 
 export async function getMedianRentals(): Promise<UraMedianRental[]> {
   const params = new URLSearchParams({
     service: "PMI_Resi_Rental_Median",
   });
-  return uraFetch<UraMedianRental>(params);
+  const results = await uraFetch<RawMedianRentalResult>(params);
+  return results.flatMap((r) =>
+    (r.rentalMedian ?? []).map((rental) => ({
+      ...rental,
+      project: r.project,
+      street: r.street,
+    })),
+  );
 }
