@@ -1,5 +1,4 @@
 import { put } from "@vercel/blob";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { db } from "@/db";
 import { projectImages } from "@/db/schema";

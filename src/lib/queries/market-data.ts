@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { priceIndices } from "@/db/schema";

@@ -1,4 +1,4 @@
-import { count, eq, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { projects, transactions } from "@/db/schema";

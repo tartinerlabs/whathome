@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { developerSales, projects } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user || session.user.role !== "admin") {
     return new Response("Forbidden", { status: 403 });

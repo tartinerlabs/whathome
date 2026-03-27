@@ -1,14 +1,4 @@
-import {
-  and,
-  count,
-  desc,
-  eq,
-  ilike,
-  inArray,
-  or,
-  type SQL,
-  sql,
-} from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, type SQL, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
