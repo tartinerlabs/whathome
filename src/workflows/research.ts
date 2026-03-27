@@ -9,8 +9,10 @@ import {
   pipelineProjects,
   projects,
   projectUnits,
+  transactions,
 } from "@/db/schema";
 import { analysisModel, enrichModel } from "@/lib/ai/model";
+import { inferBedroomType } from "@/lib/bedroom/inference";
 // Run logging handled by the API route / backfill workflow
 import { revalidateProject } from "@/lib/cache";
 import { haversineDistance, walkMinutes } from "@/lib/geo";
@@ -587,6 +589,79 @@ async function stepSaveAnalysis(
   revalidateProject(slug);
 }
 
+async function stepReinferBedroomTypes(projectId: string): Promise<number> {
+  "use step";
+  console.log(`[stepReinferBedroomTypes] START projectId=${projectId}`);
+
+  // Load curated ranges for this project
+  const unitsData = await db
+    .select({
+      unitType: projectUnits.unitType,
+      sizeSqftMin: projectUnits.sizeSqftMin,
+      sizeSqftMax: projectUnits.sizeSqftMax,
+    })
+    .from(projectUnits)
+    .where(eq(projectUnits.projectId, projectId));
+
+  const curatedRanges = unitsData
+    .filter((unit) => unit.unitType && unit.sizeSqftMin && unit.sizeSqftMax)
+    .map((unit) => ({
+      unitType: unit.unitType!,
+      sizeSqftMin: unit.sizeSqftMin!,
+      sizeSqftMax: unit.sizeSqftMax!,
+    }));
+
+  // Load project launch date
+  const projectData = await db
+    .select({ launchDate: projects.launchDate })
+    .from(projects)
+    .where(eq(projects.id, projectId))
+    .limit(1);
+
+  const launchDateStr = projectData[0]?.launchDate;
+  const harmonisationCutoff = new Date("2023-06-01");
+  const isPostHarmonisation = launchDateStr
+    ? new Date(launchDateStr) >= harmonisationCutoff
+    : null;
+
+  // Get all transactions for this project
+  const txns = await db
+    .select()
+    .from(transactions)
+    .where(eq(transactions.projectId, projectId));
+
+  console.log(
+    `[stepReinferBedroomTypes] Processing ${txns.length} transactions`,
+  );
+
+  let updated = 0;
+  for (const txn of txns) {
+    if (!txn.areaSqft) {
+      continue;
+    }
+
+    const areaSqft = Number(txn.areaSqft);
+    const inferredBedroomType = inferBedroomType(
+      areaSqft,
+      isPostHarmonisation ?? false,
+      curatedRanges,
+    );
+
+    await db
+      .update(transactions)
+      .set({
+        inferredBedroomType,
+        isPostHarmonisation,
+      })
+      .where(eq(transactions.id, txn.id));
+
+    updated++;
+  }
+
+  console.log(`[stepReinferBedroomTypes] DONE updated=${updated}`);
+  return updated;
+}
+
 // --- Workflow orchestrator ---
 
 export async function projectResearchWorkflow(projectId: string) {
@@ -675,6 +750,9 @@ export async function projectResearchWorkflow(projectId: string) {
 
   // Step 8: Upsert unit mix
   const unitMixCount = await stepUpsertUnitMix(projectId, unitData.units);
+
+  // Step 8b: Re-infer bedroom types with updated curated ranges
+  await stepReinferBedroomTypes(projectId);
 
   // Step 9: Calculate nearby amenities
   let amenityCount = 0;

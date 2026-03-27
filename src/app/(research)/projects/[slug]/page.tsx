@@ -1,14 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectBySlug } from "@/lib/queries/projects";
-import { getPsfTrend } from "@/lib/queries/transactions";
+import { getTransactionPairsByProject } from "@/lib/queries/transaction-pairs";
+import { getPsfTrend, getPsfTrendByBedroom } from "@/lib/queries/transactions";
 import { AiSummary } from "./components/ai-summary";
+import { BedroomSummaryTable } from "./components/bedroom-summary-table";
 import { NearbyAmenities } from "./components/nearby-amenities";
 import { PricingSection } from "./components/pricing-section";
 import { ProjectGallery } from "./components/project-gallery";
 import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
 import { RentalComparison } from "./components/rental-comparison";
+import { TransactionChains } from "./components/transaction-chains";
 
 // TODO: Pre-render high-traffic projects (e.g. top 100 by transaction count)
 export async function generateStaticParams() {
@@ -136,6 +139,8 @@ export default async function ProjectDetailPage({
 
   const { project, units, amenities, images, developerSlug } = data;
   const psfData = await getPsfTrend(project.id);
+  const bedroomPsfData = await getPsfTrendByBedroom(project.id);
+  const pairsData = await getTransactionPairsByProject(project.id);
 
   return (
     <>
@@ -151,11 +156,17 @@ export default async function ProjectDetailPage({
 
       {units.length > 0 && <PricingSection units={units} />}
 
-      {psfData.length > 0 && <PsfChartSection data={psfData} />}
+      {psfData.length > 0 && (
+        <PsfChartSection data={psfData} bedroomData={bedroomPsfData} />
+      )}
+
+      <BedroomSummaryTable psfData={bedroomPsfData} />
 
       {amenities.length > 0 && <NearbyAmenities amenities={amenities} />}
 
       <RentalComparison projectId={project.id} projectName={project.name} />
+
+      <TransactionChains pairs={pairsData} />
 
       <ProjectGallery projectName={project.name} images={images} />
 

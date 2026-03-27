@@ -1,5 +1,5 @@
 import { start } from "workflow/api";
-import { backfillWorkflow } from "@/workflows/backfill";
+import { backfillWorkflow } from "@/workflows/backfill/project";
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as {

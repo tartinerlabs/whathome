@@ -5,9 +5,11 @@ import {
   medianRentals,
   pipelineProjects,
   projects,
+  projectUnits,
   rentalContracts,
   transactions,
 } from "@/db/schema";
+import { inferBedroomType, type UnitType } from "@/lib/bedroom/inference";
 import { svy21ToWgs84 } from "@/lib/geo";
 import { getPlanningArea } from "@/lib/providers/onemap";
 import type { TransactionBatch, UraTransaction } from "@/lib/providers/ura";
@@ -555,6 +557,7 @@ interface IngestionSummary {
   pipelineNewProjects: number;
   rentalContractsInserted: number;
   medianRentalsUpserted: number;
+  bedroomInferredCount: number;
   durationMs: number;
 }
 
@@ -562,6 +565,94 @@ async function stepLogRun(summary: IngestionSummary): Promise<void> {
   "use step";
 
   console.log("[ingestion] Run complete", summary);
+}
+
+async function stepInferBedroomTypes(): Promise<number> {
+  "use step";
+  console.log("[stepInferBedroomTypes] START");
+
+  // Load all project units for curated ranges
+  const unitsData = await db
+    .select({
+      projectId: projectUnits.projectId,
+      unitType: projectUnits.unitType,
+      sizeSqftMin: projectUnits.sizeSqftMin,
+      sizeSqftMax: projectUnits.sizeSqftMax,
+    })
+    .from(projectUnits);
+
+  // Build map: projectId -> curated ranges
+  const curatedRangesMap = new Map<
+    string,
+    Array<{ unitType: UnitType; sizeSqftMin: number; sizeSqftMax: number }>
+  >();
+  for (const unit of unitsData) {
+    if (!curatedRangesMap.has(unit.projectId)) {
+      curatedRangesMap.set(unit.projectId, []);
+    }
+    // Skip units without type or size data
+    if (!unit.unitType || !unit.sizeSqftMin || !unit.sizeSqftMax) {
+      continue;
+    }
+    curatedRangesMap.get(unit.projectId)?.push({
+      unitType: unit.unitType as UnitType,
+      sizeSqftMin: unit.sizeSqftMin,
+      sizeSqftMax: unit.sizeSqftMax,
+    });
+  }
+
+  // Load all project launch dates
+  const projectsData = await db
+    .select({ id: projects.id, launchDate: projects.launchDate })
+    .from(projects);
+
+  const launchDatesMap = new Map<string, string | null>();
+  for (const project of projectsData) {
+    launchDatesMap.set(project.id, project.launchDate);
+  }
+
+  // Find transactions without bedroom inference
+  const txns = await db
+    .select()
+    .from(transactions)
+    .where(isNull(transactions.inferredBedroomType));
+
+  console.log(`[stepInferBedroomTypes] Processing ${txns.length} transactions`);
+
+  const harmonisationCutoff = new Date("2023-06-01");
+  let updated = 0;
+
+  for (const txn of txns) {
+    if (!txn.areaSqft || !txn.projectId) {
+      continue;
+    }
+
+    const areaSqft = Number(txn.areaSqft);
+    const launchDateStr = launchDatesMap.get(txn.projectId);
+    const isPostHarmonisation = launchDateStr
+      ? new Date(launchDateStr) >= harmonisationCutoff
+      : null;
+
+    const curatedRanges = curatedRangesMap.get(txn.projectId);
+    const inferredBedroomType = inferBedroomType(
+      areaSqft,
+      isPostHarmonisation ?? false,
+      curatedRanges,
+    );
+
+    await db
+      .update(transactions)
+      .set({
+        inferredBedroomType,
+        isPostHarmonisation,
+      })
+      .where(eq(transactions.id, txn.id));
+
+    updated++;
+  }
+
+  console.log(`[stepInferBedroomTypes] DONE updated=${updated}`);
+  return updated;
 }
 
 // --- Workflow orchestrator (runs in sandbox, coordinates steps) ---
@@ -614,7 +705,10 @@ export async function dataIngestionWorkflow() {
   // Step 8: Fetch median rentals
   const medianRentalsCount = await stepFetchMedianRentals();
 
-  // Step 9: Log the run
+  // Step 9: Infer bedroom types for newly inserted transactions
+  const bedroomInferredCount = await stepInferBedroomTypes();
+
+  // Step 10: Log the run
   const durationMs = Date.now() - startTime;
   await stepLogRun({
     transactionsInserted: totalInserted,
@@ -625,6 +719,7 @@ export async function dataIngestionWorkflow() {
     pipelineNewProjects: pipelineResult.newProjects,
     rentalContractsInserted: rentalContractsCount,
     medianRentalsUpserted: medianRentalsCount,
+    bedroomInferredCount,
     durationMs,
   });
 
@@ -637,5 +732,6 @@ export async function dataIngestionWorkflow() {
     pipelineNewProjects: pipelineResult.newProjects,
     rentalContractsInserted: rentalContractsCount,
     medianRentalsUpserted: medianRentalsCount,
+    bedroomInferredCount,
   };
 }

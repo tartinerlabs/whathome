@@ -4,6 +4,7 @@ import { revalidateTag } from "next/cache";
 export function revalidateProject(slug: string) {
   revalidateTag(`project:${slug}`, "max");
   revalidateTag("projects", "max");
+  revalidateTag("bedroom-analytics", "max");
 }
 
 /** Invalidate all cached data (after bulk ingestion). */
@@ -12,4 +13,5 @@ export function revalidateAll() {
   revalidateTag("developers", "max");
   revalidateTag("districts", "max");
   revalidateTag("market-data", "max");
+  revalidateTag("bedroom-analytics", "max");
 }

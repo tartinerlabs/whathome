@@ -7,4 +7,5 @@ export * from "./price-indices";
 export * from "./project-details";
 export * from "./projects";
 export * from "./rentals";
+export * from "./transaction-pairs";
 export * from "./transactions";

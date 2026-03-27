@@ -2,6 +2,8 @@ import { toNumber } from "@/lib/format";
 import {
   getMedianRentalByProject,
   getRentalsByProject,
+  getRentalYieldByBedroom,
+  type RentalYieldRow,
 } from "@/lib/queries/rentals";
 
 interface RentalComparisonProps {
@@ -13,12 +15,13 @@ export async function RentalComparison({
   projectId,
   projectName,
 }: RentalComparisonProps) {
-  const [contracts, median] = await Promise.all([
+  const [contracts, median, yields] = await Promise.all([
     getRentalsByProject(projectId),
     getMedianRentalByProject(projectName),
+    getRentalYieldByBedroom(projectId),
   ]);
 
-  if (!contracts.length && !median) return null;
+  if (!contracts.length && !median && !yields.length) return null;
 
   return (
     <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
@@ -26,6 +29,22 @@ export async function RentalComparison({
         <h2 className="uppercase font-bold tracking-wide text-lg">
           Rental Data
         </h2>
+
+        {yields.length > 0 && (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+            {yields.map((y: RentalYieldRow) => (
+              <div key={y.bedroom} className="border-2 border-foreground p-4">
+                <p className="font-mono text-xs uppercase text-muted-foreground">
+                  {y.bedroom} Gross Yield
+                </p>
+                <p className="text-2xl font-bold">{y.grossYield.toFixed(2)}%</p>
+                <p className="text-xs text-muted-foreground">
+                  N={y.rentalSample} rentals
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {median && (
           <div className="grid grid-cols-3 gap-4">

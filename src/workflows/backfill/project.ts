@@ -2,7 +2,7 @@ import { desc, isNull } from "drizzle-orm";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 
-import { projectResearchWorkflow } from "./research";
+import { projectResearchWorkflow } from "../research";
 
 /**
  * Backfill workflow — finds unresearched projects and enriches them
