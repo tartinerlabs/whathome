@@ -12,6 +12,6 @@ export async function POST(request: Request) {
     "[workflows] Starting research workflow for project %s",
     body.projectId,
   );
-  const run = await start(() => projectResearchWorkflow(body.projectId!));
+  const run = await start(projectResearchWorkflow, [body.projectId!]);
   return Response.json({ runId: run.runId });
 }

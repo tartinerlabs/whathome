@@ -634,6 +634,12 @@ async function stepInferBedroomTypes(): Promise<number> {
       `[stepInferBedroomTypes] Processing batch at offset ${offset} (${txns.length} rows)`,
     );
 
+    const updates: Array<{
+      id: string;
+      inferredBedroomType: ReturnType<typeof inferBedroomType>;
+      isPostHarmonisation: boolean | null;
+    }> = [];
+
     for (const txn of txns) {
       if (!txn.areaSqft || !txn.projectId) continue;
 
@@ -644,19 +650,35 @@ async function stepInferBedroomTypes(): Promise<number> {
         : null;
 
       const curatedRanges = curatedRangesMap.get(txn.projectId);
-      const inferredBedroomType = inferBedroomType(
-        areaSqft,
-        isPostHarmonisation ?? false,
-        curatedRanges,
-      );
-
-      await db
-        .update(transactions)
-        .set({ inferredBedroomType, isPostHarmonisation })
-        .where(eq(transactions.id, txn.id));
-
-      updated++;
+      updates.push({
+        id: txn.id,
+        inferredBedroomType: inferBedroomType(
+          areaSqft,
+          isPostHarmonisation ?? false,
+          curatedRanges,
+        ),
+        isPostHarmonisation,
+      });
     }
+
+    // Batch update in a single transaction per chunk
+    const CHUNK = 200;
+    for (let i = 0; i < updates.length; i += CHUNK) {
+      const chunk = updates.slice(i, i + CHUNK);
+      await db.transaction(async (tx) => {
+        for (const u of chunk) {
+          await tx
+            .update(transactions)
+            .set({
+              inferredBedroomType: u.inferredBedroomType,
+              isPostHarmonisation: u.isPostHarmonisation,
+            })
+            .where(eq(transactions.id, u.id));
+        }
+      });
+    }
+
+    updated += updates.length;
 
     // Since we're updating rows that match the WHERE clause,
     // processed rows won't appear again — no need to increment offset
@@ -677,11 +699,13 @@ export async function dataIngestionWorkflow() {
   // Step 1: Get URA auth token
   await stepFetchUraToken();
 
-  // Step 2: Fetch all 4 transaction batches
-  const batch1 = await stepFetchTransactionBatch(1);
-  const batch2 = await stepFetchTransactionBatch(2);
-  const batch3 = await stepFetchTransactionBatch(3);
-  const batch4 = await stepFetchTransactionBatch(4);
+  // Step 2: Fetch all 4 transaction batches in parallel
+  const [batch1, batch2, batch3, batch4] = await Promise.all([
+    stepFetchTransactionBatch(1),
+    stepFetchTransactionBatch(2),
+    stepFetchTransactionBatch(3),
+    stepFetchTransactionBatch(4),
+  ]);
 
   const totalInserted =
     batch1.inserted + batch2.inserted + batch3.inserted + batch4.inserted;

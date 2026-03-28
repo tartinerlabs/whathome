@@ -16,6 +16,7 @@
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "auth:generate": "pnpm dlx auth@latest generate --output src/db/schema/auth.ts --yes",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
   "lint-staged": {

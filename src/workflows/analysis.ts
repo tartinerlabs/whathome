@@ -74,10 +74,7 @@ async function stepLoadContext(projectId: string): Promise<ProjectContext> {
   if (!project) throw new Error(`Project ${projectId} not found`);
 
   const { transactions: txnSchema } = await import("@/db/schema");
-  const [{ count }] = await db
-    .select({ count: txnSchema.id })
-    .from(txnSchema)
-    .where(eq(txnSchema.projectId, projectId));
+  const count = await db.$count(txnSchema, eq(txnSchema.projectId, projectId));
 
   return {
     id: project.id,
@@ -105,7 +102,7 @@ async function stepLoadContext(projectId: string): Promise<ProjectContext> {
       distanceMeters: a.distanceMeters,
       walkMinutes: a.walkMinutes,
     })),
-    transactionCount: count ? 1 : 0,
+    transactionCount: count,
   };
 }
 

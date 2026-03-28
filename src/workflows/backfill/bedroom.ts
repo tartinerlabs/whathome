@@ -118,10 +118,10 @@ async function getTransactionCount(): Promise<number> {
   "use step";
   console.log("[getTransactionCount] START");
 
-  const result = await db.select({ count: transactions.id }).from(transactions);
+  const count = await db.$count(transactions);
 
-  console.log(`[getTransactionCount] DONE count=${result.length}`);
-  return result.length;
+  console.log(`[getTransactionCount] DONE count=${count}`);
+  return count;
 }
 
 async function processBatch(
@@ -189,17 +189,24 @@ async function processBatch(
 
   console.log(`[processBatch] prepared ${updates.length} updates`);
 
-  // Apply updates in batches
+  // Batch update in a single transaction — one round-trip per chunk
   let updatedCount = 0;
-  for (const update of updates) {
-    await db
-      .update(transactions)
-      .set({
-        inferredBedroomType: update.inferredBedroomType,
-        isPostHarmonisation: update.isPostHarmonisation,
-      })
-      .where(eq(transactions.id, update.id));
-    updatedCount++;
+  const CHUNK = 200;
+
+  for (let i = 0; i < updates.length; i += CHUNK) {
+    const chunk = updates.slice(i, i + CHUNK);
+    await db.transaction(async (tx) => {
+      for (const update of chunk) {
+        await tx
+          .update(transactions)
+          .set({
+            inferredBedroomType: update.inferredBedroomType,
+            isPostHarmonisation: update.isPostHarmonisation,
+          })
+          .where(eq(transactions.id, update.id));
+      }
+    });
+    updatedCount += chunk.length;
   }
 
   console.log(`[processBatch] DONE updated=${updatedCount}`);

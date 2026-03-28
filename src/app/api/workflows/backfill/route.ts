@@ -11,6 +11,6 @@ export async function POST(request: Request) {
   console.log(
     `[workflows] Starting backfill workflow (batchSize: ${batchSize})`,
   );
-  const run = await start(() => backfillWorkflow(batchSize));
+  const run = await start(backfillWorkflow, [batchSize]);
   return Response.json({ runId: run.runId });
 }

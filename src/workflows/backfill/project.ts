@@ -1,4 +1,5 @@
 import { desc, isNull } from "drizzle-orm";
+import { start } from "workflow/api";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 
@@ -76,9 +77,10 @@ async function stepFindUnresearched(
 async function stepResearchProject(projectId: string): Promise<void> {
   "use step";
 
-  console.log(`[backfill] Running research workflow for ${projectId}`);
-  await projectResearchWorkflow(projectId);
-  console.log(`[backfill] Completed research for ${projectId}`);
+  console.log(`[backfill] Starting research workflow for ${projectId}`);
+  const run = await start(projectResearchWorkflow, [projectId]);
+  await run.returnValue;
+  console.log(`[backfill] Research completed for ${projectId}`);
 }
 
 async function stepLogBatchRun(
