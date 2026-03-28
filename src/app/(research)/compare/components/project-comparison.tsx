@@ -117,12 +117,6 @@ export function ProjectComparison({ projects }: ProjectComparisonProps) {
                     values: selectedProjects.map((p) => p.tenure),
                   },
                   {
-                    label: "Status",
-                    values: selectedProjects.map((p) =>
-                      p.status.replace("_", " "),
-                    ),
-                  },
-                  {
                     label: "Total Units",
                     values: selectedProjects.map((p) =>
                       p.totalUnits.toLocaleString(),

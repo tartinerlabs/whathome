@@ -83,9 +83,9 @@ export async function getDeveloperBySlug(slug: string) {
       totalUnits: p.totalUnits ?? 0,
       unitsSold: p.unitsSold ?? 0,
       launchDate: p.launchDate ?? "",
+
       topDate: p.topDate ?? "TBC",
-      completionDate: p.completionDate,
-      status: p.status ?? "upcoming",
+
       latitude: toNumber(p.latitude),
       longitude: toNumber(p.longitude),
       siteArea: toNumber(p.siteArea) || null,

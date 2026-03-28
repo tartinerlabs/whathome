@@ -35,14 +35,6 @@ export const tenureEnum = pgEnum("tenure", [
   "103_year",
 ]);
 
-export const projectStatusEnum = pgEnum("project_status", [
-  "upcoming",
-  "launched",
-  "selling",
-  "sold_out",
-  "completed",
-]);
-
 export const projects = pgTable(
   "projects",
   {
@@ -61,8 +53,6 @@ export const projects = pgTable(
     unitsSold: integer(),
     launchDate: date(),
     topDate: date(),
-    completionDate: date(),
-    status: projectStatusEnum().default("upcoming"),
     latitude: numeric(),
     longitude: numeric(),
     svyX: numeric(),

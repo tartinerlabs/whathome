@@ -5,13 +5,14 @@ import {
   ilike,
   inArray,
   isNull,
+  min,
   or,
   type SQL,
   sql,
 } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
-import { developers, projects } from "@/db/schema";
+import { developers, projects, transactions } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/districts";
 import { parseRawTenure, toNumber } from "@/lib/format";
 import { svy21ToWgs84 } from "@/lib/geo";
@@ -40,9 +41,9 @@ function mapProjectRow(
     totalUnits: row.totalUnits ?? 0,
     unitsSold: row.unitsSold ?? 0,
     launchDate: row.launchDate ?? "",
+
     topDate: row.topDate ?? "TBC",
-    completionDate: row.completionDate,
-    status: row.status ?? "upcoming",
+
     latitude: toNumber(row.latitude),
     longitude: toNumber(row.longitude),
     siteArea: toNumber(row.siteArea) || null,
@@ -57,7 +58,6 @@ export interface ProjectFilters {
   regions?: string[];
   district?: number | null;
   tenures?: string[];
-  statuses?: string[];
   page?: number;
   pageSize?: number;
 }
@@ -92,10 +92,6 @@ export async function getProjects(filters: ProjectFilters = {}) {
   if (filters.tenures?.length) {
     const dbTenures = filters.tenures.map((t) => t.replace(/-/g, "_"));
     conditions.push(inArray(projects.tenure, dbTenures as any[]));
-  }
-
-  if (filters.statuses?.length) {
-    conditions.push(inArray(projects.status, filters.statuses as any[]));
   }
 
   const whereClause = conditions.length
@@ -167,20 +163,39 @@ export async function getProjectBySlug(slug: string) {
   };
 }
 
+async function getLaunchesByEarliestContract(limit: number) {
+  const earliestContractDate = min(transactions.contractDate).as(
+    "earliest_contract_date",
+  );
+
+  const rows = await db
+    .select({
+      projects,
+      developers,
+      earliestContractDate,
+    })
+    .from(projects)
+    .leftJoin(developers, eq(projects.developerId, developers.id))
+    .leftJoin(
+      transactions,
+      and(
+        eq(transactions.projectId, projects.id),
+        eq(transactions.saleType, "new_sale"),
+      ),
+    )
+    .groupBy(projects.id, developers.id)
+    .orderBy(desc(earliestContractDate))
+    .limit(limit);
+
+  return rows.map((r) => mapProjectRow(r.projects, r.developers));
+}
+
 export async function getNewLaunches(limit = 50) {
   "use cache";
   cacheLife("max");
   cacheTag("projects");
 
-  const rows = await db
-    .select()
-    .from(projects)
-    .leftJoin(developers, eq(projects.developerId, developers.id))
-    .where(inArray(projects.status, ["upcoming", "launched", "selling"]))
-    .orderBy(desc(projects.launchDate))
-    .limit(limit);
-
-  return rows.map((r) => mapProjectRow(r.projects, r.developers));
+  return getLaunchesByEarliestContract(limit);
 }
 
 export async function getFeaturedLaunches(limit = 3) {
@@ -188,15 +203,7 @@ export async function getFeaturedLaunches(limit = 3) {
   cacheLife("max");
   cacheTag("projects");
 
-  const rows = await db
-    .select()
-    .from(projects)
-    .leftJoin(developers, eq(projects.developerId, developers.id))
-    .where(inArray(projects.status, ["launched", "selling"]))
-    .orderBy(desc(projects.launchDate))
-    .limit(limit);
-
-  return rows.map((r) => mapProjectRow(r.projects, r.developers));
+  return getLaunchesByEarliestContract(limit);
 }
 
 export async function getAllProjectSlugs() {

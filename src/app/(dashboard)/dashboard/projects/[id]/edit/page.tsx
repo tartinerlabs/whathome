@@ -41,9 +41,6 @@ async function updateProject(formData: FormData) {
     if (value) updates[field] = Number.parseInt(value, 10);
   }
 
-  const status = formData.get("status") as string;
-  if (status) updates.status = status;
-
   if (Object.keys(updates).length) {
     await db.update(projects).set(updates).where(eq(projects.id, projectId));
     revalidateProject(slug);
@@ -151,21 +148,6 @@ async function EditForm({ projectId }: { projectId: string }) {
                 type="number"
                 defaultValue={project.tenureYears ?? ""}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select
-                id="status"
-                name="status"
-                defaultValue={project.status ?? ""}
-                className="flex h-8 w-full rounded-none border border-border bg-background px-2.5 font-mono text-xs"
-              >
-                <option value="upcoming">Upcoming</option>
-                <option value="launched">Launched</option>
-                <option value="selling">Selling</option>
-                <option value="sold_out">Sold Out</option>
-                <option value="completed">Completed</option>
-              </select>
             </div>
           </div>
 

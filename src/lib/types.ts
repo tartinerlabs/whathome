@@ -16,12 +16,7 @@ export interface PsfDataPoint {
 
 export type Region = "CCR" | "RCR" | "OCR";
 export type Tenure = "freehold" | "99-year" | "999-year" | "103-year";
-export type ProjectStatus =
-  | "upcoming"
-  | "launched"
-  | "selling"
-  | "sold_out"
-  | "completed";
+
 export type SaleType = "new_sale" | "sub_sale" | "resale";
 export type PropertyType = "condo" | "apt" | "ec" | "strata_landed";
 export type AmenityType =
@@ -48,8 +43,7 @@ export interface Project {
   unitsSold: number;
   launchDate: string;
   topDate: string;
-  completionDate: string | null;
-  status: ProjectStatus;
+
   latitude: number;
   longitude: number;
   siteArea: number | null;

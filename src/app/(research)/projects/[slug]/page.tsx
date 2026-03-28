@@ -66,7 +66,7 @@ function getJsonLd(
     name: project.name,
     description: project.description,
     url: `https://whathome.sg/projects/${project.slug}`,
-    datePosted: project.launchDate,
+    datePosted: project.launchDate || undefined,
     address: {
       "@type": "PostalAddress",
       streetAddress: project.address,

@@ -100,8 +100,6 @@ export async function GET(request: Request) {
       ? `$${psfMin.toLocaleString()} – $${psfMax.toLocaleString()} psf`
       : null;
 
-  const statusLabel = project.status.replace("_", " ").toUpperCase();
-
   return new ImageResponse(
     <div
       style={{
@@ -180,21 +178,6 @@ export async function GET(request: Request) {
             }}
           >
             {project.region}
-          </div>
-
-          {/* Status badge */}
-          <div
-            style={{
-              display: "flex",
-              border: "2px solid #000",
-              padding: "6px 16px",
-              fontSize: 22,
-              fontWeight: 700,
-              fontFamily: "Space Grotesk",
-              backgroundColor: "#fff",
-            }}
-          >
-            {statusLabel}
           </div>
 
           {/* Tenure badge */}

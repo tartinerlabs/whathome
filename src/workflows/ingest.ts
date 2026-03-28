@@ -600,14 +600,21 @@ async function stepInferBedroomTypes(): Promise<number> {
     });
   }
 
-  // Load all project launch dates
-  const projectsData = await db
-    .select({ id: projects.id, launchDate: projects.launchDate })
-    .from(projects);
+  // Derive earliest new_sale contract date per project for GFA harmonisation check
+  const earliestSales = await db
+    .select({
+      projectId: transactions.projectId,
+      contractDate: sql<string>`min(${transactions.contractDate})`,
+    })
+    .from(transactions)
+    .where(eq(transactions.saleType, "new_sale"))
+    .groupBy(transactions.projectId);
 
-  const launchDatesMap = new Map<string, string | null>();
-  for (const project of projectsData) {
-    launchDatesMap.set(project.id, project.launchDate);
+  const contractDatesMap = new Map<string, string | null>();
+  for (const row of earliestSales) {
+    if (row.projectId) {
+      contractDatesMap.set(row.projectId, row.contractDate);
+    }
   }
 
   const harmonisationCutoff = new Date("2023-06-01");
@@ -644,9 +651,9 @@ async function stepInferBedroomTypes(): Promise<number> {
       if (!txn.areaSqft || !txn.projectId) continue;
 
       const areaSqft = Number(txn.areaSqft);
-      const launchDateStr = launchDatesMap.get(txn.projectId);
-      const isPostHarmonisation = launchDateStr
-        ? new Date(launchDateStr) >= harmonisationCutoff
+      const contractDateStr = contractDatesMap.get(txn.projectId);
+      const isPostHarmonisation = contractDateStr
+        ? new Date(contractDateStr) >= harmonisationCutoff
         : null;
 
       const curatedRanges = curatedRangesMap.get(txn.projectId);

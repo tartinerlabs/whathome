@@ -1,5 +1,5 @@
 import { generateText, Output } from "ai";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { and, desc, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import {
@@ -337,15 +337,7 @@ async function stepEnrichProject(
     address: string | null;
     totalUnits: number | null;
     unitsSold: number | null;
-    launchDate: string | null;
     topDate: string | null;
-    status:
-      | "upcoming"
-      | "launched"
-      | "selling"
-      | "sold_out"
-      | "completed"
-      | null;
   },
 ): Promise<void> {
   "use step";
@@ -362,9 +354,7 @@ async function stepEnrichProject(
   if (data.address) updates.address = data.address;
   if (data.totalUnits) updates.totalUnits = data.totalUnits;
   if (data.unitsSold) updates.unitsSold = data.unitsSold;
-  if (data.launchDate) updates.launchDate = data.launchDate;
   if (data.topDate) updates.topDate = data.topDate;
-  if (data.status) updates.status = data.status;
 
   if (Object.keys(updates).length) {
     await db.update(projects).set(updates).where(eq(projects.id, projectId));
@@ -611,17 +601,21 @@ async function stepReinferBedroomTypes(projectId: string): Promise<number> {
       sizeSqftMax: unit.sizeSqftMax!,
     }));
 
-  // Load project launch date
-  const projectData = await db
-    .select({ launchDate: projects.launchDate })
-    .from(projects)
-    .where(eq(projects.id, projectId))
-    .limit(1);
+  // Derive earliest new_sale contract date from transactions for GFA harmonisation check
+  const [earliestSale] = await db
+    .select({ contractDate: sql<string>`min(${transactions.contractDate})` })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.projectId, projectId),
+        eq(transactions.saleType, "new_sale"),
+      ),
+    );
 
-  const launchDateStr = projectData[0]?.launchDate;
+  const contractDateStr = earliestSale?.contractDate ?? null;
   const harmonisationCutoff = new Date("2023-06-01");
-  const isPostHarmonisation = launchDateStr
-    ? new Date(launchDateStr) >= harmonisationCutoff
+  const isPostHarmonisation = contractDateStr
+    ? new Date(contractDateStr) >= harmonisationCutoff
     : null;
 
   // Get all transactions for this project
@@ -708,32 +702,9 @@ export async function projectResearchWorkflow(projectId: string) {
 
   const unitsSold = devSales[0]?.soldToDate ?? null;
 
-  // Launch date = earliest new_sale contract date
-  const newSaleDates = txns
-    .filter((t) => t.saleType === "new_sale" && t.contractDate)
-    .map((t) => t.contractDate as string)
-    .sort();
-  const launchDate = newSaleDates[0] ?? null;
-
-  // TOP date from pipeline
+  // TOP date from pipeline (year-level only — don't fabricate month/day)
   const topYear = pipeline[0]?.expectedTopYear;
-  const topDate = topYear ? `${topYear}-01-01` : null;
-
-  // Status from sales data
-  let status:
-    | "upcoming"
-    | "launched"
-    | "selling"
-    | "sold_out"
-    | "completed"
-    | null = null;
-  if (totalUnits && unitsSold) {
-    if (unitsSold >= totalUnits) {
-      status = "sold_out";
-    } else if (unitsSold > 0) {
-      status = "selling";
-    }
-  }
+  const topDate = topYear && topYear !== "na" ? `${topYear}-01-01` : null;
 
   // Step 7: Enrich project record
   await stepEnrichProject(projectId, {
@@ -743,9 +714,7 @@ export async function projectResearchWorkflow(projectId: string) {
     address: geocodeResult.address ?? project.address,
     totalUnits,
     unitsSold,
-    launchDate,
     topDate,
-    status,
   });
 
   // Step 8: Upsert unit mix

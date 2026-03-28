@@ -13,14 +13,6 @@ const regionColours: Record<Project["region"], string> = {
   OCR: "bg-chart-5 text-white",
 };
 
-const statusLabels: Record<Project["status"], string> = {
-  upcoming: "Upcoming",
-  launched: "Launched",
-  selling: "Selling",
-  sold_out: "Sold Out",
-  completed: "Completed",
-};
-
 export function ProjectHero({ project, developerSlug }: ProjectHeroProps) {
   const soldPercentage = Math.round(
     (project.unitsSold / project.totalUnits) * 100,
@@ -53,17 +45,6 @@ export function ProjectHero({ project, developerSlug }: ProjectHeroProps) {
             )}
           >
             {project.region}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className={cn(
-              "rounded-none border-2 border-foreground font-bold uppercase text-[10px] tracking-wider",
-              project.status === "selling" && "bg-success/20 text-success",
-              project.status === "sold_out" &&
-                "bg-destructive/10 text-destructive",
-            )}
-          >
-            {statusLabels[project.status]}
           </Badge>
           <Badge
             variant="outline"

@@ -13,14 +13,6 @@ interface ProjectCardProps {
   project: Project;
 }
 
-const statusLabels: Record<Project["status"], string> = {
-  upcoming: "Upcoming",
-  launched: "Launched",
-  selling: "Selling",
-  sold_out: "Sold Out",
-  completed: "Completed",
-};
-
 const regionColours: Record<Project["region"], string> = {
   CCR: "bg-chart-1 text-white",
   RCR: "bg-chart-3 text-white",
@@ -107,17 +99,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
             className="rounded-none border-2 border-foreground font-bold uppercase text-[10px] tracking-wider"
           >
             {project.tenure}
-          </Badge>
-          <Badge
-            variant="secondary"
-            className={cn(
-              "rounded-none border-2 border-foreground font-bold uppercase text-[10px] tracking-wider",
-              project.status === "selling" && "bg-success/20 text-success",
-              project.status === "sold_out" &&
-                "bg-destructive/10 text-destructive",
-            )}
-          >
-            {statusLabels[project.status]}
           </Badge>
         </CardFooter>
       </Card>

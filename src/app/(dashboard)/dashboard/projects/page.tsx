@@ -53,7 +53,6 @@ async function ProjectsTable() {
       slug: projects.slug,
       districtNumber: projects.districtNumber,
       region: projects.region,
-      status: projects.status,
       totalUnits: projects.totalUnits,
       lastResearchedAt: projects.lastResearchedAt,
     })
@@ -68,7 +67,6 @@ async function ProjectsTable() {
           <TableHead>Name</TableHead>
           <TableHead>District</TableHead>
           <TableHead>Region</TableHead>
-          <TableHead>Status</TableHead>
           <TableHead>Units</TableHead>
           <TableHead>Researched</TableHead>
           <TableHead>Actions</TableHead>
@@ -90,11 +88,6 @@ async function ProjectsTable() {
             </TableCell>
             <TableCell className="font-mono text-xs">
               {project.region ?? "\u2014"}
-            </TableCell>
-            <TableCell>
-              <Badge variant="outline" className="font-mono text-[10px]">
-                {project.status ?? "unknown"}
-              </Badge>
             </TableCell>
             <TableCell className="font-mono text-xs">
               {project.totalUnits ?? "\u2014"}

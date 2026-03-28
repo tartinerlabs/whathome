@@ -78,6 +78,13 @@
       "when": 1774683300825,
       "tag": "0010_chief_archangel",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1774710340720,
+      "tag": "0011_tidy_blue_blade",
+      "breakpoints": true
     }
   ]
 }

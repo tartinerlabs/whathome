@@ -10,7 +10,6 @@ export const filterParsers = {
   regions: parseAsArrayOf(parseAsString).withDefault([]),
   district: parseAsInteger,
   tenures: parseAsArrayOf(parseAsString).withDefault([]),
-  statuses: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 export const loadSearchParams = createLoader(filterParsers);

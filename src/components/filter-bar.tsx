@@ -27,22 +27,7 @@ import { cn } from "@/lib/utils";
 
 const regions = ["CCR", "RCR", "OCR"] as const;
 const tenures = ["freehold", "99-year", "999-year"] as const;
-const statuses = [
-  "upcoming",
-  "launched",
-  "selling",
-  "sold_out",
-  "completed",
-] as const;
 const districtNumbers = Array.from({ length: 28 }, (_, i) => i + 1);
-
-const statusLabels: Record<string, string> = {
-  upcoming: "Upcoming",
-  launched: "Launched",
-  selling: "Selling",
-  sold_out: "Sold Out",
-  completed: "Completed",
-};
 
 const tenureLabels: Record<string, string> = {
   freehold: "Freehold",
@@ -135,12 +120,11 @@ export function FilterBar() {
       regions: parseAsArrayOf(parseAsString).withDefault([]),
       district: parseAsInteger,
       tenures: parseAsArrayOf(parseAsString).withDefault([]),
-      statuses: parseAsArrayOf(parseAsString).withDefault([]),
     },
     { shallow: false },
   );
 
-  function toggleItem(key: "regions" | "tenures" | "statuses", item: string) {
+  function toggleItem(key: "regions" | "tenures", item: string) {
     const current = filters[key] ?? [];
     const next = current.includes(item)
       ? current.filter((i) => i !== item)
@@ -213,26 +197,6 @@ export function FilterBar() {
             )}
           >
             {tenureLabels[tenure]}
-          </button>
-        ))}
-
-        <span className={cn(label, "text-muted-foreground ml-2 mr-1")}>
-          Status
-        </span>
-        {statuses.map((status) => (
-          <button
-            key={status}
-            type="button"
-            onClick={() => toggleItem("statuses", status)}
-            className={cn(
-              chip,
-              "cursor-pointer transition-colors",
-              (filters.statuses ?? []).includes(status)
-                ? "bg-foreground text-background"
-                : "bg-transparent text-foreground",
-            )}
-          >
-            {statusLabels[status]}
           </button>
         ))}
       </div>
