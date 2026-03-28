@@ -2,6 +2,7 @@ import { and, eq, isNull, sql } from "drizzle-orm";
 import { db } from "@/db";
 import {
   developerSales,
+  developers,
   medianRentals,
   pipelineProjects,
   projects,
@@ -10,6 +11,10 @@ import {
   transactions,
 } from "@/db/schema";
 import { inferBedroomType, type UnitType } from "@/lib/bedroom/inference";
+import {
+  developerSlug,
+  normaliseDeveloperName,
+} from "@/lib/developers/normalize";
 import { svy21ToWgs84 } from "@/lib/geo";
 import { getPlanningArea } from "@/lib/providers/onemap";
 import type { TransactionBatch, UraTransaction } from "@/lib/providers/ura";
@@ -254,6 +259,26 @@ async function stepEnrichPlanningArea(
   }
 }
 
+async function findOrCreateDeveloper(rawSpvName: string): Promise<string> {
+  const brandName = normaliseDeveloperName(rawSpvName);
+  const slug = developerSlug(brandName);
+
+  const [existing] = await db
+    .select({ id: developers.id })
+    .from(developers)
+    .where(eq(developers.slug, slug))
+    .limit(1);
+
+  if (existing) return existing.id;
+
+  const [inserted] = await db
+    .insert(developers)
+    .values({ name: brandName, slug })
+    .returning({ id: developers.id });
+
+  return inserted.id;
+}
+
 async function stepFetchDeveloperSales(): Promise<number> {
   "use step";
 
@@ -330,15 +355,20 @@ async function stepFetchDeveloperSales(): Promise<number> {
       .limit(1);
 
     if (project && (sale.soldToDate || sale.unitsAvail)) {
-      await db
-        .update(projects)
-        .set({
-          unitsSold: sale.soldToDate,
-          totalUnits: sale.unitsAvail
-            ? (sale.soldToDate ?? 0) + sale.unitsAvail
-            : undefined,
-        })
-        .where(eq(projects.id, project.id));
+      const updates: Record<string, unknown> = {
+        unitsSold: sale.soldToDate,
+        totalUnits: sale.unitsAvail
+          ? (sale.soldToDate ?? 0) + sale.unitsAvail
+          : undefined,
+      };
+
+      // Link developer if not already set
+      if (sale.developer) {
+        const developerId = await findOrCreateDeveloper(sale.developer);
+        if (developerId) updates.developerId = developerId;
+      }
+
+      await db.update(projects).set(updates).where(eq(projects.id, project.id));
     }
   }
 
@@ -419,12 +449,25 @@ async function stepFetchPipeline(): Promise<{
       svyY: null,
     });
 
-    // Update TOP year on the newly created project
+    // Update TOP year and link developer on the newly created project
     const topYear = pipelineEntry.expectedTOPYear;
+    const pipelineUpdates: Record<string, unknown> = {};
+
     if (topYear && /^\d{4}$/.test(topYear)) {
+      pipelineUpdates.topDate = `${topYear}-01-01`;
+    }
+
+    if (pipelineEntry.developerName) {
+      const developerId = await findOrCreateDeveloper(
+        pipelineEntry.developerName,
+      );
+      pipelineUpdates.developerId = developerId;
+    }
+
+    if (Object.keys(pipelineUpdates).length) {
       await db
         .update(projects)
-        .set({ topDate: `${topYear}-01-01` })
+        .set(pipelineUpdates)
         .where(eq(projects.name, name));
     }
 

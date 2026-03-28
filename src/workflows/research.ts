@@ -15,10 +15,13 @@ import { analysisModel, enrichModel } from "@/lib/ai/model";
 import { inferBedroomType } from "@/lib/bedroom/inference";
 // Run logging handled by the API route / backfill workflow
 import { revalidateProject } from "@/lib/cache";
+import {
+  developerSlug,
+  normaliseDeveloperName,
+} from "@/lib/developers/normalize";
 import { haversineDistance, walkMinutes } from "@/lib/geo";
 import { getAllAmenities } from "@/lib/providers/data-gov";
 import { reverseGeocode } from "@/lib/providers/onemap";
-import { slugify } from "@/lib/slug";
 
 // --- Zod schemas for structured AI output ---
 
@@ -304,13 +307,15 @@ Group transactions into unit types. For each type, provide:
   return classifyResult.output ?? { units: [] };
 }
 
-async function stepFindOrCreateDeveloper(
-  developerName: string,
-): Promise<string> {
+async function stepFindOrCreateDeveloper(rawSpvName: string): Promise<string> {
   "use step";
 
-  console.log(`[research] Finding/creating developer: ${developerName}`);
-  const slug = slugify(developerName);
+  const brandName = normaliseDeveloperName(rawSpvName);
+  const slug = developerSlug(brandName);
+
+  console.log(
+    `[research] Finding/creating developer: ${rawSpvName} → ${brandName}`,
+  );
 
   const [existing] = await db
     .select({ id: developers.id })
@@ -322,7 +327,7 @@ async function stepFindOrCreateDeveloper(
 
   const [inserted] = await db
     .insert(developers)
-    .values({ name: developerName, slug })
+    .values({ name: brandName, slug })
     .returning({ id: developers.id });
 
   return inserted.id;
