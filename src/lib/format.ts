@@ -23,6 +23,24 @@ export function parseTenure(display: string): string {
   return display.replace(/-/g, "_");
 }
 
+/** Parse raw URA tenure string (e.g. "99 yrs lease commencing from 2018") → DB enum. */
+const RAW_TENURE_MAP: Record<
+  string,
+  "freehold" | "99_year" | "999_year" | "103_year"
+> = {
+  freehold: "freehold",
+  "99": "99_year",
+  "999": "999_year",
+  "103": "103_year",
+};
+
+export function parseRawTenure(
+  raw: string | null | undefined,
+): "freehold" | "99_year" | "999_year" | "103_year" | null {
+  if (!raw) return null;
+  return RAW_TENURE_MAP[raw.split(" ")[0].toLowerCase()] ?? null;
+}
+
 /** Format price with dollar sign and commas: `$1,234,567`. */
 export function formatPrice(value: number | null | undefined): string {
   if (value == null || value === 0) return "N/A";

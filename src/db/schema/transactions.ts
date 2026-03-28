@@ -54,6 +54,7 @@ export const transactions = pgTable(
     noOfUnits: integer(),
     district: integer(),
     tenure: text(),
+    marketSegment: text(),
     svyX: numeric(),
     svyY: numeric(),
     sourceDataset: text(),

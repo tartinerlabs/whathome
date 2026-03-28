@@ -116,6 +116,7 @@ function transformTransaction(txn: UraTransaction) {
     noOfUnits: txn.noOfUnits ? Number.parseInt(txn.noOfUnits, 10) : null,
     district: txn.district ? Number.parseInt(txn.district, 10) : null,
     tenure: txn.tenure ?? null,
+    marketSegment: txn.marketSegment ?? null,
     svyX: txn.x || null,
     svyY: txn.y || null,
     sourceDataset: "ura_transactions",
@@ -162,6 +163,7 @@ async function stepDetectNewProjects(): Promise<NewProject[]> {
       marketSegment: null,
       svyX,
       svyY,
+      tenureString: sample.tenure,
     });
 
     if (result.isNew) {
@@ -567,6 +569,7 @@ async function stepLogRun(summary: IngestionSummary): Promise<void> {
   console.log("[ingestion] Run complete", summary);
 }
 
+// TODO: Optimise — still updates one row at a time; batch UPDATE with CASE or temp table
 async function stepInferBedroomTypes(): Promise<number> {
   "use step";
   console.log("[stepInferBedroomTypes] START");
@@ -581,7 +584,6 @@ async function stepInferBedroomTypes(): Promise<number> {
     })
     .from(projectUnits);
 
-  // Build map: projectId -> curated ranges
   const curatedRangesMap = new Map<
     string,
     Array<{ unitType: UnitType; sizeSqftMin: number; sizeSqftMax: number }>
@@ -590,10 +592,7 @@ async function stepInferBedroomTypes(): Promise<number> {
     if (!curatedRangesMap.has(unit.projectId)) {
       curatedRangesMap.set(unit.projectId, []);
     }
-    // Skip units without type or size data
-    if (!unit.unitType || !unit.sizeSqftMin || !unit.sizeSqftMax) {
-      continue;
-    }
+    if (!unit.unitType || !unit.sizeSqftMin || !unit.sizeSqftMax) continue;
     curatedRangesMap.get(unit.projectId)?.push({
       unitType: unit.unitType as UnitType,
       sizeSqftMin: unit.sizeSqftMin,
@@ -611,44 +610,57 @@ async function stepInferBedroomTypes(): Promise<number> {
     launchDatesMap.set(project.id, project.launchDate);
   }
 
-  // Find transactions without bedroom inference
-  const txns = await db
-    .select()
-    .from(transactions)
-    .where(isNull(transactions.inferredBedroomType));
-
-  console.log(`[stepInferBedroomTypes] Processing ${txns.length} transactions`);
-
   const harmonisationCutoff = new Date("2023-06-01");
   let updated = 0;
+  const offset = 0;
+  const BATCH_SIZE = 2000;
 
-  for (const txn of txns) {
-    if (!txn.areaSqft || !txn.projectId) {
-      continue;
-    }
+  // Process in batches to avoid loading all transactions into memory
+  while (true) {
+    const txns = await db
+      .select({
+        id: transactions.id,
+        projectId: transactions.projectId,
+        areaSqft: transactions.areaSqft,
+      })
+      .from(transactions)
+      .where(isNull(transactions.inferredBedroomType))
+      .limit(BATCH_SIZE)
+      .offset(offset);
 
-    const areaSqft = Number(txn.areaSqft);
-    const launchDateStr = launchDatesMap.get(txn.projectId);
-    const isPostHarmonisation = launchDateStr
-      ? new Date(launchDateStr) >= harmonisationCutoff
-      : null;
+    if (!txns.length) break;
 
-    const curatedRanges = curatedRangesMap.get(txn.projectId);
-    const inferredBedroomType = inferBedroomType(
-      areaSqft,
-      isPostHarmonisation ?? false,
-      curatedRanges,
+    console.log(
+      `[stepInferBedroomTypes] Processing batch at offset ${offset} (${txns.length} rows)`,
     );
 
-    await db
-      .update(transactions)
-      .set({
-        inferredBedroomType,
-        isPostHarmonisation,
-      })
-      .where(eq(transactions.id, txn.id));
+    for (const txn of txns) {
+      if (!txn.areaSqft || !txn.projectId) continue;
 
-    updated++;
+      const areaSqft = Number(txn.areaSqft);
+      const launchDateStr = launchDatesMap.get(txn.projectId);
+      const isPostHarmonisation = launchDateStr
+        ? new Date(launchDateStr) >= harmonisationCutoff
+        : null;
+
+      const curatedRanges = curatedRangesMap.get(txn.projectId);
+      const inferredBedroomType = inferBedroomType(
+        areaSqft,
+        isPostHarmonisation ?? false,
+        curatedRanges,
+      );
+
+      await db
+        .update(transactions)
+        .set({ inferredBedroomType, isPostHarmonisation })
+        .where(eq(transactions.id, txn.id));
+
+      updated++;
+    }
+
+    // Since we're updating rows that match the WHERE clause,
+    // processed rows won't appear again — no need to increment offset
+    if (txns.length < BATCH_SIZE) break;
   }
 
   console.log(`[stepInferBedroomTypes] DONE updated=${updated}`);

@@ -1,9 +1,19 @@
-import { and, desc, eq, ilike, inArray, or, type SQL, sql } from "drizzle-orm";
+import {
+  and,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNull,
+  or,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/db";
 import { developers, projects } from "@/db/schema";
 import { DISTRICT_NAMES } from "@/lib/districts";
-import { toNumber } from "@/lib/format";
+import { parseRawTenure, toNumber } from "@/lib/format";
 import { svy21ToWgs84 } from "@/lib/geo";
 import { toTsQuery } from "@/lib/search";
 import { slugify } from "@/lib/slug";
@@ -205,6 +215,7 @@ interface ProjectStubInput {
   marketSegment: string | null;
   svyX: number | null;
   svyY: number | null;
+  tenureString?: string | null;
 }
 
 /**
@@ -223,7 +234,24 @@ export async function findOrCreateProject(
     .limit(1);
 
   if (existing.length > 0) {
-    return { id: existing[0].id, slug: existing[0].slug, isNew: false };
+    const { id, slug: existingSlug } = existing[0];
+    const region = DISTRICT_NAMES[input.district]?.region ?? null;
+    const tenure = parseRawTenure(input.tenureString);
+
+    await db
+      .update(projects)
+      .set({
+        ...(region && { region }),
+        ...(tenure && { tenure }),
+      })
+      .where(
+        and(
+          eq(projects.id, id),
+          or(isNull(projects.region), isNull(projects.tenure)),
+        ),
+      );
+
+    return { id, slug: existingSlug, isNew: false };
   }
 
   // Convert SVY21 → WGS84 if coordinates available
@@ -235,15 +263,8 @@ export async function findOrCreateProject(
     longitude = String(coords.longitude);
   }
 
-  // Map URA marketSegment to region enum
-  const regionMap: Record<string, "CCR" | "RCR" | "OCR"> = {
-    CCR: "CCR",
-    RCR: "RCR",
-    OCR: "OCR",
-  };
-  const region = input.marketSegment
-    ? (regionMap[input.marketSegment] ?? null)
-    : null;
+  const region = DISTRICT_NAMES[input.district]?.region ?? null;
+  const tenure = parseRawTenure(input.tenureString);
 
   const [inserted] = await db
     .insert(projects)
@@ -252,6 +273,7 @@ export async function findOrCreateProject(
       slug,
       districtNumber: input.district,
       region,
+      tenure,
       marketSegment: input.marketSegment,
       svyX: input.svyX ? String(input.svyX) : null,
       svyY: input.svyY ? String(input.svyY) : null,
