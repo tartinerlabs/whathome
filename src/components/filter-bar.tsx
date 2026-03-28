@@ -1,18 +1,28 @@
 "use client";
 
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
   parseAsArrayOf,
   parseAsInteger,
   parseAsString,
   useQueryStates,
 } from "nuqs";
+import { useState } from "react";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { DISTRICT_NAMES } from "@/lib/districts";
 import { cn } from "@/lib/utils";
 
 const regions = ["CCR", "RCR", "OCR"] as const;
@@ -43,6 +53,80 @@ const tenureLabels: Record<string, string> = {
 const chip =
   "border-2 border-foreground rounded-none font-bold uppercase text-[10px] tracking-wider px-2 py-0.5";
 const label = "uppercase font-bold tracking-wide text-[10px]";
+
+function DistrictCombobox({
+  value,
+  onChange,
+}: {
+  value: number | null;
+  onChange: (value: number | null) => void;
+}) {
+  const [open, setOpen] = useState(false);
+
+  const displayLabel = value
+    ? `D${value} — ${DISTRICT_NAMES[value].name}`
+    : "All districts";
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          role="combobox"
+          aria-expanded={open}
+          className="flex h-8 w-[340px] items-center justify-between border-2 border-foreground bg-transparent px-3 text-xs hover:shadow-[2px_2px_0px_0px_var(--foreground)] transition-shadow cursor-pointer"
+        >
+          <span className={value ? "" : "text-muted-foreground"}>
+            {displayLabel}
+          </span>
+          <HugeiconsIcon
+            icon={ArrowDown01Icon}
+            className="ml-2 size-3 shrink-0 opacity-50"
+            strokeWidth={2}
+          />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-[340px] rounded-none border-2 border-foreground p-0"
+        align="start"
+      >
+        <Command>
+          <CommandInput placeholder="Search district..." />
+          <CommandList>
+            <CommandEmpty>No district found.</CommandEmpty>
+            <CommandGroup>
+              <CommandItem
+                onSelect={() => {
+                  onChange(null);
+                  setOpen(false);
+                }}
+                data-checked={!value}
+              >
+                All districts
+              </CommandItem>
+              {districtNumbers.map((district) => (
+                <CommandItem
+                  key={district}
+                  value={`D${district} ${DISTRICT_NAMES[district].name}`}
+                  onSelect={() => {
+                    onChange(district === value ? null : district);
+                    setOpen(false);
+                  }}
+                  data-checked={value === district}
+                >
+                  <span className="font-bold">D{district}</span>
+                  <span className="text-muted-foreground">
+                    {DISTRICT_NAMES[district].name}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 export function FilterBar() {
   const [filters, setFilters] = useQueryStates(
@@ -107,23 +191,10 @@ export function FilterBar() {
         <span className={cn(label, "text-muted-foreground ml-2 mr-1")}>
           District
         </span>
-        <Select
-          value={filters.district?.toString() ?? ""}
-          onValueChange={(v) =>
-            setFilters({ district: v ? Number.parseInt(v, 10) : null })
-          }
-        >
-          <SelectTrigger className="border-2 border-foreground rounded-none w-[100px] h-8 text-xs">
-            <SelectValue placeholder="All" />
-          </SelectTrigger>
-          <SelectContent>
-            {districtNumbers.map((d) => (
-              <SelectItem key={d} value={String(d)}>
-                D{d}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <DistrictCombobox
+          value={filters.district}
+          onChange={(value) => setFilters({ district: value })}
+        />
       </div>
 
       <div className="flex flex-wrap gap-2 items-center">
