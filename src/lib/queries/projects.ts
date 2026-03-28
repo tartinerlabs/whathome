@@ -167,7 +167,7 @@ export async function getProjectBySlug(slug: string) {
   };
 }
 
-export async function getNewLaunches() {
+export async function getNewLaunches(limit = 50) {
   "use cache";
   cacheLife("max");
   cacheTag("projects");
@@ -177,7 +177,8 @@ export async function getNewLaunches() {
     .from(projects)
     .leftJoin(developers, eq(projects.developerId, developers.id))
     .where(inArray(projects.status, ["upcoming", "launched", "selling"]))
-    .orderBy(desc(projects.launchDate));
+    .orderBy(desc(projects.launchDate))
+    .limit(limit);
 
   return rows.map((r) => mapProjectRow(r.projects, r.developers));
 }
