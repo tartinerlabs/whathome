@@ -20,6 +20,7 @@
 | Hosting | Vercel (ISR for SEO-critical pages) |
 | Blob Storage | Vercel Blob (floor plans, site plans, renders) |
 | Icons | Hugeicons (free set) |
+| Local Dev | portless (named HTTPS URLs for local dev) |
 | Tooling | Biome 2, Husky, commitlint, gitleaks |
 
 ## Design Direction
@@ -35,11 +36,12 @@ Neobrutalist style (full vs soft TBD — compare at `/preview`). Monochrome/neut
 - **Path alias**: `@/*` → `./src/*`
 - **ISR**: `generateStaticParams` + `revalidate`; after agent runs, `revalidateTag()` for affected projects
 - **SEO**: Every public page has `generateMetadata`, JSON-LD where applicable, dynamic OG images
+- **Local dev URL**: `https://whathome.localhost:1355` via portless — do not use `localhost:3000`. Use the `/portless` skill when portless setup or troubleshooting is needed
 
 ## Commands
 
 ```bash
-pnpm dev          # Start dev server
+pnpm dev          # Start dev server → https://whathome.localhost:1355
 pnpm build        # Production build
 pnpm start        # Start production server
 pnpm check        # Biome lint + format check
