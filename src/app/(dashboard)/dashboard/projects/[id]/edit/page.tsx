@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -11,7 +12,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { auth } from "@/lib/auth";
-import { revalidateProject } from "@/lib/cache";
 
 async function updateProject(formData: FormData) {
   "use server";
@@ -43,7 +43,7 @@ async function updateProject(formData: FormData) {
 
   if (Object.keys(updates).length) {
     await db.update(projects).set(updates).where(eq(projects.id, projectId));
-    revalidateProject(slug);
+    revalidateTag(`project:${slug}`, "max");
   }
 
   redirect("/dashboard/projects");

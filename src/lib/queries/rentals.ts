@@ -72,7 +72,7 @@ export async function getRentalYieldByBedroom(
 ): Promise<RentalYieldRow[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("bedroom-analytics", "rentals");
+  cacheTag("bedrooms:analytics", "rentals");
 
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
@@ -151,9 +151,9 @@ export async function getRentalYieldByBedroom(
 export async function getMarketRentalYieldByBedroom(
   _region?: string,
 ): Promise<MarketRentalYieldRow[]> {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
-  cacheTag("bedroom-analytics", "rentals");
+  cacheTag("bedrooms:analytics", "rentals");
 
   const twoYearsAgo = new Date();
   twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);

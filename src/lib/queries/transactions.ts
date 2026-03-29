@@ -10,7 +10,7 @@ export async function getTransactionsByProject(
 ): Promise<Transaction[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("projects");
+  cacheTag("transactions");
 
   const rows = await db
     .select()
@@ -38,7 +38,7 @@ export async function getTransactionsByProject(
 export async function getPsfTrend(projectId: string): Promise<PsfDataPoint[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("projects");
+  cacheTag("transactions");
 
   const rows = await db
     .select({
@@ -72,7 +72,7 @@ export async function getPsfTrendByBedroom(
 ): Promise<BedroomPsfDataPoint[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("bedroom-analytics");
+  cacheTag("bedrooms:analytics");
 
   const rows = await db
     .select({

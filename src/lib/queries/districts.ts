@@ -7,7 +7,7 @@ import { toNumber } from "@/lib/format";
 import type { DistrictInfo, Project } from "@/lib/types";
 
 export async function getDistrictStats(): Promise<DistrictInfo[]> {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
   cacheTag("districts");
   const projectCounts = await db

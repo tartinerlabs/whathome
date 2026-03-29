@@ -1,9 +1,9 @@
 import { generateText } from "ai";
 import { eq } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { analysisModel } from "@/lib/ai/model";
-import { revalidateProject } from "@/lib/cache";
 
 /**
  * Standalone analysis workflow — regenerates description + aiSummary
@@ -176,5 +176,5 @@ async function stepSave(
     })
     .where(eq(projects.id, projectId));
 
-  revalidateProject(slug);
+  revalidateTag(`project:${slug}`, "max");
 }

@@ -1,5 +1,7 @@
 import { generateText, Output } from "ai";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
+// Run logging handled by the API route / backfill workflow
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { db } from "@/db";
 import {
@@ -13,8 +15,6 @@ import {
 } from "@/db/schema";
 import { analysisModel, enrichModel } from "@/lib/ai/model";
 import { inferBedroomType } from "@/lib/bedroom/inference";
-// Run logging handled by the API route / backfill workflow
-import { revalidateProject } from "@/lib/cache";
 import {
   developerSlug,
   normaliseDeveloperName,
@@ -581,7 +581,7 @@ async function stepSaveAnalysis(
     })
     .where(eq(projects.id, projectId));
 
-  revalidateProject(slug);
+  revalidateTag(`project:${slug}`, "max");
 }
 
 async function stepReinferBedroomTypes(projectId: string): Promise<number> {

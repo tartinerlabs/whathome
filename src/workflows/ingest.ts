@@ -1,4 +1,5 @@
 import { and, eq, isNull, sql } from "drizzle-orm";
+import { revalidateTag } from "next/cache";
 import { db } from "@/db";
 import {
   developerSales,
@@ -793,6 +794,21 @@ export async function dataIngestionWorkflow() {
 
   // Step 9: Infer bedroom types for newly inserted transactions
   const bedroomInferredCount = await stepInferBedroomTypes();
+
+  // Cache invalidation — targeted by what changed
+  revalidateTag("transactions", "max");
+  revalidateTag("bedrooms:analytics", "max");
+
+  if (newProjects.length > 0 || pipelineResult.newProjects > 0) {
+    revalidateTag("projects", "max");
+    revalidateTag("districts", "max");
+    revalidateTag("search", "max");
+    revalidateTag("developers", "max");
+  }
+
+  if (rentalContractsCount > 0 || medianRentalsCount > 0) {
+    revalidateTag("rentals", "max");
+  }
 
   // Step 10: Log the run
   const durationMs = Date.now() - startTime;

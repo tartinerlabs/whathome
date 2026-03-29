@@ -125,7 +125,7 @@ export async function getProjects(filters: ProjectFilters = {}) {
 export async function getProjectBySlug(slug: string) {
   "use cache";
   cacheLife("max");
-  cacheTag("projects", `project:${slug}`);
+  cacheTag(`project:${slug}`);
 
   const result = await db.query.projects.findFirst({
     where: (p, { eq }) => eq(p.slug, slug),

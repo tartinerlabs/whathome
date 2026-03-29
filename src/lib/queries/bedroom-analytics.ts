@@ -27,9 +27,9 @@ export interface DecadeBedroomCagr {
  * Returns a pivoted shape: { month, '1BR': psf|null, '2BR': psf|null, ... }
  */
 export async function getMarketPsfByBedroom(): Promise<MarketPsfByBedroom[]> {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
-  cacheTag("bedroom-analytics");
+  cacheTag("bedrooms:analytics");
 
   const fiveYearsAgo = new Date();
   fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
@@ -85,9 +85,9 @@ export async function getMarketPsfByBedroom(): Promise<MarketPsfByBedroom[]> {
  * Used for the heatmap table on the analytics dashboard.
  */
 export async function getDecadeBedroomCagr(): Promise<DecadeBedroomCagr[]> {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
-  cacheTag("bedroom-analytics");
+  cacheTag("bedrooms:analytics");
 
   const rows = await db
     .select({

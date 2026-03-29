@@ -6,9 +6,9 @@ import { toNumber } from "@/lib/format";
 import type { PriceIndex } from "@/lib/types";
 
 export async function getMarketSnapshot() {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
-  cacheTag("market-data");
+  cacheTag("market:prices");
 
   const rows = await db
     .select()
@@ -73,9 +73,9 @@ export async function getMarketSnapshot() {
 }
 
 export async function getPriceIndices(): Promise<PriceIndex[]> {
-  "use cache";
+  "use cache: remote";
   cacheLife("max");
-  cacheTag("market-data");
+  cacheTag("market:prices");
 
   const rows = await db
     .select()

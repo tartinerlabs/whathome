@@ -66,9 +66,9 @@ src/app/
 
 ### Query Layer
 
-All data access lives in `src/lib/queries/` — one file per domain (projects, transactions, developers, districts, market-data, rentals, bedroom-analytics, admin, search). These functions use `"use cache"` with `cacheLife("max")` and `cacheTag()` for ISR. Cache invalidation helpers are in `src/lib/cache.ts` (`revalidateProject`, `revalidateAll`).
+All data access lives in `src/lib/queries/` — one file per domain (projects, transactions, developers, districts, market-data, rentals, bedroom-analytics, admin, search). These functions use `"use cache"` with `cacheLife("max")` and `cacheTag()` for ISR. Expensive aggregations use `"use cache: remote"` to survive redeploys. Cache invalidation uses `revalidateTag` from `next/cache` directly at each call site (no wrapper functions).
 
-Cache tags follow the pattern `collection:entity` (e.g. `project:${slug}`, `projects`, `developers`, `districts`, `market-data`, `bedroom-analytics`).
+Cache tags follow Redis key-style colon-separated naming (e.g. `project:${slug}`, `projects`, `developers`, `districts`, `market:prices`, `bedrooms:analytics`, `transactions`, `search`, `rentals`).
 
 ### Domain Types
 
@@ -105,7 +105,7 @@ Better Auth with email + Google social login. Server-side: `src/lib/auth.ts`. Cl
 - **Conventional commits** enforced via commitlint — scopes are disallowed (`scope-empty: always`). Format: `feat: description`, not `feat(scope): description`
 - **Pre-commit hooks**: gitleaks (secret scanning) + lint-staged (Biome check)
 - **Path alias**: `@/*` → `./src/*`
-- **ISR**: query functions use `"use cache"` + `cacheTag()`; after agent runs, call `revalidateProject(slug)` or `revalidateAll()`
+- **ISR**: query functions use `"use cache"` + `cacheTag()`; after agent runs, call `revalidateTag(\`project:${slug}\`, "max")` directly
 - **SEO**: every public page has `generateMetadata`, JSON-LD where applicable, dynamic OG images via `/api/og`
 - **Local dev URL**: `https://whathome.localhost:1355` via portless — do not use `localhost:3000`
 - **Next.js 16 async APIs**: `await cookies()`, `await headers()`, `await params`, `await searchParams`

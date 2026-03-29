@@ -14,7 +14,7 @@ interface SearchResult {
 export async function searchAll(query: string): Promise<SearchResult[]> {
   "use cache";
   cacheLife("max");
-  cacheTag("projects", "developers");
+  cacheTag("search");
 
   const tsQuery = toTsQuery(query);
 

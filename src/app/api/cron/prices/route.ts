@@ -65,7 +65,7 @@ export async function GET(request: Request) {
     upserted += result?.rowCount ?? 0;
   }
 
-  revalidateTag("market-data", "max");
+  revalidateTag("market:prices", "max");
 
   return Response.json({ status: "ok", upserted, total: values.length });
 }
