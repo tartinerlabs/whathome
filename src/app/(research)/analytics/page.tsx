@@ -8,7 +8,6 @@ import { getPriceIndices } from "@/lib/queries/market-data";
 const PriceIndexChart = dynamic(
   () => import("./components/price-index-chart").then((m) => m.PriceIndexChart),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
   },
 );
@@ -16,7 +15,6 @@ const PriceIndexChart = dynamic(
 const VolumeChart = dynamic(
   () => import("./components/volume-chart").then((m) => m.VolumeChart),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
   },
 );
@@ -24,7 +22,6 @@ const VolumeChart = dynamic(
 const RegionPsfChart = dynamic(
   () => import("./components/region-psf-chart").then((m) => m.RegionPsfChart),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
   },
 );

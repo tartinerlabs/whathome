@@ -12,7 +12,6 @@ import { HarmonisationCaveat } from "./components/harmonisation-caveat";
 const BedroomPsfChart = dynamic(
   () => import("./components/bedroom-psf-chart").then((m) => m.BedroomPsfChart),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
   },
 );
@@ -20,7 +19,6 @@ const BedroomPsfChart = dynamic(
 const CagrHeatmap = dynamic(
   () => import("./components/cagr-heatmap").then((m) => m.CagrHeatmap),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-64 w-full" />,
   },
 );
@@ -31,7 +29,6 @@ const YieldByRegionChart = dynamic(
       (m) => m.YieldByRegionChart,
     ),
   {
-    ssr: false,
     loading: () => <Skeleton className="h-[350px] w-full" />,
   },
 );
