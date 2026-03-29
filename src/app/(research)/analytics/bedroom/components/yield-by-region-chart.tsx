@@ -76,6 +76,16 @@ function pivotData(
 }
 
 export function YieldByRegionChart({ data }: YieldByRegionChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="border-2 border-foreground rounded-none p-8 h-[350px] flex items-center justify-center">
+        <p className="font-mono text-sm text-muted-foreground">
+          No rental yield data available yet.
+        </p>
+      </div>
+    );
+  }
+
   const chartData = pivotData(data);
 
   return (

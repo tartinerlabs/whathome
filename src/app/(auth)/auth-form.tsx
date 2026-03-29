@@ -68,7 +68,9 @@ export function AuthForm({ defaultMode = "login" }: AuthFormProps) {
       </p>
 
       {error && (
-        <p className="mt-4 text-sm font-medium text-destructive">{error}</p>
+        <p role="alert" className="mt-4 text-sm font-medium text-destructive">
+          {error}
+        </p>
       )}
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-6">

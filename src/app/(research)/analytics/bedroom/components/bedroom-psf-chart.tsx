@@ -62,6 +62,16 @@ function ChartTooltip({
 }
 
 export function BedroomPsfChart({ data }: BedroomPsfChartProps) {
+  if (data.length === 0) {
+    return (
+      <div className="border-2 border-foreground rounded-none p-8 h-[350px] flex items-center justify-center">
+        <p className="font-mono text-sm text-muted-foreground">
+          No bedroom PSF data available yet.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="border-2 border-foreground rounded-none p-4 h-[350px]">
       <ResponsiveContainer width="100%" height="100%">

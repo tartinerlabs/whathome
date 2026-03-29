@@ -34,14 +34,19 @@ export function SearchAutocomplete({
     }
 
     const controller = new AbortController();
-    fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
-      signal: controller.signal,
-    })
-      .then((res) => res.json())
-      .then((data: SearchResult[]) => setResults(data))
-      .catch(() => {});
+    const timeout = setTimeout(() => {
+      fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
+        signal: controller.signal,
+      })
+        .then((res) => res.json())
+        .then((data: SearchResult[]) => setResults(data))
+        .catch(() => {});
+    }, 300);
 
-    return () => controller.abort();
+    return () => {
+      clearTimeout(timeout);
+      controller.abort();
+    };
   }, [query]);
 
   useEffect(() => {

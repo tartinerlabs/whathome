@@ -20,6 +20,20 @@ interface CagrHeatmapProps {
 }
 
 export function CagrHeatmap({ data }: CagrHeatmapProps) {
+  if (data.length === 0) {
+    return (
+      <div className="border-2 border-foreground p-8 text-center">
+        <p className="font-mono text-sm text-muted-foreground">
+          Insufficient matched transaction data for CAGR analysis.
+        </p>
+        <p className="mt-2 text-xs text-muted-foreground">
+          CAGR requires matched buy-sell pairs which are not yet available for
+          enough transactions.
+        </p>
+      </div>
+    );
+  }
+
   const byKey = new Map<string, DecadeBedroomCagr>();
   for (const row of data) {
     byKey.set(`${row.decade}::${row.bedroom}::${row.region}`, row);
