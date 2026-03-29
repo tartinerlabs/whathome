@@ -13,6 +13,20 @@ export const metadata: Metadata = {
     "Browse all Singapore new condo launches. Filter by region, district, tenure, and status to find your next property research target.",
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  name: "Singapore New Condo Launches",
+  description:
+    "Browse all Singapore new condo launches. Filter by region, district, tenure, and status.",
+  url: "https://whathome.sg/projects",
+  isPartOf: {
+    "@type": "WebSite",
+    name: "WhatHome",
+    url: "https://whathome.sg",
+  },
+};
+
 async function ProjectResults({
   searchParams,
 }: {
@@ -35,30 +49,39 @@ export default function ProjectsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   return (
-    <PageTransition
-      enter={{
-        default: "none",
-        "transition-to-list": "animate-slide-from-left",
-        "transition-to-detail": "animate-slide-from-right",
-      }}
-      exit={{
-        default: "none",
-        "transition-to-list": "animate-slide-to-right",
-        "transition-to-detail": "animate-slide-to-left",
-      }}
-    >
-      <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
-        <div className="mx-auto max-w-7xl space-y-8">
-          <Suspense>
-            <FilterBar />
-          </Suspense>
-          <Suspense
-            fallback={<SectionHeader title="All Projects" meta="LOADING..." />}
-          >
-            <ProjectResults searchParams={searchParams} />
-          </Suspense>
-        </div>
-      </section>
-    </PageTransition>
+    <>
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from trusted static data
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PageTransition
+        enter={{
+          default: "none",
+          "transition-to-list": "animate-slide-from-left",
+          "transition-to-detail": "animate-slide-from-right",
+        }}
+        exit={{
+          default: "none",
+          "transition-to-list": "animate-slide-to-right",
+          "transition-to-detail": "animate-slide-to-left",
+        }}
+      >
+        <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
+          <div className="mx-auto max-w-7xl space-y-8">
+            <Suspense>
+              <FilterBar />
+            </Suspense>
+            <Suspense
+              fallback={
+                <SectionHeader title="All Projects" meta="LOADING..." />
+              }
+            >
+              <ProjectResults searchParams={searchParams} />
+            </Suspense>
+          </div>
+        </section>
+      </PageTransition>
+    </>
   );
 }

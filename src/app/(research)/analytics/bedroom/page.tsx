@@ -1,14 +1,40 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { SectionHeader } from "@/components/section-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   getDecadeBedroomCagr,
   getMarketPsfByBedroom,
 } from "@/lib/queries/bedroom-analytics";
 import { getMarketRentalYieldByBedroom } from "@/lib/queries/rentals";
-import { BedroomPsfChart } from "./components/bedroom-psf-chart";
-import { CagrHeatmap } from "./components/cagr-heatmap";
 import { HarmonisationCaveat } from "./components/harmonisation-caveat";
-import { YieldByRegionChart } from "./components/yield-by-region-chart";
+
+const BedroomPsfChart = dynamic(
+  () => import("./components/bedroom-psf-chart").then((m) => m.BedroomPsfChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  },
+);
+
+const CagrHeatmap = dynamic(
+  () => import("./components/cagr-heatmap").then((m) => m.CagrHeatmap),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-64 w-full" />,
+  },
+);
+
+const YieldByRegionChart = dynamic(
+  () =>
+    import("./components/yield-by-region-chart").then(
+      (m) => m.YieldByRegionChart,
+    ),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  },
+);
 
 export const metadata: Metadata = {
   title: "Bedroom Performance Analytics",

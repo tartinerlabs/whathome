@@ -1,10 +1,33 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { SectionHeader } from "@/components/section-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getPriceIndices } from "@/lib/queries/market-data";
-import { PriceIndexChart } from "./components/price-index-chart";
-import { RegionPsfChart } from "./components/region-psf-chart";
-import { VolumeChart } from "./components/volume-chart";
+
+const PriceIndexChart = dynamic(
+  () => import("./components/price-index-chart").then((m) => m.PriceIndexChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  },
+);
+
+const VolumeChart = dynamic(
+  () => import("./components/volume-chart").then((m) => m.VolumeChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  },
+);
+
+const RegionPsfChart = dynamic(
+  () => import("./components/region-psf-chart").then((m) => m.RegionPsfChart),
+  {
+    ssr: false,
+    loading: () => <Skeleton className="h-[350px] w-full" />,
+  },
+);
 
 export const metadata: Metadata = {
   title: "Market Analytics",

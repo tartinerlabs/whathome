@@ -27,9 +27,17 @@ export async function generateMetadata({
 
   const { district } = data;
 
+  const title = `District ${district.number} — ${district.name}`;
+  const description = `D${district.number} ${district.name} (${district.region}) — ${district.projectCount} projects, average $${district.avgPsf.toLocaleString()} psf.`;
+
   return {
-    title: `District ${district.number} — ${district.name}`,
-    description: `D${district.number} ${district.name} (${district.region}) — ${district.projectCount} projects, average $${district.avgPsf.toLocaleString()} psf.`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [`/api/og?type=district&slug=${number}`],
+    },
   };
 }
 

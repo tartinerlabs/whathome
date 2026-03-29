@@ -20,9 +20,16 @@ export async function generateMetadata({
 
   const { developer } = data;
 
+  const description = `${developer.name} — ${developer.projectCount} projects, ${developer.totalUnits.toLocaleString()} total units. View their full Singapore property portfolio.`;
+
   return {
     title: developer.name,
-    description: `${developer.name} — ${developer.projectCount} projects, ${developer.totalUnits.toLocaleString()} total units. View their full Singapore property portfolio.`,
+    description,
+    openGraph: {
+      title: developer.name,
+      description,
+      images: [`/api/og?type=developer&slug=${slug}`],
+    },
   };
 }
 

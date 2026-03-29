@@ -21,6 +21,12 @@ const regionColours: Record<Project["region"], string> = {
   OCR: "bg-chart-5 text-white",
 };
 
+const regionLabels: Record<Project["region"], string> = {
+  CCR: "Core Central Region",
+  RCR: "Rest of Central Region",
+  OCR: "Outside Central Region",
+};
+
 export function ProjectCard({ project }: ProjectCardProps) {
   const soldPercentage = Math.round(
     (project.unitsSold / project.totalUnits) * 100,
@@ -49,6 +55,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
               </CardTitle>
             </SharedTransition>
             <Badge
+              aria-label={regionLabels[project.region]}
               className={cn(
                 "rounded-none border-2 border-foreground font-bold uppercase text-[10px] tracking-wider",
                 regionColours[project.region],

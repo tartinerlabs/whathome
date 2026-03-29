@@ -1,10 +1,14 @@
 import { ImageResponse } from "next/og";
+import { getDeveloperBySlug } from "@/lib/queries/developers";
+import { getDistrictByNumber } from "@/lib/queries/districts";
 import { getProjectBySlug } from "@/lib/queries/projects";
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const slug = searchParams.get("slug");
+const CACHE_HEADERS = {
+  "Cache-Control":
+    "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
+};
 
+async function loadFont() {
   const fontData = await fetch(
     "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap",
   ).then((res) => res.text());
@@ -15,82 +19,125 @@ export async function GET(request: Request) {
     ? await fetch(fontUrl).then((res) => res.arrayBuffer())
     : null;
 
-  const data = slug ? await getProjectBySlug(slug) : null;
-  const project = data?.project ?? null;
+  return font
+    ? {
+        fonts: [
+          {
+            name: "Space Grotesk",
+            data: font,
+            weight: 700 as const,
+            style: "normal" as const,
+          },
+        ],
+      }
+    : {};
+}
 
-  if (!project) {
-    // Fallback: generic WhatHome branded image
-    return new ImageResponse(
+function BrandedFallback({ subtitle }: { subtitle: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#FAFAFA",
+        padding: 60,
+      }}
+    >
       <div
         style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          width: "100%",
-          height: "100%",
-          backgroundColor: "#FAFAFA",
-          padding: 60,
+          border: "3px solid #000",
+          padding: "40px 60px",
+          backgroundColor: "#fff",
+          boxShadow: "6px 6px 0px #000",
         }}
       >
         <div
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            border: "3px solid #000",
-            padding: "40px 60px",
-            backgroundColor: "#fff",
-            boxShadow: "6px 6px 0px #000",
+            fontSize: 64,
+            fontWeight: 700,
+            color: "#000",
+            fontFamily: "Space Grotesk",
           }}
         >
-          <div
-            style={{
-              fontSize: 64,
-              fontWeight: 700,
-              color: "#000",
-              fontFamily: "Space Grotesk",
-            }}
-          >
-            WhatHome
-          </div>
-          <div
-            style={{
-              fontSize: 28,
-              color: "#555",
-              marginTop: 12,
-              fontFamily: "Space Grotesk",
-            }}
-          >
-            Singapore New Condo Launch Research
-          </div>
+          WhatHome
         </div>
-      </div>,
-      {
-        width: 1200,
-        height: 630,
-        headers: {
-          "Cache-Control":
-            "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
-        },
-        ...(font
-          ? {
-              fonts: [
-                {
-                  name: "Space Grotesk",
-                  data: font,
-                  weight: 700 as const,
-                  style: "normal" as const,
-                },
-              ],
-            }
-          : {}),
-      },
+        <div
+          style={{
+            fontSize: 28,
+            color: "#555",
+            marginTop: 12,
+            fontFamily: "Space Grotesk",
+          }}
+        >
+          {subtitle}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BrandingBar() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        marginTop: 16,
+        fontSize: 24,
+        fontWeight: 700,
+        fontFamily: "Space Grotesk",
+        color: "#000",
+      }}
+    >
+      WhatHome
+    </div>
+  );
+}
+
+function Badge({ label, bg = "#E5E5E5" }: { label: string; bg?: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        border: "2px solid #000",
+        padding: "6px 16px",
+        fontSize: 22,
+        fontWeight: 700,
+        fontFamily: "Space Grotesk",
+        backgroundColor: bg,
+      }}
+    >
+      {label}
+    </div>
+  );
+}
+
+const REGION_COLOURS: Record<string, string> = {
+  CCR: "#FDE68A",
+  RCR: "#BBF7D0",
+  OCR: "#BFDBFE",
+};
+
+async function renderProject(slug: string, fontConfig: object) {
+  const data = await getProjectBySlug(slug);
+  const project = data?.project ?? null;
+
+  if (!project) {
+    return new ImageResponse(
+      <BrandedFallback subtitle="Singapore New Condo Launch Research" />,
+      { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
     );
   }
 
-  // Get PSF range from unit mix
   const units = data?.units ?? [];
   const psfValues = units.map((u) => u.pricePsf).filter(Boolean);
   const psfMin = psfValues.length ? Math.min(...psfValues) : null;
@@ -111,7 +158,6 @@ export async function GET(request: Request) {
         padding: 48,
       }}
     >
-      {/* Main card */}
       <div
         style={{
           display: "flex",
@@ -123,7 +169,6 @@ export async function GET(request: Request) {
           padding: 48,
         }}
       >
-        {/* Project name */}
         <div
           style={{
             fontSize: 56,
@@ -136,7 +181,6 @@ export async function GET(request: Request) {
           {project.name}
         </div>
 
-        {/* Badges row */}
         <div
           style={{
             display: "flex",
@@ -145,58 +189,14 @@ export async function GET(request: Request) {
             marginTop: 24,
           }}
         >
-          {/* District badge */}
-          <div
-            style={{
-              display: "flex",
-              border: "2px solid #000",
-              padding: "6px 16px",
-              fontSize: 22,
-              fontWeight: 700,
-              fontFamily: "Space Grotesk",
-              backgroundColor: "#E5E5E5",
-            }}
-          >
-            D{project.districtNumber}
-          </div>
-
-          {/* Region badge */}
-          <div
-            style={{
-              display: "flex",
-              border: "2px solid #000",
-              padding: "6px 16px",
-              fontSize: 22,
-              fontWeight: 700,
-              fontFamily: "Space Grotesk",
-              backgroundColor:
-                project.region === "CCR"
-                  ? "#FDE68A"
-                  : project.region === "RCR"
-                    ? "#BBF7D0"
-                    : "#BFDBFE",
-            }}
-          >
-            {project.region}
-          </div>
-
-          {/* Tenure badge */}
-          <div
-            style={{
-              display: "flex",
-              border: "2px solid #000",
-              padding: "6px 16px",
-              fontSize: 22,
-              fontWeight: 700,
-              fontFamily: "Space Grotesk",
-              backgroundColor: "#fff",
-            }}
-          >
-            {project.tenure}
-          </div>
+          <Badge label={`D${project.districtNumber}`} />
+          <Badge
+            label={project.region ?? ""}
+            bg={REGION_COLOURS[project.region ?? ""] ?? "#E5E5E5"}
+          />
+          <Badge label={project.tenure ?? ""} />
         </div>
 
-        {/* PSF range */}
         {psfRange && (
           <div
             style={{
@@ -212,7 +212,6 @@ export async function GET(request: Request) {
           </div>
         )}
 
-        {/* Units + TOP */}
         <div
           style={{
             display: "flex",
@@ -230,41 +229,220 @@ export async function GET(request: Request) {
         </div>
       </div>
 
-      {/* Branding bar */}
+      <BrandingBar />
+    </div>,
+    { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
+  );
+}
+
+async function renderDeveloper(slug: string, fontConfig: object) {
+  const data = await getDeveloperBySlug(slug);
+
+  if (!data) {
+    return new ImageResponse(
+      <BrandedFallback subtitle="Developer Directory" />,
+      { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
+    );
+  }
+
+  const { developer } = data;
+
+  return new ImageResponse(
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#FAFAFA",
+        padding: 48,
+      }}
+    >
       <div
         style={{
           display: "flex",
-          justifyContent: "flex-end",
-          alignItems: "center",
-          marginTop: 16,
-          fontSize: 24,
-          fontWeight: 700,
-          fontFamily: "Space Grotesk",
-          color: "#000",
+          flexDirection: "column",
+          flex: 1,
+          border: "3px solid #000",
+          backgroundColor: "#fff",
+          boxShadow: "8px 8px 0px #000",
+          padding: 48,
+          justifyContent: "center",
         }}
       >
-        WhatHome
+        <div
+          style={{
+            fontSize: 20,
+            fontWeight: 700,
+            color: "#555",
+            fontFamily: "Space Grotesk",
+            textTransform: "uppercase",
+            letterSpacing: 3,
+          }}
+        >
+          Developer
+        </div>
+        <div
+          style={{
+            fontSize: 56,
+            fontWeight: 700,
+            color: "#000",
+            fontFamily: "Space Grotesk",
+            lineHeight: 1.1,
+            marginTop: 12,
+          }}
+        >
+          {developer.name}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 32,
+            marginTop: 32,
+            fontSize: 24,
+            color: "#555",
+            fontFamily: "Space Grotesk",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            {developer.projectCount} projects
+          </div>
+          <div style={{ display: "flex" }}>
+            {developer.totalUnits.toLocaleString()} units
+          </div>
+        </div>
       </div>
+
+      <BrandingBar />
     </div>,
-    {
+    { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
+  );
+}
+
+async function renderDistrict(number: string, fontConfig: object) {
+  const districtNum = Number.parseInt(number, 10);
+  const data = await getDistrictByNumber(districtNum);
+
+  if (!data) {
+    return new ImageResponse(<BrandedFallback subtitle="District Browser" />, {
       width: 1200,
       height: 630,
-      headers: {
-        "Cache-Control":
-          "public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400",
-      },
-      ...(font
-        ? {
-            fonts: [
-              {
-                name: "Space Grotesk",
-                data: font,
-                weight: 700 as const,
-                style: "normal" as const,
-              },
-            ],
-          }
-        : {}),
-    },
+      headers: CACHE_HEADERS,
+      ...fontConfig,
+    });
+  }
+
+  const { district } = data;
+
+  return new ImageResponse(
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#FAFAFA",
+        padding: 48,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          border: "3px solid #000",
+          backgroundColor: "#fff",
+          boxShadow: "8px 8px 0px #000",
+          padding: 48,
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 20,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              fontSize: 72,
+              fontWeight: 700,
+              color: "#000",
+              fontFamily: "Space Grotesk",
+            }}
+          >
+            D{district.number}
+          </div>
+          <Badge
+            label={district.region}
+            bg={REGION_COLOURS[district.region] ?? "#E5E5E5"}
+          />
+        </div>
+
+        <div
+          style={{
+            fontSize: 44,
+            fontWeight: 700,
+            color: "#000",
+            fontFamily: "Space Grotesk",
+            marginTop: 12,
+          }}
+        >
+          {district.name}
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 32,
+            marginTop: 32,
+            fontSize: 24,
+            color: "#555",
+            fontFamily: "Space Grotesk",
+          }}
+        >
+          <div style={{ display: "flex" }}>
+            {district.projectCount} projects
+          </div>
+          <div style={{ display: "flex" }}>
+            Avg ${Math.round(district.avgPsf).toLocaleString()} psf
+          </div>
+        </div>
+      </div>
+
+      <BrandingBar />
+    </div>,
+    { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
+  );
+}
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get("type") ?? "project";
+  const slug = searchParams.get("slug");
+
+  const fontConfig = await loadFont();
+
+  if (type === "developer" && slug) {
+    return renderDeveloper(slug, fontConfig);
+  }
+
+  if (type === "district" && slug) {
+    return renderDistrict(slug, fontConfig);
+  }
+
+  if (slug) {
+    return renderProject(slug, fontConfig);
+  }
+
+  return new ImageResponse(
+    <BrandedFallback subtitle="Singapore New Condo Launch Research" />,
+    { width: 1200, height: 630, headers: CACHE_HEADERS, ...fontConfig },
   );
 }
