@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { PageTransition } from "@/components/transitions";
 import { getProjectBySlug } from "@/lib/queries/projects";
 import { getTransactionPairsByProject } from "@/lib/queries/transaction-pairs";
 import { getPsfTrend, getPsfTrendByBedroom } from "@/lib/queries/transactions";
@@ -53,12 +55,12 @@ function getJsonLd(
   project: import("@/lib/types").Project,
   units: import("@/lib/types").UnitMixRow[],
 ) {
-  const priceValues = units.map((u) => u.priceFrom).filter(Boolean);
+  const priceValues = units.map((unit) => unit.priceFrom).filter(Boolean);
   const lowPrice = priceValues.length ? Math.min(...priceValues) : undefined;
   const highPrice = units
-    .map((u) => u.priceTo)
+    .map((unit) => unit.priceTo)
     .filter(Boolean)
-    .reduce((max, v) => Math.max(max, v), 0);
+    .reduce((max, value) => Math.max(max, value), 0);
 
   return {
     "@context": "https://schema.org",
@@ -143,7 +145,18 @@ export default async function ProjectDetailPage({
   const pairsData = await getTransactionPairsByProject(project.id);
 
   return (
-    <>
+    <PageTransition
+      enter={{
+        default: "none",
+        "transition-to-list": "animate-slide-from-left",
+        "transition-to-detail": "animate-slide-from-right",
+      }}
+      exit={{
+        default: "none",
+        "transition-to-list": "animate-slide-to-right",
+        "transition-to-detail": "animate-slide-to-left",
+      }}
+    >
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD from trusted server data
@@ -152,7 +165,23 @@ export default async function ProjectDetailPage({
         }}
       />
 
-      <ProjectHero project={project} developerSlug={developerSlug} />
+      <section className="border-b-2 border-foreground px-6 py-4 md:px-12">
+        <div className="mx-auto max-w-7xl">
+          <Link
+            href="/projects"
+            transitionTypes={["transition-to-list"]}
+            className="font-mono text-xs font-semibold tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+          >
+            &larr; Back to Projects
+          </Link>
+        </div>
+      </section>
+
+      <ProjectHero
+        project={project}
+        developerSlug={developerSlug}
+        slug={slug}
+      />
 
       {units.length > 0 && <PricingSection units={units} />}
 
@@ -182,6 +211,6 @@ export default async function ProjectDetailPage({
           </a>
         </div>
       </section>
-    </>
+    </PageTransition>
   );
 }

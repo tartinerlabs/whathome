@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
     mcpServer: true,
     turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
+    viewTransition: true,
   },
   async rewrites() {
     return [

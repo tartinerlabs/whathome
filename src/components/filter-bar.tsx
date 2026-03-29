@@ -54,22 +54,15 @@ function DistrictCombobox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          role="combobox"
-          aria-expanded={open}
-          className="flex h-8 w-[340px] items-center justify-between border-2 border-foreground bg-transparent px-3 text-xs hover:shadow-[2px_2px_0px_0px_var(--foreground)] transition-shadow cursor-pointer"
-        >
-          <span className={value ? "" : "text-muted-foreground"}>
-            {displayLabel}
-          </span>
-          <HugeiconsIcon
-            icon={ArrowDown01Icon}
-            className="ml-2 size-3 shrink-0 opacity-50"
-            strokeWidth={2}
-          />
-        </button>
+      <PopoverTrigger className="flex h-8 w-[340px] items-center justify-between border-2 border-foreground bg-transparent px-3 text-xs hover:shadow-[2px_2px_0px_0px_var(--foreground)] transition-shadow cursor-pointer">
+        <span className={value ? "" : "text-muted-foreground"}>
+          {displayLabel}
+        </span>
+        <HugeiconsIcon
+          icon={ArrowDown01Icon}
+          className="ml-2 size-3 shrink-0 opacity-50"
+          strokeWidth={2}
+        />
       </PopoverTrigger>
       <PopoverContent
         className="w-[340px] rounded-none border-2 border-foreground p-0"

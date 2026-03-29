@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { FilterBar } from "@/components/filter-bar";
 import { SectionHeader } from "@/components/section-header";
+import { PageTransition } from "@/components/transitions";
 import { getProjects } from "@/lib/queries/projects";
 import { ProjectGrid } from "./components/project-grid";
 import { loadSearchParams } from "./search-params";
@@ -34,17 +35,30 @@ export default function ProjectsPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   return (
-    <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
-      <div className="mx-auto max-w-7xl space-y-8">
-        <Suspense>
-          <FilterBar />
-        </Suspense>
-        <Suspense
-          fallback={<SectionHeader title="All Projects" meta="LOADING..." />}
-        >
-          <ProjectResults searchParams={searchParams} />
-        </Suspense>
-      </div>
-    </section>
+    <PageTransition
+      enter={{
+        default: "none",
+        "transition-to-list": "animate-slide-from-left",
+        "transition-to-detail": "animate-slide-from-right",
+      }}
+      exit={{
+        default: "none",
+        "transition-to-list": "animate-slide-to-right",
+        "transition-to-detail": "animate-slide-to-left",
+      }}
+    >
+      <section className="border-b-2 border-foreground px-6 py-16 md:px-12">
+        <div className="mx-auto max-w-7xl space-y-8">
+          <Suspense>
+            <FilterBar />
+          </Suspense>
+          <Suspense
+            fallback={<SectionHeader title="All Projects" meta="LOADING..." />}
+          >
+            <ProjectResults searchParams={searchParams} />
+          </Suspense>
+        </div>
+      </section>
+    </PageTransition>
   );
 }

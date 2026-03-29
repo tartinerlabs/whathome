@@ -1,3 +1,4 @@
+import { SharedTransition } from "@/components/transitions";
 import { Badge } from "@/components/ui/badge";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -5,6 +6,7 @@ import { cn } from "@/lib/utils";
 interface ProjectHeroProps {
   project: Project;
   developerSlug: string;
+  slug: string;
 }
 
 const regionColours: Record<Project["region"], string> = {
@@ -13,7 +15,11 @@ const regionColours: Record<Project["region"], string> = {
   OCR: "bg-chart-5 text-white",
 };
 
-export function ProjectHero({ project, developerSlug }: ProjectHeroProps) {
+export function ProjectHero({
+  project,
+  developerSlug,
+  slug,
+}: ProjectHeroProps) {
   const soldPercentage = Math.round(
     (project.unitsSold / project.totalUnits) * 100,
   );
@@ -21,10 +27,20 @@ export function ProjectHero({ project, developerSlug }: ProjectHeroProps) {
   return (
     <section className="border-b-2 border-foreground px-6 py-12 md:px-12">
       <div className="mx-auto max-w-7xl space-y-6">
+        <SharedTransition name={`project-image-${slug}`}>
+          <div className="h-48 bg-muted flex items-center justify-center border-2 border-foreground md:h-64">
+            <span className="uppercase font-bold tracking-wide text-xs text-muted-foreground">
+              {project.name}
+            </span>
+          </div>
+        </SharedTransition>
+
         <div className="space-y-2">
-          <h1 className="font-sans text-3xl font-bold tracking-tight md:text-4xl">
-            {project.name}
-          </h1>
+          <SharedTransition name={`project-title-${slug}`}>
+            <h1 className="font-sans text-3xl font-bold tracking-tight md:text-4xl">
+              {project.name}
+            </h1>
+          </SharedTransition>
           <p className="text-muted-foreground">
             by{" "}
             <a

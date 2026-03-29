@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -8,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import type { Project } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { SharedTransition } from "./transitions";
 
 interface ProjectCardProps {
   project: Project;
@@ -25,19 +27,27 @@ export function ProjectCard({ project }: ProjectCardProps) {
   );
 
   return (
-    <a href={`/projects/${project.slug}`} className="group block">
+    <Link
+      href={`/projects/${project.slug}`}
+      transitionTypes={["transition-to-detail"]}
+      className="group block"
+    >
       <Card className="gap-0 border-2 border-foreground rounded-none shadow-[4px_4px_0px_0px_var(--foreground)] transition-shadow group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px]">
-        <div className="h-40 bg-muted flex items-center justify-center border-b-2 border-foreground">
-          <span className="uppercase font-bold tracking-wide text-[10px] text-muted-foreground">
-            {project.name}
-          </span>
-        </div>
+        <SharedTransition name={`project-image-${project.slug}`}>
+          <div className="h-40 bg-muted flex items-center justify-center border-b-2 border-foreground">
+            <span className="uppercase font-bold tracking-wide text-[10px] text-muted-foreground">
+              {project.name}
+            </span>
+          </div>
+        </SharedTransition>
 
         <CardHeader className="border-b-2 border-foreground gap-2 py-3">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="uppercase font-bold tracking-wide text-sm leading-tight">
-              {project.name}
-            </CardTitle>
+            <SharedTransition name={`project-title-${project.slug}`}>
+              <CardTitle className="uppercase font-bold tracking-wide text-sm leading-tight">
+                {project.name}
+              </CardTitle>
+            </SharedTransition>
             <Badge
               className={cn(
                 "rounded-none border-2 border-foreground font-bold uppercase text-[10px] tracking-wider",
@@ -102,6 +112,6 @@ export function ProjectCard({ project }: ProjectCardProps) {
           </Badge>
         </CardFooter>
       </Card>
-    </a>
+    </Link>
   );
 }

@@ -52,6 +52,9 @@
 }
 
 :root {
+  --duration-enter: 210ms;
+  --duration-move: 400ms;
+  --duration-exit: 150ms;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -137,5 +140,83 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* View Transition Animations */
+
+@keyframes fade {
+  from {
+    filter: blur(3px);
+    opacity: 0;
+  }
+  to {
+    filter: blur(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide {
+  from {
+    translate: var(--slide-offset);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+@keyframes via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Slide from left (entering when going back to list) */
+::view-transition-new(.animate-slide-from-left) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+
+/* Slide to right (exiting when going back to list) */
+::view-transition-old(.animate-slide-to-right) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+
+/* Slide from right (entering when going to detail) */
+::view-transition-new(.animate-slide-from-right) {
+  --slide-offset: 60px;
+  animation:
+    var(--duration-enter) ease-out var(--duration-exit) both fade,
+    var(--duration-move) ease-in-out both slide;
+}
+
+/* Slide to left (exiting when going to detail) */
+::view-transition-old(.animate-slide-to-left) {
+  --slide-offset: -60px;
+  animation:
+    var(--duration-exit) ease-in both fade reverse,
+    var(--duration-move) ease-in-out both slide reverse;
+}
+
+/* Shared element morph */
+::view-transition-group(.animate-morph) {
+  animation-duration: var(--duration-move);
+}
+
+::view-transition-image-pair(.animate-morph) {
+  animation-name: via-blur;
+}
+
+@media (prefers-reduced-motion) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-image-pair(*) {
+    animation: none !important;
   }
 }

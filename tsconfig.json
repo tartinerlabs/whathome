@@ -21,6 +21,7 @@
         "name": "workflow"
       }
     ],
+    "types": ["react/canary"],
     "paths": {
       "@/*": ["./src/*"]
     }
