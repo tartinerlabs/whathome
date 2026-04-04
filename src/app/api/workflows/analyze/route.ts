@@ -4,8 +4,14 @@ import { analysisWorkflow } from "@/workflows/analysis";
 export async function POST(request: Request) {
   const body = (await request.json()) as { projectId?: string };
 
-  if (!body.projectId) {
-    return Response.json({ error: "projectId is required" }, { status: 400 });
+  const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  if (!body.projectId || !UUID_REGEX.test(body.projectId)) {
+    return Response.json(
+      { error: "projectId must be a valid UUID" },
+      { status: 400 },
+    );
   }
 
   console.log(

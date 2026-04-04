@@ -101,8 +101,6 @@ async function stepLoadProject(projectId: string): Promise<{
 }> {
   "use step";
 
-  console.log("[research] Loading project %s", projectId);
-
   const [project] = await db
     .select({
       id: projects.id,
@@ -184,7 +182,6 @@ async function stepReverseGeocode(
 ): Promise<{ postalCode: string | null; address: string | null }> {
   "use step";
 
-  console.log("[research] Reverse geocoding for project %s", projectId);
   const result = await reverseGeocode(lat, lng);
 
   const updates: Record<string, string | null> = {};
@@ -346,8 +343,6 @@ async function stepEnrichProject(
   },
 ): Promise<void> {
   "use step";
-
-  console.log("[research] Enriching project %s", projectId);
 
   const updates: Record<string, unknown> = {};
 
@@ -586,8 +581,6 @@ async function stepSaveAnalysis(
 
 async function stepReinferBedroomTypes(projectId: string): Promise<number> {
   "use step";
-  console.log(`[stepReinferBedroomTypes] START projectId=${projectId}`);
-
   // Load curated ranges for this project
   const unitsData = await db
     .select({
