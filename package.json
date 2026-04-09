@@ -38,7 +38,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
-    "drizzle-orm": "0.45.1",
+    "drizzle-orm": "0.45.2",
     "next": "16.2.0",
     "nuqs": "2.8.9",
     "posthog-js": "1.363.1",
