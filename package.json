@@ -39,7 +39,7 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "drizzle-orm": "0.45.2",
-    "next": "16.2.0",
+    "next": "16.2.3",
     "nuqs": "2.8.9",
     "posthog-js": "1.363.1",
     "posthog-node": "5.28.5",
