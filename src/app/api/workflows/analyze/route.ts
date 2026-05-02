@@ -2,6 +2,15 @@ import { start } from "workflow/api";
 import { analysisWorkflow } from "@/workflows/analysis";
 
 export async function POST(request: Request) {
+  const authHeader = request.headers.get("authorization");
+
+  if (
+    !process.env.CRON_SECRET ||
+    authHeader !== `Bearer ${process.env.CRON_SECRET}`
+  ) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
   const body = (await request.json()) as { projectId?: string };
 
   const UUID_REGEX =
@@ -18,6 +27,6 @@ export async function POST(request: Request) {
     "[workflows] Starting analysis workflow for project %s",
     body.projectId,
   );
-  const run = await start(analysisWorkflow, [body.projectId!]);
+  const run = await start(analysisWorkflow, [body.projectId]);
   return Response.json({ runId: run.runId });
 }

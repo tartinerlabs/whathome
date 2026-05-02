@@ -4,8 +4,11 @@ import { dataIngestionWorkflow } from "@/workflows/ingest";
 export async function GET(request: Request) {
   if (process.env.VERCEL_ENV) {
     const authHeader = request.headers.get("authorization");
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return new Response("Unauthorised", { status: 401 });
+    if (
+      !process.env.CRON_SECRET ||
+      authHeader !== `Bearer ${process.env.CRON_SECRET}`
+    ) {
+      return new Response("Unauthorized", { status: 401 });
     }
   }
 
