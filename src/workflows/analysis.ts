@@ -1,6 +1,7 @@
 import { generateText } from "ai";
 import { eq } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
+import { getWritable } from "workflow";
 import { db } from "@/db";
 import { projects } from "@/db/schema";
 import { analysisModel } from "@/lib/ai/model";
@@ -15,9 +16,20 @@ export async function analysisWorkflow(projectId: string) {
 
   const startTime = Date.now();
 
+  await stepEmitAnalysisProgress("Starting analysis", { projectId });
   const context = await stepLoadContext(projectId);
+  await stepEmitAnalysisProgress("Loaded project context", {
+    projectId,
+    projectName: context.name,
+  });
   const result = await stepGenerateAnalysis(context);
+  await stepEmitAnalysisProgress("Generated analysis", {
+    projectId,
+    totalTokens: result.totalTokens,
+  });
   await stepSave(projectId, context.slug, result.description, result.aiSummary);
+  await stepEmitAnalysisProgress("Saved analysis", { projectId });
+  await stepCloseAnalysisProgress();
 
   return {
     projectId,
@@ -25,6 +37,30 @@ export async function analysisWorkflow(projectId: string) {
     totalTokens: result.totalTokens,
     durationMs: Date.now() - startTime,
   };
+}
+
+async function stepEmitAnalysisProgress(
+  message: string,
+  data?: Record<string, unknown>,
+): Promise<void> {
+  "use step";
+
+  const writer = getWritable<Uint8Array>().getWriter();
+  try {
+    await writer.write(
+      new TextEncoder().encode(
+        `${JSON.stringify({ type: "progress", workflow: "analysis", message, data, timestamp: new Date().toISOString() })}\n`,
+      ),
+    );
+  } finally {
+    writer.releaseLock();
+  }
+}
+
+async function stepCloseAnalysisProgress(): Promise<void> {
+  "use step";
+
+  await getWritable<Uint8Array>().close();
 }
 
 interface ProjectContext {

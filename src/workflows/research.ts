@@ -2,6 +2,7 @@ import { generateText, Output } from "ai";
 import { and, desc, eq, isNull, sql } from "drizzle-orm";
 // Run logging handled by the API route / backfill workflow
 import { revalidateTag } from "next/cache";
+import { getWritable } from "workflow";
 import { z } from "zod";
 import { db } from "@/db";
 import {
@@ -661,9 +662,16 @@ export async function projectResearchWorkflow(projectId: string) {
 
   const startTime = Date.now();
 
+  await stepEmitResearchProgress("Starting project research", { projectId });
+
   // Step 1: Load project and related data
   const { project, txns, devSales, pipeline } =
     await stepLoadProject(projectId);
+  await stepEmitResearchProgress("Loaded project data", {
+    projectId,
+    projectName: project.name,
+    transactionCount: txns.length,
+  });
 
   // Step 2: Reverse geocode for postal code (if coordinates available)
   let geocodeResult = {
@@ -676,6 +684,10 @@ export async function projectResearchWorkflow(projectId: string) {
       Number.parseFloat(project.latitude),
       Number.parseFloat(project.longitude),
     );
+    await stepEmitResearchProgress("Reverse geocoded project", {
+      projectId,
+      postalCode: geocodeResult.postalCode,
+    });
   }
 
   // Step 3: Parse tenure from transaction data
@@ -683,9 +695,14 @@ export async function projectResearchWorkflow(projectId: string) {
     .map((t) => t.tenure)
     .filter((t): t is string => !!t);
   const tenure = await stepParseTenure(tenureStrings);
+  await stepEmitResearchProgress("Parsed tenure", { projectId, tenure });
 
   // Step 4: Classify unit types from transaction areas
   const unitData = await stepClassifyUnits(txns);
+  await stepEmitResearchProgress("Classified unit mix", {
+    projectId,
+    unitTypeCount: unitData.units.length,
+  });
 
   // Step 5: Find or create developer
   const developerName =
@@ -693,6 +710,10 @@ export async function projectResearchWorkflow(projectId: string) {
   let developerId: string | null = null;
   if (developerName) {
     developerId = await stepFindOrCreateDeveloper(developerName);
+    await stepEmitResearchProgress("Linked developer", {
+      projectId,
+      developerName,
+    });
   }
 
   // Step 6: Compute derived fields
@@ -714,12 +735,18 @@ export async function projectResearchWorkflow(projectId: string) {
     unitsSold,
     topDate,
   });
+  await stepEmitResearchProgress("Enriched project record", { projectId });
 
   // Step 8: Upsert unit mix
   const unitMixCount = await stepUpsertUnitMix(projectId, unitData.units);
+  await stepEmitResearchProgress("Saved unit mix", { projectId, unitMixCount });
 
   // Step 8b: Re-infer bedroom types with updated curated ranges
-  await stepReinferBedroomTypes(projectId);
+  const bedroomInferredCount = await stepReinferBedroomTypes(projectId);
+  await stepEmitResearchProgress("Re-inferred bedroom types", {
+    projectId,
+    bedroomInferredCount,
+  });
 
   // Step 9: Calculate nearby amenities
   let amenityCount = 0;
@@ -729,10 +756,18 @@ export async function projectResearchWorkflow(projectId: string) {
       Number.parseFloat(project.latitude),
       Number.parseFloat(project.longitude),
     );
+    await stepEmitResearchProgress("Calculated nearby amenities", {
+      projectId,
+      amenityCount,
+    });
   }
 
   // Step 10: Generate AI analysis (description + summary)
   const analysis = await stepGenerateAnalysis(project);
+  await stepEmitResearchProgress("Generated project analysis", {
+    projectId,
+    totalTokens: analysis.totalTokens,
+  });
 
   // Step 11: Save analysis and mark as researched
   await stepSaveAnalysis(
@@ -741,6 +776,8 @@ export async function projectResearchWorkflow(projectId: string) {
     analysis.description,
     analysis.aiSummary,
   );
+  await stepEmitResearchProgress("Research completed", { projectId });
+  await stepCloseResearchProgress();
 
   const durationMs = Date.now() - startTime;
 
@@ -752,4 +789,28 @@ export async function projectResearchWorkflow(projectId: string) {
     totalTokens: analysis.totalTokens,
     durationMs,
   };
+}
+
+async function stepEmitResearchProgress(
+  message: string,
+  data?: Record<string, unknown>,
+): Promise<void> {
+  "use step";
+
+  const writer = getWritable<Uint8Array>().getWriter();
+  try {
+    await writer.write(
+      new TextEncoder().encode(
+        `${JSON.stringify({ type: "progress", workflow: "research", message, data, timestamp: new Date().toISOString() })}\n`,
+      ),
+    );
+  } finally {
+    writer.releaseLock();
+  }
+}
+
+async function stepCloseResearchProgress(): Promise<void> {
+  "use step";
+
+  await getWritable<Uint8Array>().close();
 }

@@ -1,5 +1,6 @@
 import { and, eq, isNull, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
+import { getWritable } from "workflow";
 import { db } from "@/db";
 import {
   developerSales,
@@ -615,6 +616,51 @@ async function stepLogRun(summary: IngestionSummary): Promise<void> {
   console.log("[ingestion] Run complete", summary);
 }
 
+async function stepEmitIngestionProgress(
+  message: string,
+  data?: Record<string, unknown>,
+): Promise<void> {
+  "use step";
+
+  const writer = getWritable<Uint8Array>().getWriter();
+  try {
+    await writer.write(
+      new TextEncoder().encode(
+        `${JSON.stringify({ type: "progress", workflow: "ingest", message, data, timestamp: new Date().toISOString() })}\n`,
+      ),
+    );
+  } finally {
+    writer.releaseLock();
+  }
+}
+
+async function stepRevalidateIngestionCache(changed: {
+  projects: boolean;
+  rentals: boolean;
+}): Promise<void> {
+  "use step";
+
+  revalidateTag("transactions", "max");
+  revalidateTag("bedrooms:analytics", "max");
+
+  if (changed.projects) {
+    revalidateTag("projects", "max");
+    revalidateTag("districts", "max");
+    revalidateTag("search", "max");
+    revalidateTag("developers", "max");
+  }
+
+  if (changed.rentals) {
+    revalidateTag("rentals", "max");
+  }
+}
+
+async function stepCloseIngestionProgress(): Promise<void> {
+  "use step";
+
+  await getWritable<Uint8Array>().close();
+}
+
 // TODO: Optimise — still updates one row at a time; batch UPDATE with CASE or temp table
 async function stepInferBedroomTypes(): Promise<number> {
   "use step";
@@ -749,7 +795,9 @@ export async function dataIngestionWorkflow() {
   const startTime = Date.now();
 
   // Step 1: Get URA auth token
+  await stepEmitIngestionProgress("Starting data ingestion");
   await stepFetchUraToken();
+  await stepEmitIngestionProgress("Fetched URA token");
 
   // Step 2: Fetch all 4 transaction batches in parallel
   const [batch1, batch2, batch3, batch4] = await Promise.all([
@@ -763,12 +811,22 @@ export async function dataIngestionWorkflow() {
     batch1.inserted + batch2.inserted + batch3.inserted + batch4.inserted;
   const totalSkipped =
     batch1.skipped + batch2.skipped + batch3.skipped + batch4.skipped;
+  await stepEmitIngestionProgress("Fetched transaction batches", {
+    inserted: totalInserted,
+    skipped: totalSkipped,
+  });
 
   // Step 3: Detect and create new projects from unmatched transactions
   const newProjects = await stepDetectNewProjects();
+  await stepEmitIngestionProgress("Detected new projects", {
+    count: newProjects.length,
+  });
 
   // Step 3b: Fix any bad SVY21→WGS84 coordinates from earlier runs
-  await stepFixCoordinates();
+  const fixedCoordinates = await stepFixCoordinates();
+  await stepEmitIngestionProgress("Fixed project coordinates", {
+    count: fixedCoordinates,
+  });
 
   // Step 4: Enrich new projects with planning area from OneMap
   for (const project of newProjects) {
@@ -780,36 +838,44 @@ export async function dataIngestionWorkflow() {
       );
     }
   }
+  await stepEmitIngestionProgress("Enriched planning areas", {
+    count: newProjects.length,
+  });
 
   // Step 5: Fetch developer sales for previous month
   const developerSalesCount = await stepFetchDeveloperSales();
+  await stepEmitIngestionProgress("Fetched developer sales", {
+    count: developerSalesCount,
+  });
 
   // Step 6: Fetch pipeline data
   const pipelineResult = await stepFetchPipeline();
+  await stepEmitIngestionProgress("Fetched pipeline data", pipelineResult);
 
   // Step 7: Fetch rental contracts for previous quarter
   const rentalContractsCount = await stepFetchRentalContracts();
+  await stepEmitIngestionProgress("Fetched rental contracts", {
+    count: rentalContractsCount,
+  });
 
   // Step 8: Fetch median rentals
   const medianRentalsCount = await stepFetchMedianRentals();
+  await stepEmitIngestionProgress("Fetched median rentals", {
+    count: medianRentalsCount,
+  });
 
   // Step 9: Infer bedroom types for newly inserted transactions
   const bedroomInferredCount = await stepInferBedroomTypes();
+  await stepEmitIngestionProgress("Inferred bedroom types", {
+    count: bedroomInferredCount,
+  });
 
   // Cache invalidation — targeted by what changed
-  revalidateTag("transactions", "max");
-  revalidateTag("bedrooms:analytics", "max");
-
-  if (newProjects.length > 0 || pipelineResult.newProjects > 0) {
-    revalidateTag("projects", "max");
-    revalidateTag("districts", "max");
-    revalidateTag("search", "max");
-    revalidateTag("developers", "max");
-  }
-
-  if (rentalContractsCount > 0 || medianRentalsCount > 0) {
-    revalidateTag("rentals", "max");
-  }
+  await stepRevalidateIngestionCache({
+    projects: newProjects.length > 0 || pipelineResult.newProjects > 0,
+    rentals: rentalContractsCount > 0 || medianRentalsCount > 0,
+  });
+  await stepEmitIngestionProgress("Revalidated caches");
 
   // Step 10: Log the run
   const durationMs = Date.now() - startTime;
@@ -825,6 +891,13 @@ export async function dataIngestionWorkflow() {
     bedroomInferredCount,
     durationMs,
   });
+  await stepEmitIngestionProgress("Data ingestion completed", {
+    transactionsInserted: totalInserted,
+    transactionsSkipped: totalSkipped,
+    newProjects: newProjects.length,
+    durationMs,
+  });
+  await stepCloseIngestionProgress();
 
   return {
     transactionsInserted: totalInserted,
