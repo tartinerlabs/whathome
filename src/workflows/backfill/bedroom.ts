@@ -189,23 +189,22 @@ async function processBatch(
 
   console.log(`[processBatch] prepared ${updates.length} updates`);
 
-  // Batch update in a single transaction — one round-trip per chunk
+  // Neon HTTP does not support transactions, so keep updates chunked but execute
+  // them directly.
   let updatedCount = 0;
   const CHUNK = 200;
 
   for (let i = 0; i < updates.length; i += CHUNK) {
     const chunk = updates.slice(i, i + CHUNK);
-    await db.transaction(async (tx) => {
-      for (const update of chunk) {
-        await tx
-          .update(transactions)
-          .set({
-            inferredBedroomType: update.inferredBedroomType,
-            isPostHarmonisation: update.isPostHarmonisation,
-          })
-          .where(eq(transactions.id, update.id));
-      }
-    });
+    for (const update of chunk) {
+      await db
+        .update(transactions)
+        .set({
+          inferredBedroomType: update.inferredBedroomType,
+          isPostHarmonisation: update.isPostHarmonisation,
+        })
+        .where(eq(transactions.id, update.id));
+    }
     updatedCount += chunk.length;
   }
 

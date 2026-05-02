@@ -226,8 +226,10 @@ async function stepFixCoordinates(): Promise<number> {
 
   let fixed = 0;
   for (const row of badCoords) {
-    const svyX = Number.parseFloat(row.svyX!);
-    const svyY = Number.parseFloat(row.svyY!);
+    if (!row.svyX || !row.svyY) continue;
+
+    const svyX = Number.parseFloat(row.svyX);
+    const svyY = Number.parseFloat(row.svyY);
     if (!svyX || !svyY) continue;
 
     const coords = svy21ToWgs84(svyX, svyY);
@@ -712,21 +714,20 @@ async function stepInferBedroomTypes(): Promise<number> {
       });
     }
 
-    // Batch update in a single transaction per chunk
+    // Neon HTTP does not support transactions, so keep updates chunked but execute
+    // them directly.
     const CHUNK = 200;
     for (let i = 0; i < updates.length; i += CHUNK) {
       const chunk = updates.slice(i, i + CHUNK);
-      await db.transaction(async (tx) => {
-        for (const u of chunk) {
-          await tx
-            .update(transactions)
-            .set({
-              inferredBedroomType: u.inferredBedroomType,
-              isPostHarmonisation: u.isPostHarmonisation,
-            })
-            .where(eq(transactions.id, u.id));
-        }
-      });
+      for (const u of chunk) {
+        await db
+          .update(transactions)
+          .set({
+            inferredBedroomType: u.inferredBedroomType,
+            isPostHarmonisation: u.isPostHarmonisation,
+          })
+          .where(eq(transactions.id, u.id));
+      }
     }
 
     updated += updates.length;
