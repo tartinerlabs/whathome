@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { PageTransition } from "@/components/transitions";
 import { getProjectBySlug } from "@/lib/queries/projects";
 import { getTransactionPairsByProject } from "@/lib/queries/transaction-pairs";
@@ -14,11 +15,7 @@ import { ProjectHero } from "./components/project-hero";
 import { PsfChartSection } from "./components/psf-chart-section";
 import { RentalComparison } from "./components/rental-comparison";
 import { TransactionChains } from "./components/transaction-chains";
-
-// TODO: Pre-render high-traffic projects (e.g. top 100 by transaction count)
-export async function generateStaticParams() {
-  return [{ slug: "__placeholder__" }];
-}
+import ProjectDetailLoading from "./loading";
 
 export async function generateMetadata({
   params,
@@ -130,7 +127,7 @@ function getJsonLd(
   };
 }
 
-export default async function ProjectDetailPage({
+async function ProjectDetailContent({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -212,5 +209,17 @@ export default async function ProjectDetailPage({
         </div>
       </section>
     </PageTransition>
+  );
+}
+
+export default function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  return (
+    <Suspense fallback={<ProjectDetailLoading />}>
+      <ProjectDetailContent params={params} />
+    </Suspense>
   );
 }

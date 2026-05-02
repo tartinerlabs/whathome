@@ -1,0 +1,243 @@
+{
+  "version": "1.0.0",
+  "steps": {
+    "src/workflows/backfill/project.ts": {
+      "stepFindUnresearched": {
+        "stepId": "step//./src/workflows/backfill/project//stepFindUnresearched"
+      },
+      "stepLogBatchRun": {
+        "stepId": "step//./src/workflows/backfill/project//stepLogBatchRun"
+      },
+      "stepResearchProject": {
+        "stepId": "step//./src/workflows/backfill/project//stepResearchProject"
+      }
+    },
+    "src/workflows/analysis.ts": {
+      "stepGenerateAnalysis": {
+        "stepId": "step//./src/workflows/analysis//stepGenerateAnalysis"
+      },
+      "stepLoadContext": {
+        "stepId": "step//./src/workflows/analysis//stepLoadContext"
+      },
+      "stepSave": {
+        "stepId": "step//./src/workflows/analysis//stepSave"
+      }
+    },
+    "node_modules/.pnpm/workflow@4.2.0-beta.76_@nestjs+common@11.1.17_reflect-metadata@0.2.2_rxjs@7.8.2__@nestj_9e570b8b24a02fca0ba923a1d66d52ae/node_modules/workflow/dist/internal/builtins.js": {
+      "__builtin_response_array_buffer": {
+        "stepId": "__builtin_response_array_buffer"
+      },
+      "__builtin_response_json": {
+        "stepId": "__builtin_response_json"
+      },
+      "__builtin_response_text": {
+        "stepId": "__builtin_response_text"
+      }
+    },
+    "src/workflows/research.ts": {
+      "stepCalculateAmenities": {
+        "stepId": "step//./src/workflows/research//stepCalculateAmenities"
+      },
+      "stepClassifyUnits": {
+        "stepId": "step//./src/workflows/research//stepClassifyUnits"
+      },
+      "stepEnrichProject": {
+        "stepId": "step//./src/workflows/research//stepEnrichProject"
+      },
+      "stepFindOrCreateDeveloper": {
+        "stepId": "step//./src/workflows/research//stepFindOrCreateDeveloper"
+      },
+      "stepGenerateAnalysis": {
+        "stepId": "step//./src/workflows/research//stepGenerateAnalysis"
+      },
+      "stepLoadProject": {
+        "stepId": "step//./src/workflows/research//stepLoadProject"
+      },
+      "stepParseTenure": {
+        "stepId": "step//./src/workflows/research//stepParseTenure"
+      },
+      "stepReinferBedroomTypes": {
+        "stepId": "step//./src/workflows/research//stepReinferBedroomTypes"
+      },
+      "stepReverseGeocode": {
+        "stepId": "step//./src/workflows/research//stepReverseGeocode"
+      },
+      "stepSaveAnalysis": {
+        "stepId": "step//./src/workflows/research//stepSaveAnalysis"
+      },
+      "stepUpsertUnitMix": {
+        "stepId": "step//./src/workflows/research//stepUpsertUnitMix"
+      }
+    },
+    "src/workflows/ingest.ts": {
+      "stepDetectNewProjects": {
+        "stepId": "step//./src/workflows/ingest//stepDetectNewProjects"
+      },
+      "stepEnrichPlanningArea": {
+        "stepId": "step//./src/workflows/ingest//stepEnrichPlanningArea"
+      },
+      "stepFetchDeveloperSales": {
+        "stepId": "step//./src/workflows/ingest//stepFetchDeveloperSales"
+      },
+      "stepFetchMedianRentals": {
+        "stepId": "step//./src/workflows/ingest//stepFetchMedianRentals"
+      },
+      "stepFetchPipeline": {
+        "stepId": "step//./src/workflows/ingest//stepFetchPipeline"
+      },
+      "stepFetchRentalContracts": {
+        "stepId": "step//./src/workflows/ingest//stepFetchRentalContracts"
+      },
+      "stepFetchTransactionBatch": {
+        "stepId": "step//./src/workflows/ingest//stepFetchTransactionBatch"
+      },
+      "stepFetchUraToken": {
+        "stepId": "step//./src/workflows/ingest//stepFetchUraToken"
+      },
+      "stepFixCoordinates": {
+        "stepId": "step//./src/workflows/ingest//stepFixCoordinates"
+      },
+      "stepInferBedroomTypes": {
+        "stepId": "step//./src/workflows/ingest//stepInferBedroomTypes"
+      },
+      "stepLogRun": {
+        "stepId": "step//./src/workflows/ingest//stepLogRun"
+      }
+    }
+  },
+  "workflows": {
+    "src/workflows/backfill/project.ts": {
+      "backfillWorkflow": {
+        "workflowId": "workflow//./src/workflows/backfill/project//backfillWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: backfillWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    },
+    "src/workflows/analysis.ts": {
+      "analysisWorkflow": {
+        "workflowId": "workflow//./src/workflows/analysis//analysisWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: analysisWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    },
+    "src/workflows/research.ts": {
+      "projectResearchWorkflow": {
+        "workflowId": "workflow//./src/workflows/research//projectResearchWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: projectResearchWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    },
+    "src/workflows/ingest.ts": {
+      "dataIngestionWorkflow": {
+        "workflowId": "workflow//./src/workflows/ingest//dataIngestionWorkflow",
+        "graph": {
+          "nodes": [
+            {
+              "id": "start",
+              "type": "workflowStart",
+              "data": {
+                "label": "Start: dataIngestionWorkflow",
+                "nodeKind": "workflow_start"
+              }
+            },
+            {
+              "id": "end",
+              "type": "workflowEnd",
+              "data": {
+                "label": "Return",
+                "nodeKind": "workflow_end"
+              }
+            }
+          ],
+          "edges": [
+            {
+              "id": "e_start_end",
+              "source": "start",
+              "target": "end",
+              "type": "default"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "classes": {}
+}

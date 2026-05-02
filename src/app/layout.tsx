@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 import { ViewCounter } from "@/components/view-counter";
 import { cn } from "@/lib/utils";
@@ -57,7 +58,9 @@ export default function RootLayout({
       )}
     >
       <body className="min-h-full flex flex-col">
-        <ViewCounter />
+        <Suspense fallback={null}>
+          <ViewCounter />
+        </Suspense>
         {children}
         <Analytics />
       </body>

@@ -99,9 +99,13 @@ export async function getDeveloperBySlug(slug: string) {
 }
 
 export async function getAllDeveloperSlugs() {
-  const rows = await db.select({ slug: developers.slug }).from(developers);
+  "use cache";
+  cacheLife("max");
+  cacheTag("developers");
 
-  if (!rows.length) return [{ slug: "__placeholder__" }];
-
-  return rows.map((r) => ({ slug: r.slug }));
+  return db
+    .select({
+      slug: developers.slug,
+    })
+    .from(developers);
 }

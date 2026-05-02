@@ -207,6 +207,10 @@ export async function getFeaturedLaunches(limit = 3) {
 }
 
 export async function getAllProjectSlugs() {
+  "use cache";
+  cacheLife("max");
+  cacheTag("projects");
+
   const rows = await db.select({ slug: projects.slug }).from(projects);
 
   // Cache Components requires at least one result from generateStaticParams

@@ -10,6 +10,7 @@ export async function getDistrictStats(): Promise<DistrictInfo[]> {
   "use cache: remote";
   cacheLife("max");
   cacheTag("districts");
+
   const projectCounts = await db
     .select({
       districtNumber: projects.districtNumber,
@@ -110,4 +111,14 @@ export async function getDistrictByNumber(districtNumber: number) {
   }));
 
   return { district, projects: projectList };
+}
+
+export async function getAllDistricts() {
+  "use cache";
+  cacheLife("max");
+  cacheTag("districts");
+
+  return Object.keys(DISTRICT_NAMES).map((number) => ({
+    number: Number(number),
+  }));
 }
