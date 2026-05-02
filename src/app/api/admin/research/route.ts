@@ -19,9 +19,7 @@ export async function POST(request: Request) {
   }
 
   const runs = await Promise.all(
-    projectIds.map((projectId) =>
-      start(() => projectResearchWorkflow(projectId)),
-    ),
+    projectIds.map((projectId) => start(projectResearchWorkflow, [projectId])),
   );
 
   return Response.json({ runIds: runs.map((run) => run.runId) });
